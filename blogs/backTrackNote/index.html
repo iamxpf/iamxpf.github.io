@@ -56,21 +56,18 @@
   };
 </script>
 
-  <meta name="description" content="问题描述 测量绿萝叶片使用kinect相机对图像做标定，将图像映射到坐标系中，使用matlab程序计算叶片整体占图像的像素从而计算面积，对绿萝每层的叶片都需要分次进行标定求解过程较为复杂，因此针对这种情况，采用bp网络来预测绿萝叶片面积。 数据采集测量9盆绿萝叶片，实测数据共557片。训练集1-7盆，共449片，测试集8-9盆，共108片。数据集中共四个属性，分别是宽度为w，长边为L1,短边为L2">
-<meta name="keywords" content="神经网络,算法">
+  <meta name="description" content="回溯法回溯一般用于找到满足要求的的所有解，即相当于构造一棵树，从跟节点出发，找到满足条件的所有路径，并进行保存，当目前的路径不符合条件的时候，需要回溯，即剪枝，删除不符合的分支，当到达结束的条件时，即找到了一个满足条件的解，再继续构造下一个符合条件的路径。常用与解决树种求得所有解得问题和排列组合中求解问题。">
+<meta name="keywords" content="good good good">
 <meta property="og:type" content="article">
-<meta property="og:title" content="用bp网络预测绿萝叶片面积">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;bp-net&#x2F;index.html">
+<meta property="og:title" content="Leecode算法学习笔记（二）">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;backTrackNote&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="问题描述 测量绿萝叶片使用kinect相机对图像做标定，将图像映射到坐标系中，使用matlab程序计算叶片整体占图像的像素从而计算面积，对绿萝每层的叶片都需要分次进行标定求解过程较为复杂，因此针对这种情况，采用bp网络来预测绿萝叶片面积。 数据采集测量9盆绿萝叶片，实测数据共557片。训练集1-7盆，共449片，测试集8-9盆，共108片。数据集中共四个属性，分别是宽度为w，长边为L1,短边为L2">
+<meta property="og:description" content="回溯法回溯一般用于找到满足要求的的所有解，即相当于构造一棵树，从跟节点出发，找到满足条件的所有路径，并进行保存，当目前的路径不符合条件的时候，需要回溯，即剪枝，删除不符合的分支，当到达结束的条件时，即找到了一个满足条件的解，再继续构造下一个符合条件的路径。常用与解决树种求得所有解得问题和排列组合中求解问题。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;bp%E7%BD%91%E7%BB%9C%E7%A4%BA%E6%84%8F%E5%9B%BE%E5%8F%8A%E5%90%84%E5%8F%98%E9%87%8F%E5%90%AB%E4%B9%89.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;bp%E5%AD%A6%E4%B9%A0%E7%8E%87%E5%8F%98%E5%8C%96.png">
-<meta property="og:updated_time" content="2020-01-20T12:17:50.704Z">
+<meta property="og:updated_time" content="2020-02-25T07:09:03.755Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;bp%E7%BD%91%E7%BB%9C%E7%A4%BA%E6%84%8F%E5%9B%BE%E5%8F%8A%E5%90%84%E5%8F%98%E9%87%8F%E5%90%AB%E4%B9%89.png">
 
-<link rel="canonical" href="https://www.xiapf.com/blogs/bp-net/">
+<link rel="canonical" href="https://www.xiapf.com/blogs/backTrackNote/">
 
 
 <script id="page-configurations">
@@ -84,7 +81,7 @@
   };
 </script>
 
-  <title>用bp网络预测绿萝叶片面积 | 八戒大强攻</title>
+  <title>Leecode算法学习笔记（二） | 八戒大强攻</title>
   
 
 
@@ -236,7 +233,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/bp-net/">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/backTrackNote/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
@@ -249,7 +246,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          用bp网络预测绿萝叶片面积
+          Leecode算法学习笔记（二）
         </h2>
 
         <div class="post-meta">
@@ -258,30 +255,13 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2019-12-11 10:46:04" itemprop="dateCreated datePublished" datetime="2019-12-11T10:46:04+08:00">2019-12-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-20 20:17:50" itemprop="dateModified" datetime="2020-01-20T20:17:50+08:00">2020-01-20</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
+              <time title="创建时间：2020-02-25 15:08:13 / 修改时间：15:09:03" itemprop="dateCreated datePublished" datetime="2020-02-25T15:08:13+08:00">2020-02-25</time>
             </span>
 
           
-            <span id="/blogs/bp-net/" class="post-meta-item leancloud_visitors" data-flag-title="用bp网络预测绿萝叶片面积" title="阅读次数">
+            <span id="/blogs/backTrackNote/" class="post-meta-item leancloud_visitors" data-flag-title="Leecode算法学习笔记（二）" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -296,8 +276,8 @@
       </span>
       <span class="post-meta-item-text">评论数：</span>
     
-    <a title="valine" href="/blogs/bp-net/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/blogs/bp-net/" itemprop="commentCount"></span>
+    <a title="valine" href="/blogs/backTrackNote/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/backTrackNote/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -307,14 +287,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
+              <span>2.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>2 分钟</span>
             </span>
 		  
 			
@@ -328,118 +308,28 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><blockquote>
-<p>测量绿萝叶片使用kinect相机对图像做标定，将图像映射到坐标系中，使用matlab程序计算叶片整体占图像的像素从而计算面积，对绿萝每层的叶片都需要分次进行标定求解过程较为复杂，因此针对这种情况，采用bp网络来预测绿萝叶片面积。</p>
-</blockquote><hr><h1 id="数据采集"><a href="#数据采集" class="headerlink" title="数据采集"></a>数据采集</h1><p><em>测量9盆绿萝叶片，实测数据共557片。训练集1-7盆，共449片，测试集8-9盆，共108片。<br>数据集中共四个属性，分别是宽度为w，长边为L1,短边为L2，面积area。</em><br><strong>其中宽度，长边，短边为手动实测，面积根据叶片像素点占图片整体像素点计算得出。</strong></p><a id="more"></a>
+        <h2 id="回溯法"><a href="#回溯法" class="headerlink" title="回溯法"></a>回溯法</h2><p>回溯一般用于找到满足要求的的所有解，即相当于构造一棵树，从跟节点出发，找到满足条件的所有路径，并进行保存，当目前的路径不符合条件的时候，需要回溯，即剪枝，删除不符合的分支，当到达结束的条件时，即找到了一个满足条件的解，再继续构造下一个符合条件的路径。</p><p>常用与解决树种求得所有解得问题和排列组合中求解问题。</p><a id="more"></a>
+
+<h3 id="关于树的回溯"><a href="#关于树的回溯" class="headerlink" title="关于树的回溯"></a>关于树的回溯</h3><p>伪代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//result存储最终结果，res存储中间结果</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(TreeNode* root,<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&gt; result,<span class="built_in">vector</span> res，….)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="comment">//处理当前节点</span></span><br><span class="line">   res.push(root-&gt;val)</span><br><span class="line"></span><br><span class="line">   …</span><br><span class="line"></span><br><span class="line">  <span class="comment">//结束的条件</span></span><br><span class="line">  <span class="keyword">if</span>(满足题目要求（一般是值相等）并且到达根节点)</span><br><span class="line">  	result.push(res)</span><br><span class="line">  <span class="keyword">if</span>(root-&gt;left)</span><br><span class="line">  &#123;</span><br><span class="line">    doTree(root-&gt;left,其他参数)</span><br><span class="line">    <span class="comment">//不满足条件，需要回溯</span></span><br><span class="line">    res.pop()</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(root-&gt;right)</span><br><span class="line">  &#123;</span><br><span class="line">    doTree(root-&gt;right,其他参数)</span><br><span class="line">    <span class="comment">//不满足条件，需要回溯</span></span><br><span class="line">    res.pop()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
-<ul>
-<li>计算面积的MATLAB程序<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">%% 分割</span><br><span class="line">k=graythresh(I);              %得到最优阈值</span><br><span class="line">j=im2bw(I,k);                  %转换成二值图，k为分割阈值</span><br><span class="line">%imshow(j); </span><br><span class="line">f = bwmorph(j,&apos;open&apos;);  %开运算</span><br><span class="line">figure, imshow(f)</span><br><span class="line">%% 像素点统计</span><br><span class="line">[m,n]=size(f);</span><br><span class="line">k=0;</span><br><span class="line">for i=1:1:m</span><br><span class="line">    for j=1:1:n</span><br><span class="line">        if f(i,j)==0</span><br><span class="line">            k=k+1;</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line">p=k/(m*n);</span><br><span class="line">s=21*29.7*p;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<hr>
-<h1 id="bp网络设计"><a href="#bp网络设计" class="headerlink" title="bp网络设计"></a>bp网络设计</h1><p>bp网络示意图及各变量含义<br><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/bp%E7%BD%91%E7%BB%9C%E7%A4%BA%E6%84%8F%E5%9B%BE%E5%8F%8A%E5%90%84%E5%8F%98%E9%87%8F%E5%90%AB%E4%B9%89.png" alt="bp结构图片"></p>
-<ol>
-<li><p>结构选取<br>a.隐含层数量选取：单隐层结构选择，当仅有一层隐含层时，测试数据正确率已达100%，为降低网络复杂度，所以选择单隐层结构。<br>b.隐含层神经元个数选取</p>
-<table>
-<thead>
-<tr>
-<th align="left">隐含层神经元个数</th>
-<th align="left">达到最小误差时需要迭代的次数</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">5</td>
-<td align="left">1873</td>
-</tr>
-<tr>
-<td align="left">10</td>
-<td align="left">2009</td>
-</tr>
-<tr>
-<td align="left">15</td>
-<td align="left">2259</td>
-</tr>
-</tbody></table>
-<p>根据程序运行来看，当隐藏层神经元个数选择过小（小于5）收敛速度很慢，当到达最大迭代次数时，误差仍很大，当个数选择过大（大于15），网络出现振荡，因此，考虑隐藏层神经元个数在5-15之间，因为本实验数据集属性少，因此选择隐藏层神经元个数为5个，减少复杂度。<br> c.误差函数选择均方差公式：$[    {E_{k} } =1/2*( \hat{y}-y) ]$<br> d.结束条件：<br> 训练结束条件：当误差函数值小于1e-3或者迭代次数大于50000次时结束训练<br> 测试误差判断：当测试集输出面积和实际面积误差函数值大于1e-5时，预测错误，反之预测正确。</p>
-</li>
-<li><p>初始值设置<br>a.权值矩阵的初始值<br>产生0-1之间的随机数作为权值的初始值<br>代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">srand(time(NULL));//设置随机数种子，使每次产生的随机序列不同</span><br><span class="line">for (int i = 0; i &lt; n; i++)</span><br><span class="line">    w[i] = rand() % (N + 1) / (float)(N + 1);//N为设置的精度</span><br></pre></td></tr></table></figure>
-<p>b.学习率的初始值<br>学习率控制着算法每一轮的迭代的更新步长，若太大则容易振荡，太小则收敛速度又过慢因此需要选择适合的初始值。<br><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/bp%E5%AD%A6%E4%B9%A0%E7%8E%87%E5%8F%98%E5%8C%96.png" alt="学习率变化图片"><br>由图可以看出，当学习率小于1时，网络训练次数多集中在1000以上，但当学习率大于5时，测试集数据会出现错误，因此选择训练次数少并且误差低的学习率=5.</p>
-</li>
-<li><p>数据归一化<br>前三列属性取值∈[2,9]，因此采用对数函数y=log10(x) 以10为底的对数函数转换。<br>最后一列属性取值∈[10,100]，因此采用反余弦函数y=atan(x)*2/PI，保证输入的数据在0-1之间，让网络更快的收敛。</p>
-</li>
-<li><p>前向传播和反向传播<br>a.前向传播<br>激活函数选择sigmod函数，第i个输入层神经元到第h个隐藏层神经元的权值为Vih,第h个隐藏层神经元输入为α=∑Vih<em>Xi，输出为bh;第h个输入层神经元到第j个隐藏层神经元的权值为Whj,第j个输出层神经元的输入β=∑Whj</em>bh,输出为<br>求出激活值，代入sigmod函数中，求得输出值<br>代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">for(int j=0;j&lt;hideSum;j++)</span><br><span class="line">&#123;</span><br><span class="line">   o1[j]=0.0;</span><br><span class="line">   for(int i=0;i&lt;inSum;i++)</span><br><span class="line">   //激活值</span><br><span class="line">   o1[j]=o1[j]+w[i][j]*x[i];</span><br><span class="line">   //实际输出</span><br><span class="line">   x1[j]=1.0/(1+exp(-o1[j]-b1[j])); //b1为偏置量</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>b.反向传播<br>网络在（Xk,Yk)上的均方差为，BP算法基于梯度下降的策略，以目标的负梯度方向进行调整在学习率下，采用链式法则对权值进行更新：<br>从输出层到隐藏层，有:<br>从隐藏层到输入层，有:</p>
-</li>
-</ol>
-<ul>
-<li>算法描述:<blockquote>
-<p>在（0，1）范围内初始化权值和学习率<br>REPEAT<br>FOR all（Xk,Yk)：<br>输入正向传播公式计算输出<br>计算输出层需修改的梯度项gj<br>计算隐藏层层需修改的梯度项eh<br>根据公式更新权值wjh,vij<br>END FOR<br>UNTIL 达到停止条件</p>
-</blockquote>
-</li>
-</ul>
-<p>标准BP算法：上述算法是对每个样本更新权值，属于标准BP算法，参数更新的频繁<br>累积BP算法：当读取完所有样本之后才更新参数，参数更新的频率低<br>区别：累积BP算法在误差下降到一定阶段，下降回非常缓慢，所以往往标准BP算法能更快得到较好解。<br><em>使用标准BP算法：对每个样本更新权值</em></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">//输出层</span><br><span class="line">for(int k=0;k&lt;outSum;k++)</span><br><span class="line">&#123;</span><br><span class="line">    //与实际输出的偏差</span><br><span class="line">    qq[k]=(yd[k]-x2[k])*x2[k]*(1-x2[k]);</span><br><span class="line">    for (int j = 0; j&lt; hideSum; ++j)</span><br><span class="line">        //调整隐藏层到输出层之间的连接权</span><br><span class="line">        w1[j][k]+=rate_w1*qq[k]*x1[j];</span><br><span class="line">&#125;</span><br><span class="line">//隐藏层</span><br><span class="line">for(int j=0;j&lt;hideSum;j++)</span><br><span class="line">&#123;</span><br><span class="line">    pp[j]=0;</span><br><span class="line">    //隐藏层的偏差</span><br><span class="line">    for (int k = 0; k&lt; outSum; k++)</span><br><span class="line">        pp[j]=pp[j]+qq[k]*w1[j][k];  //隐藏层的偏差和后面所有连接的对应输出层都有关系</span><br><span class="line">    pp[j]=pp[j]*x1[j]*(1-x1[j]);</span><br><span class="line">   for (int i = 0; i &lt; inSum; ++i)</span><br><span class="line">        //调整输入层到隐藏层之间的连接权</span><br><span class="line">        w[i][j]+=rate_w*pp[j]*x[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><em>使用累积BP算法：遍历完所有样本再更新权值<br>增加权值修改矩阵，将误差进行累加</em></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">//输出层</span><br><span class="line">for(int k=0;k&lt;outSum;k++)</span><br><span class="line">&#123;</span><br><span class="line">    //与实际输出的偏差</span><br><span class="line">    qq[k]=(yd[k]-x2[k])*x2[k]*(1-x2[k]);</span><br><span class="line">    for (int j = 0; j&lt; hideSum; ++j)</span><br><span class="line">    &#123;</span><br><span class="line">        //调整隐藏层到输出层之间的连接权</span><br><span class="line">        chg_w2[j][k]+=rate_w1*qq[k]*x1[j];</span><br><span class="line">        chg_b2[k]+=rate_b2*qq[k];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//隐藏层</span><br><span class="line">for(int j=0;j&lt;hideSum;j++)</span><br><span class="line">&#123;</span><br><span class="line">    pp[j]=0;</span><br><span class="line">    //隐藏层的偏差</span><br><span class="line">    for (int k = 0; k&lt; outSum; k++)</span><br><span class="line">    &#123;</span><br><span class="line">        pp[j]=pp[j]+qq[k]*w1[j][k];  //隐藏层的偏差和后面所有连接的对应输出层都有关系</span><br><span class="line">    &#125;</span><br><span class="line">    pp[j]=pp[j]*x1[j]*(1-x1[j]);</span><br><span class="line">   for (int i = 0; i &lt; inSum; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        //调整输入层到隐藏层之间的连接权</span><br><span class="line">        chg_w1[i][j]=chg_w1[i][j]+rate_w1*pp[j]*x[i];</span><br><span class="line">        chg_b1[j]+=rate_b1*pp[j];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h1 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h1><table>
-<thead>
-<tr>
-<th align="left">对比</th>
-<th align="left">标准BP算法</th>
-<th align="left">累积BP算法</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">迭代次数</td>
-<td align="left">548</td>
-<td align="left">348</td>
-</tr>
-<tr>
-<td align="left">训练平均误差</td>
-<td align="left">小于1e-5</td>
-<td align="left">小于1e-5</td>
-</tr>
-<tr>
-<td align="left">识别结果</td>
-<td align="left">100%</td>
-<td align="left">100%</td>
-</tr>
-</tbody></table>
-<p>使用标准BP算法和累积BP算法识别率都能达到100%，但是因数据量小，使用累积BP 算法训练时间更短。</p>
-<hr>
-<h1 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h1><ul>
-<li>如果将长边短边合成一条边，效果还是一样吗？<br>将数据集中长边L1和短边L2相加得到叶子的长为L，输入的属性列变为长L,宽W,面积area<br>网络结构采取上述结构，训练效果如下图：<table>
-<thead>
-<tr>
-<th align="left">对比</th>
-<th align="left">标准BP算法</th>
-<th align="left">累积BP算法</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">迭代次数</td>
-<td align="left">566</td>
-<td align="left">717</td>
-</tr>
-<tr>
-<td align="left">训练平均误差</td>
-<td align="left">小于1e-5</td>
-<td align="left">小于1e-5</td>
-</tr>
-<tr>
-<td align="left">识别结果</td>
-<td align="left">94.5%</td>
-<td align="left">97.3%</td>
-</tr>
-</tbody></table>
-</li>
-</ul>
-<p>因实验所用的叶片有破损存在，直接用长边加上短边得到的叶片长度存在一定误差，因此使用BP算法时，识别结果略有下降.<br>使用标准BP算法和累积BP算法识别率都能达到100%，但是因数据量小，使用累积BP 算法训练时间更短。</p>
+<p>应用场景：</p>
+<p>找到所有满足目标节点的路径：每次把当前节点加入，并将目标值减去当前节点的值，判断当前叶子节点值（左右子树为空）与0是否相等，相等，则找到一个满足的结果，否则，继续对左右子树递归，此时若存在不满足条件的，需要回溯（pop）</p>
+<h3 id="排列组合"><a href="#排列组合" class="headerlink" title="排列组合"></a>排列组合</h3><p>排列组合求所有符合问题的解，基本框架：</p>
+<p>组合问题按顺序读取，不需要设置used数组，排列问题则需要设置</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">int</span> start,<span class="keyword">int</span> target)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">//结束的条件：找到满足要求的一个解</span></span><br><span class="line">  <span class="keyword">if</span>(满足值为<span class="number">0</span>或者其他条件)</span><br><span class="line">  &#123;</span><br><span class="line">    result.push(res);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//循环的条件</span></span><br><span class="line">  <span class="keyword">for</span>(i&lt;数组长度&amp;&amp;target-num[i]&gt;=<span class="number">0</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    [</span><br><span class="line">      <span class="comment">//避免重复元素得出重复组合</span></span><br><span class="line">      <span class="keyword">if</span>(i&gt;start&amp;&amp;num[i]==num[i<span class="number">-1</span>])</span><br><span class="line">      	<span class="keyword">continue</span>;</span><br><span class="line">    ]</span><br><span class="line">    [</span><br><span class="line">      <span class="comment">//全排列中不能使用上一层使用的元素</span></span><br><span class="line">      <span class="comment">//设置标志位或者其他判断条件</span></span><br><span class="line">      <span class="keyword">if</span>(!use[i])&#123;&#125;</span><br><span class="line">    ]</span><br><span class="line">    <span class="comment">//当时排列问题，并且有重复数字的时候，需要将上面两个条件结合</span></span><br><span class="line">    <span class="comment">//选择当前节点</span></span><br><span class="line">    res.push(num[i]);</span><br><span class="line">    [</span><br><span class="line">      <span class="comment">//选择了该节点，需要设置标志位</span></span><br><span class="line">      used[i]=<span class="literal">true</span>;</span><br><span class="line">    ]</span><br><span class="line">    <span class="comment">//[可以重复使用]</span></span><br><span class="line">    dfs(i,target-num[i]);</span><br><span class="line">    [<span class="comment">//不可以重复使用</span></span><br><span class="line">    [dfs(i+<span class="number">1</span>,target-num[i]);</span><br><span class="line">    ]</span><br><span class="line">    <span class="comment">//回溯，取消当前选择，返回上一层</span></span><br><span class="line">    res.pop();</span><br><span class="line">    [</span><br><span class="line">      <span class="comment">//撤销选择，需要还原标志位</span></span><br><span class="line">      used[i]=<span class="literal">true</span>;</span><br><span class="line">    ]</span><br><span class="line">      </span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 应用场景：</p>
+<p>组合求和（数组元素内部不重复，在数组中找到和为目标值的组合）：首先对数组排序，排序能更方便去重。在dfs函数中，每次传入数组中数据的位置和目标值，当剩余值大于等于0，进入循环，将当前数组值存入路径中，再继续递归，做下一次决策，由于可重复，所以下一次可以仍然从i开始，当满足条件时，将当前路径存入结果，此时回溯到上一层，继续寻找合适的路径。</p>
+<p>组合求和（数组元素内部可能有重复，在数组中找到和为目标值的组合，此时不能重复使用数组的元素，解集不能包含重复的组合）：思路同上，因为不能重复使用数组元素，所以在for循环中dfs函数传值只鞥从i+1开始。与此同时，由于解集不能包含重复的组合，所以在排序后数组，当前一个数组元素和当前数组元素相同，那么当前元素得出的路径和上一个元素必定相同，因此这时需要跳过当前元素，对下一个元素处理。</p>
+<p>全排列（给定一个没有重复数字的序列，返回其所有可能的全排列）：排列题是上一次选择的节点，这次不能再选择。每一层都可以选择一个未出现的元素，需要对数组元素设置标志位，当使用过，就将标志位置为1，此时也需要在for循环中加一层判断，查看当前数组是否被使用，当使用过时，需要跳过该元素，下一层继续选择，找到一个合适的结果后存储下来，接着撤销本次选择，返回上一层查看是否有其他结果。</p>
+<p>全排列（给定一个可包含重复数字的序列，返回所有不重复的全排列）：思路同上，此时需要额外加个判断，看是否有重复的数字，有重复的数字则跳过。具体为：本次节点与前一个相同，并且前一个已使用过，说明已有相同的排列，则本次排列跳过。</p>
+<p>n皇后问题：转换为全排列问题，在每一个的n个位置中选一个作为当前选择，n行做n个选择，并且是做做不重复的选择，正好构成一个排列，此时的排列满足不在同一行不在同一列，只要对当前的排列需要再满足题设条件即可，即不在主对角线，不在副对角线，vector<bool> master1;//副对角线和相同，都为i+j i为行，j为列，两者相加和是当前行，vector<bool> master2;//主对角线差相同，为i-j+n-1 i为行，j为列，再设置两个标志位进行判断，最后将得到的排列用题目中格式打印出来作为结果。</bool></bool></p>
+<p>子集（给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集））：对不同子集个数进行深度遍历，此时需要在主函数中加一个循环</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>()+<span class="number">1</span>;i++)<span class="comment">//i的长度为0~nums.size(),所以需要加一</span></span><br><span class="line">&#123;</span><br><span class="line">  dfs(start,i);</span><br><span class="line">  <span class="comment">//start是从数组中取元素的开始的位置，i是深度，即子集中元素的个数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 
     </div>
 
@@ -478,24 +368,19 @@
 
 
       <footer class="post-footer">
-          
-          <div class="post-tags">
-              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 神经网络</a>
-              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
-          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
+                <a href="/blogs/treeNote/" rel="next" title="Leecode算法学习笔记（一）">
+                  <i class="fa fa-chevron-left"></i> Leecode算法学习笔记（一）
+                </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/blogs/future-futuretask/" rel="prev" title="future与futuretask用法区别">
-                  future与futuretask用法区别 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -535,7 +420,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据采集"><span class="nav-number">2.</span> <span class="nav-text">数据采集</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bp网络设计"><span class="nav-number">3.</span> <span class="nav-text">bp网络设计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结果分析"><span class="nav-number">4.</span> <span class="nav-text">结果分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#思考"><span class="nav-number">5.</span> <span class="nav-text">思考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#回溯法"><span class="nav-number">1.</span> <span class="nav-text">回溯法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于树的回溯"><span class="nav-number">1.1.</span> <span class="nav-text">关于树的回溯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#排列组合"><span class="nav-number">1.2.</span> <span class="nav-text">排列组合</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

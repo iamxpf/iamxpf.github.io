@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.xiapf.com/blogs/backTrackNote/</loc>
+    
+    <lastmod>2020-02-25T07:09:03.755Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.xiapf.com/blogs/treeNote/</loc>
     
     <lastmod>2020-02-25T07:03:33.319Z</lastmod>
@@ -65,14 +72,14 @@
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/blogs/docker/</loc>
+    <loc>https://www.xiapf.com/blogs/future-futuretask/</loc>
     
     <lastmod>2019-12-13T12:52:51.111Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/blogs/future-futuretask/</loc>
+    <loc>https://www.xiapf.com/blogs/docker/</loc>
     
     <lastmod>2019-12-13T12:52:51.111Z</lastmod>
     
