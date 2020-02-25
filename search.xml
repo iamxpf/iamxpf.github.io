@@ -3,7 +3,7 @@
   <entry>
     <title>Leecode算法学习笔记（二）</title>
     <url>/blogs/backTrackNote/</url>
-    <content><![CDATA[<h2 id="回溯法"><a href="#回溯法" class="headerlink" title="回溯法"></a>回溯法</h2><p>回溯一般用于找到满足要求的的所有解，即相当于构造一棵树，从跟节点出发，找到满足条件的所有路径，并进行保存，当目前的路径不符合条件的时候，需要回溯，即剪枝，删除不符合的分支，当到达结束的条件时，即找到了一个满足条件的解，再继续构造下一个符合条件的路径。</p><p>常用与解决树种求得所有解得问题和排列组合中求解问题。</p><a id="more"></a>
+    <content><![CDATA[<h2 id="回溯法"><a href="#回溯法" class="headerlink" title="回溯法"></a>回溯法</h2><p>回溯一般用于找到满足要求的的所有解，即相当于构造一棵树，从跟节点出发，找到满足条件的所有路径，并进行保存，当目前的路径不符合条件的时候，需要回溯，即剪枝，删除不符合的分支，当到达结束的条件时，即找到了一个满足条件的解，再继续构造下一个符合条件的路径。</p><p>常用于解决树种求得所有解的问题和排列组合中求解问题，或者问题可以转换为求树中一条路径的问题，可以画图。</p><a id="more"></a>
 
 <h3 id="关于树的回溯"><a href="#关于树的回溯" class="headerlink" title="关于树的回溯"></a>关于树的回溯</h3><p>伪代码：</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//result存储最终结果，res存储中间结果</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(TreeNode* root,<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&gt; result,<span class="built_in">vector</span> res，….)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="comment">//处理当前节点</span></span><br><span class="line">   res.push(root-&gt;val)</span><br><span class="line"></span><br><span class="line">   …</span><br><span class="line"></span><br><span class="line">  <span class="comment">//结束的条件</span></span><br><span class="line">  <span class="keyword">if</span>(满足题目要求（一般是值相等）并且到达根节点)</span><br><span class="line">  	result.push(res)</span><br><span class="line">  <span class="keyword">if</span>(root-&gt;left)</span><br><span class="line">  &#123;</span><br><span class="line">    doTree(root-&gt;left,其他参数)</span><br><span class="line">    <span class="comment">//不满足条件，需要回溯</span></span><br><span class="line">    res.pop()</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(root-&gt;right)</span><br><span class="line">  &#123;</span><br><span class="line">    doTree(root-&gt;right,其他参数)</span><br><span class="line">    <span class="comment">//不满足条件，需要回溯</span></span><br><span class="line">    res.pop()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -26,6 +26,13 @@
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>()+<span class="number">1</span>;i++)<span class="comment">//i的长度为0~nums.size(),所以需要加一</span></span><br><span class="line">&#123;</span><br><span class="line">  dfs(start,i);</span><br><span class="line">  <span class="comment">//start是从数组中取元素的开始的位置，i是深度，即子集中元素的个数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 ]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>回溯</tag>
+      </tags>
   </entry>
   <entry>
     <title>Leecode算法学习笔记（一）</title>
@@ -427,8 +434,8 @@
         <category>机器学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
         <tag>算法</tag>
+        <tag>神经网络</tag>
       </tags>
   </entry>
 </search>
