@@ -255,10 +255,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-02-24 16:56:00 / 修改时间：17:01:38" itemprop="dateCreated datePublished" datetime="2020-02-24T16:56:00+08:00">2020-02-24</time>
+              <time title="创建时间：2020-02-24 16:56:00" itemprop="dateCreated datePublished" datetime="2020-02-24T16:56:00+08:00">2020-02-24</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 15:03:33" itemprop="dateModified" datetime="2020-02-25T15:03:33+08:00">2020-02-25</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -319,7 +325,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="一、-关于树的算法"><a href="#一、-关于树的算法" class="headerlink" title="一、 关于树的算法"></a>一、 关于树的算法</h2><p>除了基本的遍历，其余关于树的处理基本都是依赖递归算法，总体思路，是对当前节点进行处理，再将剩余的交给左子树和右子树分别递归处理。</p><h3 id="（1）-层次遍历"><a href="#（1）-层次遍历" class="headerlink" title="（1） 层次遍历"></a>（1） 层次遍历</h3><p>队列：每次把同一层的节点入队，根据先进先出的特点，依次读取队首节点，再把当前节点的左右子树入队，作为下一层需要遍历的节点</p><p>伪代码：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//队列存储根节点</span></span><br><span class="line">p.push(root)</span><br><span class="line"><span class="keyword">while</span>(队列不为空)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//获取该层节点个数</span></span><br><span class="line">  <span class="built_in">width</span>=p.<span class="built_in">size</span>()</span><br><span class="line">  <span class="comment">//读取该层所有节点，并存储下一层节 点</span></span><br><span class="line">  <span class="keyword">for</span>(i&lt;<span class="built_in">width</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">//读取队首节点</span></span><br><span class="line">    r=p.front()</span><br><span class="line">    出队</span><br><span class="line">    <span class="keyword">if</span>(r的左子树存在) 左子树入队</span><br><span class="line">    <span class="keyword">if</span>(r的右子树存在) 右子树入队</span><br><span class="line">  &#125;</span><br><span class="line">  存储每层的结果</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <h2 id="关于树的算法"><a href="#关于树的算法" class="headerlink" title="关于树的算法"></a>关于树的算法</h2><p>除了基本的遍历，其余关于树的处理基本都是依赖递归算法，总体思路，是对当前节点进行处理，再将剩余的交给左子树和右子树分别递归处理。</p><h3 id="层次遍历"><a href="#层次遍历" class="headerlink" title="层次遍历"></a>层次遍历</h3><p>队列：每次把同一层的节点入队，根据先进先出的特点，依次读取队首节点，再把当前节点的左右子树入队，作为下一层需要遍历的节点</p><p>伪代码：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//队列存储根节点</span></span><br><span class="line">p.push(root)</span><br><span class="line"><span class="keyword">while</span>(队列不为空)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//获取该层节点个数</span></span><br><span class="line">  <span class="built_in">width</span>=p.<span class="built_in">size</span>()</span><br><span class="line">  <span class="comment">//读取该层所有节点，并存储下一层节 点</span></span><br><span class="line">  <span class="keyword">for</span>(i&lt;<span class="built_in">width</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">//读取队首节点</span></span><br><span class="line">    r=p.front()</span><br><span class="line">    出队</span><br><span class="line">    <span class="keyword">if</span>(r的左子树存在) 左子树入队</span><br><span class="line">    <span class="keyword">if</span>(r的右子树存在) 右子树入队</span><br><span class="line">  &#125;</span><br><span class="line">  存储每层的结果</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blogs/treeNote/#more" rel="contents">
