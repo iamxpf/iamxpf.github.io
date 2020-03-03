@@ -56,23 +56,18 @@
   };
 </script>
 
-  <meta name="description" content="几种排序算法的比较，对原始序列：6，3，5，7，2，9，8，1，4  进行排序冒泡排序第一次：从第一个数字开始，依次相邻比较，前面大于后面则调换位置，比到最后一位，则选出了最大值放在最后​        第一次排序后：3，5，6，2，7，8，1，4，9​        第二次排序后：3，5，2，6，7，1，4，8，9">
-<meta name="keywords" content="算法,排序">
+  <meta name="description" content="关于链表的算法链表节点的定义123456struct ListNode&amp;#123;  int val;  ListNode* next;  ListNode(int x):val(x),next(NULL)&amp;#123;&amp;#125;;&amp;#125;链表常用算法思想包括：快慢指针（对空间复杂度有要求，可以考虑使用快慢指针）">
+<meta name="keywords" content="算法,链表,括号">
 <meta property="og:type" content="article">
-<meta property="og:title" content="排序算法">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;sort&#x2F;index.html">
+<meta property="og:title" content="Leecode算法学习笔记（三）">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;listbNote&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="几种排序算法的比较，对原始序列：6，3，5，7，2，9，8，1，4  进行排序冒泡排序第一次：从第一个数字开始，依次相邻比较，前面大于后面则调换位置，比到最后一位，则选出了最大值放在最后​        第一次排序后：3，5，6，2，7，8，1，4，9​        第二次排序后：3，5，2，6，7，1，4，8，9">
+<meta property="og:description" content="关于链表的算法链表节点的定义123456struct ListNode&amp;#123;  int val;  ListNode* next;  ListNode(int x):val(x),next(NULL)&amp;#123;&amp;#125;;&amp;#125;链表常用算法思想包括：快慢指针（对空间复杂度有要求，可以考虑使用快慢指针）">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191226160921.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191226110659.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191226140326.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191226142419.png">
-<meta property="og:updated_time" content="2020-01-20T12:17:50.705Z">
+<meta property="og:updated_time" content="2020-03-03T07:20:20.057Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191226160921.png">
 
-<link rel="canonical" href="https://www.xiapf.com/blogs/sort/">
+<link rel="canonical" href="https://www.xiapf.com/blogs/listbNote/">
 
 
 <script id="page-configurations">
@@ -86,7 +81,7 @@
   };
 </script>
 
-  <title>排序算法 | 八戒大强攻</title>
+  <title>Leecode算法学习笔记（三） | 八戒大强攻</title>
   
 
 
@@ -238,7 +233,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/sort/">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/listbNote/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
@@ -251,7 +246,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          排序算法
+          Leecode算法学习笔记（三）
         </h2>
 
         <div class="post-meta">
@@ -260,16 +255,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2019-12-26 14:27:48" itemprop="dateCreated datePublished" datetime="2019-12-26T14:27:48+08:00">2019-12-26</time>
+              <time title="创建时间：2020-03-03 15:18:41 / 修改时间：15:20:20" itemprop="dateCreated datePublished" datetime="2020-03-03T15:18:41+08:00">2020-03-03</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-20 20:17:50" itemprop="dateModified" datetime="2020-01-20T20:17:50+08:00">2020-01-20</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -283,7 +272,7 @@
             </span>
 
           
-            <span id="/blogs/sort/" class="post-meta-item leancloud_visitors" data-flag-title="排序算法" title="阅读次数">
+            <span id="/blogs/listbNote/" class="post-meta-item leancloud_visitors" data-flag-title="Leecode算法学习笔记（三）" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -298,8 +287,8 @@
       </span>
       <span class="post-meta-item-text">评论数：</span>
     
-    <a title="valine" href="/blogs/sort/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/blogs/sort/" itemprop="commentCount"></span>
+    <a title="valine" href="/blogs/listbNote/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/listbNote/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -309,14 +298,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
+              <span>2.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 		  
 			
@@ -330,52 +319,28 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>几种排序算法的比较，对原始序列：6，3，5，7，2，9，8，1，4  进行排序</p><h6 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h6><p>第一次：从第一个数字开始，依次相邻比较，前面大于后面则调换位置，比到最后一位，则选出了最大值放在最后</p><p>​        第一次排序后：3，5，6，2，7，8，1，4，9</p><p>​        第二次排序后：3，5，2，6，7，1，4，8，9</p><a id="more"></a>
+        <h2 id="关于链表的算法"><a href="#关于链表的算法" class="headerlink" title="关于链表的算法"></a>关于链表的算法</h2><p>链表节点的定义</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="keyword">int</span> val;</span><br><span class="line">  ListNode* next;</span><br><span class="line">  ListNode(<span class="keyword">int</span> x):val(x),next(<span class="literal">NULL</span>)&#123;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>链表常用算法思想包括：快慢指针（对空间复杂度有要求，可以考虑使用快慢指针）</p><a id="more"></a>
 
 
 
-<p>​        。。。。。。。</p>
-<p>时间复杂度：O(n^2)</p>
-<h6 id="简单选择排序"><a href="#简单选择排序" class="headerlink" title="简单选择排序"></a>简单选择排序</h6><p>第一次：首先排第一个位置，先设min=0记录最小值位置，默认第一个位置，将6与3比较，3比6小，则min=1(代表3的位置)；再将3与5比较，3比5小，不改变min值；依次将min位置的数值依次与后续数字比较，比min小则更改min为更小值的位置，直到最后一个数字比完。此时min=7(1的位置)，将6与7对换，则第一次排序完成。</p>
-<p>​        第一次排序后顺序是：1，3，5，7，2，9，8，6，4</p>
-<p>第二次：排第二个位置，方法同上，设min=1代表默认第二个位置，即数值3默认最小值，将3依次与后续比较，找出最小值，min=最小值的位置，交换第二个位置的值3与min位置的值2，完成第二次排序。</p>
-<p>​        第二次排序后：1，2，5，7，3，9，8，6，4</p>
-<p>​        第三次排序后：1，2，3，7，5，9，8，6，4</p>
-<p>​        。。。。。。。</p>
-<p>时间复杂度：O(n^2)</p>
-<p>​        第五次排序后顺序为：1，2，3，4，5，9，8，6，7</p>
-<p>​        第六次排序后顺序为：1，2，3，4，5，6，8，9，7</p>
-<p>​        第七次排序后顺序为：1，2，3，4，5，6，7，9，8</p>
-<p>​        第八次排序后顺序为：1，2，3，4，5，6，7，8，9</p>
-<h6 id="直接插入排序"><a href="#直接插入排序" class="headerlink" title="直接插入排序"></a>直接插入排序</h6><p>​        第一次排序后：6</p>
-<p>​        第二次排序后：3，6</p>
-<p>​        第三次排序后：3，5，6</p>
-<p>​        。。。。。。。</p>
-<p>时间复杂度：O(n^2)</p>
-<h6 id="折半插入排序"><a href="#折半插入排序" class="headerlink" title="折半插入排序"></a>折半插入排序</h6><p>同直接插入排序，但是在比较的时候，是折半比较，思想同折半查找</p>
-<p>时间复杂度：O(n^2)</p>
-<h6 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h6><p>第一次：设步长d=5，则6和9；3和8；5和1；7和4；直接插入排序</p>
-<p>​        第一次排序后：6，3，1，4，2，9，8，5，7</p>
-<p>第二次：d = d/2 = 2，则6，1，2，8，7；3，4，9，5；直接插入排序</p>
-<p>​        第二次排序后：1，3，2，4，6，5，7，9，8</p>
-<p>第三次：d = d/2 = 1，则所有数据直接插入排序</p>
-<p>​        第三次排序后：1，2，3，4，5，6，7，8，9</p>
-<p>时间复杂度：O(nlog2^n)</p>
-<h6 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h6><p>第一次：选取第一个数6为轴，将第一个6与最后一个数字4比较（从后往前比），如果大于比较的数字，则调换，然后与原位置后面开始比（从前往后比），以此类推，第一次排完后，轴6的左边都小于6，右边都大于6。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191226160921.png" alt="快速排序i,j变化"></p>
-<p>​        第一次排序后：4，3，5，1，2，6，8，9，7</p>
-<p>第二次：则将上个比较后的轴的左右依次做快速排序，直到所有子表的表长不超过1</p>
-<p>时间复杂度：O(nlog2^n)</p>
-<h6 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h6><p>首先建立初始堆，按照顺序方式建立完全二叉树</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191226110659.png" alt="二叉树"></p>
-<p>然后建立大顶堆，分别将有子节点的7，3，5，6从底层开始，分别与子节点比较，选大的作为父节点，即可得到最大的根节点的二叉树，即大顶堆</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191226140326.png" alt="大顶堆"></p>
-<p>然后，将堆顶拿下来，将叶子节点放上去，再次按照大顶堆方法，得到根节点，以此类推，最终得到有序数列</p>
-<p>时间复杂度：O(nlog2^n)</p>
-<h6 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h6><p>对数组递归折半分割，直到分割成单个，然后递归合并比较，直到合并为整个数组</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191226142419.png" alt="归并排序"></p>
-<p>时间复杂度：O(nlog2^n)</p>
-<p>总结：时间复杂度是nlog2^n的是：快些(希)归队(堆)，不稳定的是：快些(希)选队(堆)</p>
+<h3 id="快慢指针"><a href="#快慢指针" class="headerlink" title="快慢指针"></a>快慢指针</h3><p>新建两个指针，快指针走两步，慢指针走一步</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//快慢指针法只使用两个指针，空间复杂度很小，只有O(1)</span></span><br><span class="line">ListNode* fast=head;<span class="comment">//快指针</span></span><br><span class="line">ListNode* slow=head;<span class="comment">//慢指针</span></span><br><span class="line"><span class="keyword">while</span>(fast!=<span class="literal">NULL</span>&amp;&amp;fast-&gt;next!=<span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//慢指针走一步</span></span><br><span class="line">  slow=slow-&gt;next;</span><br><span class="line">  <span class="comment">//快指针走两步</span></span><br><span class="line">  fast=fast-&gt;next-&gt;next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>应用场景：</p>
+<p>环形链表（判断链表中是否存在环）：</p>
+<p>（1）判断有无环：可以利用快慢指针，如果存在环，那么在某一个链表节点快指针指向的节点就等于慢指针指向的节点（是节点整体相等，包括val和next，不能只用val判断），反之，则不存在环，整体问题抽象成追赶问题，因为存在环，所以一定能追赶上。</p>
+<p>（2）求环的入口节点：当需要求环形入口节点的时候，首先将判断有无环，在相遇的时候break，此时假设链表中无环部分长度为a，环长度b，相遇时快指针比慢指针走了n个环长度，f=s+nb，又因为f=2s，所以s=nb，慢指针要走到环入口，需要长度为a+nb，所以慢指针需要再走a个长度，此时将fast设置为head，从head走到环入口长度正好为a，当两个指针指向相同链节点的时候，就到达了环的入口</p>
+<h2 id="关于括号的算法"><a href="#关于括号的算法" class="headerlink" title="关于括号的算法"></a>关于括号的算法</h2><h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">[<span class="comment">//用map存储括号的键值对</span></span><br><span class="line">unorder_map&lt;<span class="keyword">char</span>&gt; <span class="built_in">map</span>&#123;&#123;<span class="string">')'</span>,<span class="string">'('</span>&#125;,&#123;&#125;&#125;;</span><br><span class="line">]</span><br><span class="line"><span class="comment">//用栈存储读入的字符</span></span><br><span class="line"><span class="built_in">stack</span>&lt;<span class="keyword">char</span>&gt; s;</span><br><span class="line"><span class="keyword">while</span>(字符串不为空)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(当字符是左半边括号时)</span><br><span class="line">    左括号入栈；</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    ...</span><br><span class="line">    [</span><br><span class="line">    <span class="comment">//取栈顶元素</span></span><br><span class="line">    q=s.top();</span><br><span class="line">    <span class="keyword">if</span>(栈顶元素==<span class="built_in">map</span>[q])</span><br><span class="line">      出栈</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      未能匹配上</span><br><span class="line">    ]</span><br><span class="line">    [</span><br><span class="line">      <span class="comment">//先出栈，当出栈后栈为空，说明当前右括号前面没有匹配的左括号，此时右括号入栈作为一个位置标记，计算后面的长度，如果在else里出栈，那么会面临出栈后，s.top()不存在的现象</span></span><br><span class="line">      s.pop();</span><br><span class="line">      <span class="comment">//栈为空，存入当前括号</span></span><br><span class="line">      <span class="keyword">if</span>(s.empty())</span><br><span class="line">      	s.push(i)</span><br><span class="line">      <span class="comment">//栈不为空，获得长度</span></span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        length=<span class="built_in">max</span>(length,i-s.top())</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>应用场景：</p>
+<p>有效的括号（给定一个只包括 <code>&#39;(&#39;</code>，<code>&#39;)&#39;</code>，<code>&#39;{&#39;</code>，<code>&#39;}&#39;</code>，<code>&#39;[&#39;</code>，<code>&#39;]&#39;</code> 的字符串，判断字符串是否有效。）：在map中存储括号的键值对，利用map[值]=键，每次读入字符串的字符时，如果是左边括号就入栈，否则就是右边括号，需要进行检测是否配对，取这时栈顶的括号，如果键值对匹配上，则出栈，检测下一个，否则是没有匹配上。</p>
+<p>最长有效括号（给定一个只包含 <code>&#39;(&#39;</code> 和 <code>&#39;)&#39;</code> 的字符串，找出最长的包含有效括号的子串的长度。）：</p>
+<p>（1）初始化：用栈来存储括号，栈里保存括号位置的下标，为了保证获取长度，初始化栈为-1。</p>
+<p>（2）当扫描到左括号的时候，入栈，当扫描到右括号的时候，此时将栈顶元素出栈，分为两种情况，一种是当栈为空的时候，说明之前没有匹配的左括号，把当前括号入栈，另一种栈不为空，说明有匹配的左括号，用当前位置减去栈顶的位置，并更新长度</p>
+<h3 id="深度遍历-剪枝"><a href="#深度遍历-剪枝" class="headerlink" title="深度遍历+剪枝"></a>深度遍历+剪枝</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//输入参数为当前由括号组成的路径，左子树括号的个数，右子树括号的个数，以及最终结果</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="built_in">string</span> str,<span class="keyword">int</span> left,<span class="keyword">int</span> right,<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&gt;&gt; res)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">//结束的条件,此时出现了一条满足条件的路径:左右子树的括号个数都为0</span></span><br><span class="line">  <span class="keyword">if</span>(left==<span class="number">0</span>&amp;&amp;right==<span class="number">0</span>)</span><br><span class="line">    res.push(str)</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  <span class="comment">//剪枝：左子树的括号个数大于右子树的括号个数,出现不匹配</span></span><br><span class="line">  <span class="keyword">if</span>(left&gt;right)</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  <span class="comment">//左边括号多，先生成左括号</span></span><br><span class="line">  <span class="keyword">if</span>(left&gt;<span class="number">0</span>)</span><br><span class="line">    dfs(str+<span class="string">'('</span>,left<span class="number">-1</span>,right,res)</span><br><span class="line">  <span class="comment">//右边括号多，再生成右括号</span></span><br><span class="line">  <span class="keyword">if</span>(right&gt;<span class="number">0</span>)</span><br><span class="line">    dfs(str+<span class="string">'）'</span>,left<span class="number">-1</span>,right,res)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>应用场景：</p>
+<p>括号的生成（给出 n 代表生成括号的对数，写出一个函数，使其能够生成所有可能的并且有效的括号组合）：实质是对括号做减法，当左括号数量大于0，就不断生成左括号，右括号数量大于0，生成右括号，但是存在不满足括号匹配的条件，当左括号数量大于右括号，此时需要剪枝（加一个判断条件，return）,当左右括号数量都为0，说明找到了一个合适的路径，将其存储下来。</p>
 
     </div>
 
@@ -417,24 +382,22 @@
           
           <div class="post-tags">
               <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
-              <a href="/tags/%E6%8E%92%E5%BA%8F/" rel="tag"><i class="fa fa-tag"></i> 排序</a>
+              <a href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag"><i class="fa fa-tag"></i> 链表</a>
+              <a href="/tags/%E6%8B%AC%E5%8F%B7/" rel="tag"><i class="fa fa-tag"></i> 括号</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/blogs/hello-world/" rel="next" title="Hello World">
-                  <i class="fa fa-chevron-left"></i> Hello World
+                <a href="/blogs/backTrackNote/" rel="next" title="Leecode算法学习笔记（二）">
+                  <i class="fa fa-chevron-left"></i> Leecode算法学习笔记（二）
                 </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/blogs/treeNote/" rel="prev" title="Leecode算法学习笔记（一）">
-                  Leecode算法学习笔记（一） <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -474,7 +437,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-6"><a class="nav-link" href="#冒泡排序"><span class="nav-number">1.</span> <span class="nav-text">冒泡排序</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#简单选择排序"><span class="nav-number">2.</span> <span class="nav-text">简单选择排序</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#直接插入排序"><span class="nav-number">3.</span> <span class="nav-text">直接插入排序</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#折半插入排序"><span class="nav-number">4.</span> <span class="nav-text">折半插入排序</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#希尔排序"><span class="nav-number">5.</span> <span class="nav-text">希尔排序</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#快速排序"><span class="nav-number">6.</span> <span class="nav-text">快速排序</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#堆排序"><span class="nav-number">7.</span> <span class="nav-text">堆排序</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#归并排序"><span class="nav-number">8.</span> <span class="nav-text">归并排序</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于链表的算法"><span class="nav-number">1.</span> <span class="nav-text">关于链表的算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#快慢指针"><span class="nav-number">1.1.</span> <span class="nav-text">快慢指针</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于括号的算法"><span class="nav-number">2.</span> <span class="nav-text">关于括号的算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#栈"><span class="nav-number">2.1.</span> <span class="nav-text">栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#深度遍历-剪枝"><span class="nav-number">2.2.</span> <span class="nav-text">深度遍历+剪枝</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
