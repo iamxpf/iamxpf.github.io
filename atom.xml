@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://www.xiapf.com/"/>
-  <updated>2020-03-03T07:20:20.057Z</updated>
+  <updated>2020-03-04T03:49:26.520Z</updated>
   <id>https://www.xiapf.com/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>mac下搭建和使用mve</title>
+    <link href="https://www.xiapf.com/blogs/useMVE/"/>
+    <id>https://www.xiapf.com/blogs/useMVE/</id>
+    <published>2020-03-04T03:47:55.000Z</published>
+    <updated>2020-03-04T03:49:26.520Z</updated>
+    
+    <content type="html"><![CDATA[<p>mve可以将多角度的图片序列重构成三维点云</p><h2 id="一、搭建mve"><a href="#一、搭建mve" class="headerlink" title="一、搭建mve"></a>一、搭建mve</h2><p>搭建过程参照官方文档<a href="https://github.com/simonfuhrmann/mve" target="_blank" rel="external nofollow noopener noreferrer">https://github.com/simonfuhrmann/mve</a></p><p>以下均在终端进行操作</p><p>1.从github上下载代码</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/simonfuhrmann/mve.git</span><br></pre></td></tr></table></figure><p>下载之后会在根目录建立mve文件夹</p><a id="more"></a><p>2.进入mve文件夹</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd mve</span><br></pre></td></tr></table></figure><p>进行编辑</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -j8</span><br></pre></td></tr></table></figure><p>3.添加依赖库</p><p>编译过程中报错，是因为缺少依赖库，需要手动安装。主要是对图片处理的函数库。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">brew install libjpeg</span><br><span class="line">brew install libpng</span><br><span class="line">brew install libtiff</span><br></pre></td></tr></table></figure><p>此时就能成功编译，打开mve下的apps文件夹，当所有的文件夹下生成了”.o”后缀的文件，说明环境已经搭建好。</p><h2 id="二、简单使用"><a href="#二、简单使用" class="headerlink" title="二、简单使用"></a>二、简单使用</h2><p>1.在官网下载数据集</p><p><a href="http://download.hrz.tu-darmstadt.de/media/FB20/GCC/mve_datasets/" target="_blank" rel="external nofollow noopener noreferrer">http://download.hrz.tu-darmstadt.de/media/FB20/GCC/mve_datasets/</a></p><p>我选择的是der_hass-20140923数据集，里面包含雕像不同角度的79张图像，下载后进行解压</p><p>2.设置环境变量</p><p>生成点云过程中是使用apps下中的子文件夹实现，所以需要设置环境变量</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#进入根目录</span><br><span class="line">cd ~</span><br><span class="line">#给任意一个文件添加环境变量</span><br><span class="line">vim ~/.bash_profile</span><br></pre></td></tr></table></figure><p>输入vim命令后，进入输入环境变量页面，输入“O”，进入写模式，将apps下所有文件夹路径加入环境变量中</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export PATH=/Users/mve/apps/bundle2pset:$PATH</span><br><span class="line">#以下省略</span><br></pre></td></tr></table></figure><p>输入结束后，按esc，在文末输入”:wq”，退出并保存环境变量</p><p>生效环境变量，将环境变量应用到下载好的数据集下</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source 数据集路径名称</span><br></pre></td></tr></table></figure><p>查看环境变量是否生效，在数据集文件夹下打开终端，输入：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo $PATH</span><br></pre></td></tr></table></figure><p>当环境变量中包含了apps下文件夹的路径，说明环境变量设置成功</p><p>3.重建三维生成点云</p><p>der_hass-20140923是下载的数据集，der_hass是生成数据所在的文件夹</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">makescene -i der_hass-20140923 der_hass</span><br></pre></td></tr></table></figure><p>按以下命令一个个运行，der_hass是生成的散文图所在的文件夹</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sfmrecon der_hass</span><br><span class="line">dmrecon -s2 der_hass</span><br><span class="line">scene2pset -F2 der_hass der_hass/pset-L2.ply</span><br><span class="line">fssrecon der_hass/pset-L2.ply der_hass/surface-L2.ply</span><br><span class="line">meshclean -t10 der_hass/surface-L2.ply der_hass/surface-L2-clean.ply</span><br></pre></td></tr></table></figure><p>运行过程比较慢，需要耐心等待，大约需3小时左右，最终生成的点云文件为surface-L2-clean.ply</p><p>4.效果展示</p><p>使用meshlab打开点云文件，效果如下</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200120193729.png" alt="效果图"></p><p>可以看出生成的点云完整，不存在不连续的部分，实现了从图像-&gt;稀疏点云-&gt;稠密点云-&gt;点云表面重建的全过程。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;mve可以将多角度的图片序列重构成三维点云&lt;/p&gt;&lt;h2 id=&quot;一、搭建mve&quot;&gt;&lt;a href=&quot;#一、搭建mve&quot; class=&quot;headerlink&quot; title=&quot;一、搭建mve&quot;&gt;&lt;/a&gt;一、搭建mve&lt;/h2&gt;&lt;p&gt;搭建过程参照官方文档&lt;a href=&quot;https://github.com/simonfuhrmann/mve&quot; target=&quot;_blank&quot; rel=&quot;external nofollow noopener noreferrer&quot;&gt;https://github.com/simonfuhrmann/mve&lt;/a&gt;&lt;/p&gt;&lt;p&gt;以下均在终端进行操作&lt;/p&gt;&lt;p&gt;1.从github上下载代码&lt;/p&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;git clone https://github.com/simonfuhrmann/mve.git&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;p&gt;下载之后会在根目录建立mve文件夹&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="点云" scheme="https://www.xiapf.com/categories/%E7%82%B9%E4%BA%91/"/>
+    
+    
+      <category term="mve" scheme="https://www.xiapf.com/tags/mve/"/>
+    
+      <category term="点云" scheme="https://www.xiapf.com/tags/%E7%82%B9%E4%BA%91/"/>
+    
+  </entry>
   
   <entry>
     <title>Leecode算法学习笔记（三）</title>
