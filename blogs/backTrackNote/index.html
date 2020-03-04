@@ -64,7 +64,7 @@
 <meta property="og:site_name" content="八戒大强攻">
 <meta property="og:description" content="回溯法回溯一般用于找到满足要求的的所有解，即相当于构造一棵树，从跟节点出发，找到满足条件的所有路径，并进行保存，当目前的路径不符合条件的时候，需要回溯，即剪枝，删除不符合的分支，当到达结束的条件时，即找到了一个满足条件的解，再继续构造下一个符合条件的路径。常用于解决树种求得所有解的问题和排列组合中求解问题，或者问题可以转换为求树中一条路径的问题，可以画图。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-02-25T07:14:59.043Z">
+<meta property="og:updated_time" content="2020-03-04T04:53:13.997Z">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://www.xiapf.com/blogs/backTrackNote/">
@@ -255,10 +255,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-02-25 15:08:13 / 修改时间：15:14:59" itemprop="dateCreated datePublished" datetime="2020-02-25T15:08:13+08:00">2020-02-25</time>
+              <time title="创建时间：2020-02-25 15:08:13" itemprop="dateCreated datePublished" datetime="2020-02-25T15:08:13+08:00">2020-02-25</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-04 12:53:13" itemprop="dateModified" datetime="2020-03-04T12:53:13+08:00">2020-03-04</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -298,7 +304,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.4k</span>
+              <span>2.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -339,8 +345,12 @@
 <p>全排列（给定一个可包含重复数字的序列，返回所有不重复的全排列）：思路同上，此时需要额外加个判断，看是否有重复的数字，有重复的数字则跳过。具体为：本次节点与前一个相同，并且前一个已使用过，说明已有相同的排列，则本次排列跳过。</p>
 <p>n皇后问题：转换为全排列问题，在每一个的n个位置中选一个作为当前选择，n行做n个选择，并且是做做不重复的选择，正好构成一个排列，此时的排列满足不在同一行不在同一列，只要对当前的排列需要再满足题设条件即可，即不在主对角线，不在副对角线，vector<bool> master1;//副对角线和相同，都为i+j i为行，j为列，两者相加和是当前行，vector<bool> master2;//主对角线差相同，为i-j+n-1 i为行，j为列，再设置两个标志位进行判断，最后将得到的排列用题目中格式打印出来作为结果。</bool></bool></p>
 <p>子集（给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集））：对不同子集个数进行深度遍历，此时需要在主函数中加一个循环</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>()+<span class="number">1</span>;i++)<span class="comment">//i的长度为0~nums.size(),所以需要加一</span></span><br><span class="line">&#123;</span><br><span class="line">  dfs(start,i);</span><br><span class="line">  <span class="comment">//start是从数组中取元素的开始的位置，i是深度，即子集中元素的个数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>()+<span class="number">1</span>;i++)<span class="comment">//i的长度为0~nums.size(),所以需要加一</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//----通过i控制子集大小</span></span><br><span class="line">  dfs(start,i);</span><br><span class="line">  <span class="comment">//start是从数组中取元素的开始的位置，i是深度，即子集中元素的个数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
+<p>分割字符串（给定一个字符串 <em>s</em>，将 <em>s</em> 分割成一些子串，使每个子串都是回文串）：每次判断当前的起始至末尾位置是否是回文，如果是就将结果压入res，继续递归。通过不断变换分割的位置</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=start;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(start~i之间不是回文)</span><br><span class="line">    继续找下一个回文的位置</span><br><span class="line">    </span><br><span class="line">   <span class="comment">//start~i之间是回文，压入结果内</span></span><br><span class="line">    res.push(s.substr(start,start+i+<span class="number">1</span>))</span><br><span class="line">    <span class="comment">//继续看下一个分割位置</span></span><br><span class="line">    dfs(i+<span class="number">1</span>,depth)</span><br><span class="line">    <span class="comment">//撤销选择，回到上一层决策</span></span><br><span class="line">    res.pop()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -534,7 +544,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">18k</span>
+    <span title="站点总字数">19k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
