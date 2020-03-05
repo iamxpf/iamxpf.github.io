@@ -2,9 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.xiapf.com/blogs/movStateNote/</loc>
+    
+    <lastmod>2020-03-05T03:25:35.643Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.xiapf.com/blogs/treeNote/</loc>
+    
+    <lastmod>2020-03-05T03:23:35.627Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.xiapf.com/blogs/backTrackNote/</loc>
     
-    <lastmod>2020-03-04T04:53:13.997Z</lastmod>
+    <lastmod>2020-03-04T04:56:30.496Z</lastmod>
     
   </url>
   
@@ -19,13 +33,6 @@
     <loc>https://www.xiapf.com/blogs/listbNote/</loc>
     
     <lastmod>2020-03-03T07:20:20.057Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.xiapf.com/blogs/treeNote/</loc>
-    
-    <lastmod>2020-02-25T07:03:33.319Z</lastmod>
     
   </url>
   
@@ -86,13 +93,6 @@
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/blogs/future-futuretask/</loc>
-    
-    <lastmod>2019-12-13T12:52:51.111Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.xiapf.com/blogs/docker/</loc>
     
     <lastmod>2019-12-13T12:52:51.111Z</lastmod>
@@ -101,6 +101,13 @@
   
   <url>
     <loc>https://www.xiapf.com/blogs/hello-world/</loc>
+    
+    <lastmod>2019-12-13T12:52:51.111Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.xiapf.com/blogs/future-futuretask/</loc>
     
     <lastmod>2019-12-13T12:52:51.111Z</lastmod>
     

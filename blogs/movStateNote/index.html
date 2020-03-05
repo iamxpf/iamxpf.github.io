@@ -56,29 +56,20 @@
   };
 </script>
 
-  <meta name="description" content="Docker：虚拟化容器技术三大组件：镜像，容器，仓库镜像：想象成系统iso或者ghost镜像  容器：想象成一个系统环境  仓库：想象成GitHub优点：隔离性   便捷性–移植和集群     轻量级   云支持安装DockerCenos7下安装docker1.把yum包更新到最新1yum update">
-<meta name="keywords" content="docker">
+  <meta name="description" content="动态规划一般思路（1）明确状态含义首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数（）确定初始状态可以考虑最多…的时候dp的状态例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次12345&#x2F;&#x2F;求分割回文字符串的次数&#x2F;&#x2F;初始状态for(int i=0;i&amp;lt;len;i++)  dp[i]=i;&#x2F;&#x2F;i个字符串，最多分割i次">
+<meta name="keywords" content="算法,动态规划">
 <meta property="og:type" content="article">
-<meta property="og:title" content="docker简易教程">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;docker&#x2F;index.html">
+<meta property="og:title" content="Leecode算法学习笔记（四）">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;movStateNote&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="Docker：虚拟化容器技术三大组件：镜像，容器，仓库镜像：想象成系统iso或者ghost镜像  容器：想象成一个系统环境  仓库：想象成GitHub优点：隔离性   便捷性–移植和集群     轻量级   云支持安装DockerCenos7下安装docker1.把yum包更新到最新1yum update">
+<meta property="og:description" content="动态规划一般思路（1）明确状态含义首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数（）确定初始状态可以考虑最多…的时候dp的状态例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次12345&#x2F;&#x2F;求分割回文字符串的次数&#x2F;&#x2F;初始状态for(int i=0;i&amp;lt;len;i++)  dp[i]=i;&#x2F;&#x2F;i个字符串，最多分割i次">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191212144010.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191212144100.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191212144117.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191212144141.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191212144221.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191212144237.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191212144250.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191212144304.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191212144319.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191212144335.png">
-<meta property="og:updated_time" content="2019-12-13T12:52:51.111Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200304222109.png">
+<meta property="og:updated_time" content="2020-03-05T03:25:35.643Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20191212144010.png">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200304222109.png">
 
-<link rel="canonical" href="https://www.xiapf.com/blogs/docker/">
+<link rel="canonical" href="https://www.xiapf.com/blogs/movStateNote/">
 
 
 <script id="page-configurations">
@@ -92,7 +83,7 @@
   };
 </script>
 
-  <title>docker简易教程 | 八戒大强攻</title>
+  <title>Leecode算法学习笔记（四） | 八戒大强攻</title>
   
 
 
@@ -244,7 +235,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/docker/">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/movStateNote/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
@@ -257,7 +248,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          docker简易教程
+          Leecode算法学习笔记（四）
         </h2>
 
         <div class="post-meta">
@@ -266,30 +257,24 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2019-12-12 13:44:29" itemprop="dateCreated datePublished" datetime="2019-12-12T13:44:29+08:00">2019-12-12</time>
+              <time title="创建时间：2020-03-05 11:22:57 / 修改时间：11:25:35" itemprop="dateCreated datePublished" datetime="2020-03-05T11:22:57+08:00">2020-03-05</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-13 20:52:51" itemprop="dateModified" datetime="2019-12-13T20:52:51+08:00">2019-12-13</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/docker/" itemprop="url" rel="index">
-                    <span itemprop="name">docker</span>
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
                   </a>
                 </span>
             </span>
 
           
-            <span id="/blogs/docker/" class="post-meta-item leancloud_visitors" data-flag-title="docker简易教程" title="阅读次数">
+            <span id="/blogs/movStateNote/" class="post-meta-item leancloud_visitors" data-flag-title="Leecode算法学习笔记（四）" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -304,8 +289,8 @@
       </span>
       <span class="post-meta-item-text">评论数：</span>
     
-    <a title="valine" href="/blogs/docker/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/blogs/docker/" itemprop="commentCount"></span>
+    <a title="valine" href="/blogs/movStateNote/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/movStateNote/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -315,14 +300,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.2k</span>
+              <span>3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 		  
 			
@@ -336,96 +321,65 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="Docker：虚拟化容器技术"><a href="#Docker：虚拟化容器技术" class="headerlink" title="Docker：虚拟化容器技术"></a>Docker：虚拟化容器技术</h2><p>三大组件：镜像，容器，仓库</p><pre><code>镜像：想象成系统iso或者ghost镜像
-
-容器：想象成一个系统环境
-
-仓库：想象成GitHub</code></pre><p>优点：隔离性   便捷性–移植和集群     轻量级   云支持</p><h2 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h2><p>Cenos7下安装docker</p><p>1.把yum包更新到最新</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update</span><br></pre></td></tr></table></figure><a id="more"></a>
+        <h2 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h2><h3 id="一般思路"><a href="#一般思路" class="headerlink" title="一般思路"></a>一般思路</h3><p>（1）明确状态含义</p><p>首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数</p><p>（）确定初始状态</p><p>可以考虑最多…的时候dp的状态</p><p>例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//求分割回文字符串的次数</span></span><br><span class="line"><span class="comment">//初始状态</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;len;i++)</span><br><span class="line">  dp[i]=i;</span><br><span class="line"><span class="comment">//i个字符串，最多分割i次</span></span><br></pre></td></tr></table></figure><a id="more"></a>
 
 
 
 
 
-<p>2.安装需要的软件包</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y yum-utils device-mapper-persistent-data lvm2</span><br></pre></td></tr></table></figure>
 
-<p>3.设置yum源</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+<p>（3）确定状态转移方程</p>
+<p>假设已知dp[i]的状态，列出dp[i+1]和dp[i]之间的关系式，即为状态转移方程</p>
+<p>明确目标：要求dp{i]的值</p>
+<p>例如求分割回文字符串的次数，其中状态转移方程如下：</p>
+<p>当i从1变化到len之间，求dp[i]。当0~i本身是回文时，不需要分割，即dp[i]=0。该题dp[i+1]和dp[i]之间没有明确联系，可以从分割边界考虑。假设分割边界为j，已知dp[j]，求dp[i]，就需要分两种情况考虑</p>
+<p>a）j+1~i之间是回文，那么dp[j]再分割一次就可以得到j之前的字符串和后面的回文，即dp[i]=dp[j]+1，但dp[i]有可能更小，所以dp[i]在dp[i]和dp[j]+1之间取小的</p>
+<p>b）j+1~i之间不是回文，继续移动j，找到符合回文的子串</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="number">0</span>~i是回文)</span><br><span class="line">    dp[i]=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(j+<span class="number">1</span>~i是回文)</span><br><span class="line">      dp[i]=<span class="built_in">min</span>(dp[i],dp[j]+<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>4.可以查看所有仓库中所有docker版本</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum list docker-ce --showduplicates | sort -r</span><br></pre></td></tr></table></figure>
+<p>（4）最终输出</p>
+<p>一般输出为dp[len-1]，例如在求分割回文字符串的次数中，最终是求len个字符串的分割次数，即求dp[len-1]</p>
+<h3 id="股票问题"><a href="#股票问题" class="headerlink" title="股票问题"></a>股票问题</h3><p>（1）明确状态含义</p>
+<p>股票有三种状态：买入，卖出，休息（不买入也不卖出）    最终状态为持有股票设置为0，不持有股票1</p>
+<p>转换关系如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200304222109.png" alt="stock"></p>
+<p>设置dp[i] [k] [s]表示第天股票的持有情况，k表示至今最多进行k笔交易，整个数组表示可以得到的最大利润</p>
+<p>（2）确定状态转移方程</p>
+<p>转换关系中就两种状态，因此分别考虑两种情况下的转移方程：</p>
+<p>a）今天持有股票，即求dp[i] [k] [1]</p>
+<p>持有股票有两种情况，一种是前一天本来就有股票，并且今天休息，即dp[i-1] [k] [1]；另一种是前一天没有股票，今天购入了，此时前一天进行了k-1笔交易，买入股票，说明利润减少，需要减掉买入的价格,即dp[i-1] [k-1] [0]-price[i]</p>
+<p>综上，求利润最大，即求两种情况的最大者，dp[i] [k] [1]=max(dp[i-1] [k] [1]，dp[i-1] [k-1] [0]-price[i])</p>
+<p>b）今天不持有股票，即求dp[i] [k] [0]</p>
+<p>不持有股票也有两种情况，一种是前一天本来就没有股票，并且今天休息，即dp[i-1] [k] [0]；另一种是前一天有股票，今天卖出了，卖出股票，说明利润增加，需要加上卖出的价格,即dp[i-1] [k] [1]+price[i]</p>
+<p>综上，求利润最大，即求两种情况的最大者，dp[i] [k] [0]=max(dp[i-1] [k] [0]]，dp[i-1] [k] [1]+price[i])</p>
+<p>综合a和b，可以得出状态转移方程</p>
+<p>（3）确定初始状态</p>
+<p>因为状态转移方程中只有两个最终状态，所以对两个最终状态的初始情况进行讨论：</p>
+<p>a）刚开始没有持有股票时，没有利润，即dp[0] [0]=0</p>
+<p>b）刚开四持有股票，之前没有利润，亏损买入的价格，即dp[0] [1]=-price[0]</p>
+<p>（4）最终输出</p>
+<p>最后一天利润是最大的，此时不持有股票的利润肯定大于持有的，即dp[len-1] [k] [0]&gt;dp[len-1] [k] [1]，所以选择dp[len-1] [k] [1]</p>
+<p>（5）实际应用</p>
+<p>a）给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。如果你最多只允许完成一笔交易（即买入和卖出一支股票），设计一个算法来计算你所能获取的最大利润。注意你不能在买入股票前卖出股票。</p>
+<p>此时k=1，代入方程得</p>
+<p>dp[i] [1] [1]=max(dp[i-1] [1] [1]，dp[i-1] [0] [0]-price[i]) 其中dp[i-1] [0] [0]=0</p>
+<p>dp[i] [1] [0]=max(dp[i-1] [1] [0]，dp[i-1] [1] [1]+price[i])</p>
+<p>可以看出，方程中k=1对转换无影响，所以省去k</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//初始状态</span></span><br><span class="line">dp[<span class="number">0</span>][<span class="number">0</span>]=<span class="number">0</span>;</span><br><span class="line">dp[<span class="number">0</span>][<span class="number">1</span>]=-price[<span class="number">0</span>];</span><br><span class="line"><span class="comment">//转移方程</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  dp[i][<span class="number">1</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][<span class="number">1</span>]，-price[i]);</span><br><span class="line">  dp[i][<span class="number">0</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][<span class="number">0</span>]，dp[i<span class="number">-1</span>][<span class="number">1</span>]+price[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>5.安装Docker</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install docker-ce-17.12.1.ce</span><br></pre></td></tr></table></figure>
+<p>b）给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
+<p>此时k=无穷，那么k的值和k-1的值近似一样，因此k同样可以省略，此时的方程为</p>
+<p>dp[i] [1]=max(dp[i-1] [1]，dp[i-1] [0]-price[i]) 其中dp[i-1] [0]不可以省略，因为其值已经不等于0</p>
+<p>dp[i] [0]=max(dp[i-1] [0]，dp[i-1]  [1]+price[i])</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//初始状态</span></span><br><span class="line">dp[<span class="number">0</span>][<span class="number">0</span>]=<span class="number">0</span>;</span><br><span class="line">dp[<span class="number">0</span>][<span class="number">1</span>]=-price[<span class="number">0</span>];</span><br><span class="line"><span class="comment">//转移方程</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  dp[i][<span class="number">1</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][<span class="number">1</span>]，dp[i<span class="number">-1</span>][<span class="number">0</span>]-price[i]);</span><br><span class="line">  dp[i][<span class="number">0</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][<span class="number">0</span>]，dp[i<span class="number">-1</span>][<span class="number">1</span>]+price[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>6.启动Docker，加入开机启动</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl start docker</span><br><span class="line"></span><br><span class="line">systemctl <span class="built_in">enable</span> docker</span><br></pre></td></tr></table></figure>
-
-<p>7.验证安装是否成功</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker version</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="编辑容器"><a href="#编辑容器" class="headerlink" title="编辑容器"></a>编辑容器</h2><p>从仓库中拉去一个centos7的镜像 </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">doucker pull centos:7</span><br></pre></td></tr></table></figure>
-
-<p>启动镜像生成容器</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -i -t &lt;IMAGE ID&gt; bash</span><br></pre></td></tr></table></figure>
-
-<p>进入容器</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it &lt;CONTAINER ID&gt; bash</span><br></pre></td></tr></table></figure>
-
-<p>此时就是进入了centos7的linux系统，可以在里安装jdk,tomcat等，然后部署war后，执行</p>
-<p><code>curl localhost:端口号</code>    看看是否可以访问。</p>
-<p>为了可以启动容器的时候，自动启动tomcat，可以写一个脚本，启动容器的时候，启动此脚本。<br>例如我在最根目录创建了runtomcat.sh的脚本<br>脚本内容：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/soft/jdk1.5.0_22</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line">sh /soft/apache-tomcat-5.5.25/bin/catalina.sh run</span><br></pre></td></tr></table></figure>
+<p>c）给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。设计一个算法来计算你所能获取的最大利润。你最多可以完成 两笔 交易。注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
+<p>此时k从1变换到2，不为0是因为要有利润至少会有一笔交易，此时代码中将多一重循环</p>
+<p>dp[i] [k] [1]=max(dp[i-1] [k] [1]，dp[i-1] [k-1] [0]-price[i]) 其中dp[i-1] [0] [0]=0</p>
+<p>dp[i] [k] [0]=max(dp[i-1] [k] [0]，dp[i-1] [k] [1]+price[i])</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//转移方程</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> k=<span class="number">1</span>;k&lt;=<span class="number">2</span>;k++)</span><br><span class="line">  &#123;</span><br><span class="line">     <span class="comment">//定义初始状态</span></span><br><span class="line">    <span class="keyword">if</span>(i==<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">//刚开始时，不持有股票，利润为0</span></span><br><span class="line">      dp[i][k][<span class="number">0</span>]=<span class="number">0</span>;</span><br><span class="line">      <span class="comment">//刚开始时，持有股票，利润为亏损买入对应的股票</span></span><br><span class="line">      dp[i][k][<span class="number">1</span>]=-price[i];</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    dp[i][k][<span class="number">1</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][k][<span class="number">1</span>]，dp[i<span class="number">-1</span>][k<span class="number">-1</span>][<span class="number">0</span>]-price[i]);</span><br><span class="line">    dp[i][k][<span class="number">0</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][k][<span class="number">0</span>]，dp[i<span class="number">-1</span>][k][<span class="number">1</span>]+price[i]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
-
-<h2 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h2><p>将原来的容器制成镜像–docker commit containerid new_image:tag</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit centos7_base centos:7.1</span><br></pre></td></tr></table></figure>
-
-<p>使用新的镜像制成容器–docker run -d -p 主机端口:容器端口/tcp –name 容器名 镜像名:tag  </p>
-<p>并执行docker内脚本</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 18080:8080 --name centos7_1 centos:7.1 /runtomcat.sh</span><br></pre></td></tr></table></figure>
-
-<p>宿主机端口是18080映射了容器内的8080tomcat端口，现在直接访问宿主机的ip:18080/cvbs就可以访问容器的web服务了。<br>查看docker运行情况</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191212144010.png" alt="查看docker运行情况"></p>
-<p>可以看到此时新的容器已经启动了</p>
-<p>再次制成一个容器</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 28080:8080 --name centos7_2 centos:7.1 /runtomcat.sh</span><br></pre></td></tr></table></figure>
-
-<p>查看docker运行情况–<code>docker ps –a</code></p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191212144100.png" alt="查看docker运行情况"></p>
-<p>此时可以看到已经部署了两个服务了，分别映射在宿主机的18080和28080端口</p>
-<p>外部浏览器访问：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191212144117.png" alt="浏览器双端口访问"></p>
-<p>可以看到两个端口都可以访问了</p>
-<p>因为我是在虚拟机里安装，所以局域网中其他机器无法访问到此ip，</p>
-<p>所以为了省略配置虚拟机对外暴露的ip等步骤，直接在主机中通过配置nginx做代理，配置如下</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191212144141.png" alt="nginx配置"></p>
-<p>此时外部访问即可<code>http://10.45.12.120/cvbs</code>（我的局域网内ip）即可访问到docker中部署两个的应用。</p>
-<p>注意：因为有些项目没有做分布式session处理，所以简单使用ip_hash策略解决session问题</p>
-<h2 id="IDEA中配置docker"><a href="#IDEA中配置docker" class="headerlink" title="IDEA中配置docker"></a>IDEA中配置docker</h2><p>1.在根目录写Dockerfile文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#指定基础镜像，在其上进行定制FROM java:8</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#这里的 /tmp 目录就会在运行时自动挂载为匿名卷，任何向 /data 中写入的信息都不会记录进容器存储层</span></span><br><span class="line">VOLUME /tmp</span><br><span class="line"></span><br><span class="line"><span class="comment">#复制上下文目录下的target/demo-1.0.0.jar 到容器里</span></span><br><span class="line">ADD target/spring-boot-0.0.1-SNAPSHOT.jar test.jar</span><br><span class="line"></span><br><span class="line"><span class="comment">#bash方式执行，使test.jar可访问</span></span><br><span class="line"><span class="comment">#RUN新建立一层，在其上执行这些命令，执行结束后， commit 这一层的修改，构成新的镜像。</span></span><br><span class="line">RUN bash -c <span class="string">"touch /test.jar"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#声明运行时容器提供服务端口，这只是一个声明，在运行时并不会因为这个声明应用就会开启这个端口的服务</span></span><br><span class="line">EXPOSE 8088</span><br><span class="line"></span><br><span class="line"><span class="comment">#指定容器启动程序及参数   &lt;ENTRYPOINT&gt; "&lt;CMD&gt;"</span></span><br><span class="line">ENTRYPOINT [<span class="string">"java"</span>,<span class="string">"-jar"</span>,<span class="string">"test.jar"</span>]</span><br></pre></td></tr></table></figure>
-
-<p>2.在启动配置中配置dockerfile,image,container,port(宿主机和docker的端口映射)</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191212144221.png" alt="配置dockerfile"></p>
-<p>3.Maven打包</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191212144237.png" alt="maven打包"></p>
-<p>4.Docker部署</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191212144250.png" alt="docker部署"></p>
-<p>5.启动Docker</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191212144304.png" alt="启动docker"></p>
-<p>6.查看docker运行情况</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191212144319.png" alt="查看docker运行情况3"></p>
-<p>7.浏览器访问成功</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20191212144335.png" alt="浏览器访问"></p>
-<h2 id="k8s"><a href="#k8s" class="headerlink" title="k8s"></a>k8s</h2><p>k8s是一个开源的容器集群管理系统，可以实现容器集群的自动化部署、自动扩缩容、维护等功能。</p>
-<p>可以对各种虚拟化容器技术做统一的管理</p>
-<p>实际项目中大量用到docker时，可以在研究k8s的实际使用。</p>
 
     </div>
 
@@ -466,24 +420,22 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/docker/" rel="tag"><i class="fa fa-tag"></i> docker</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+              <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" rel="tag"><i class="fa fa-tag"></i> 动态规划</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/blogs/future-futuretask/" rel="next" title="future与futuretask用法区别">
-                  <i class="fa fa-chevron-left"></i> future与futuretask用法区别
+                <a href="/blogs/useMVE/" rel="next" title="mac下搭建和使用mve">
+                  <i class="fa fa-chevron-left"></i> mac下搭建和使用mve
                 </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/blogs/hexo-deploy/" rel="prev" title="hexo部署时用户名密码设置">
-                  hexo部署时用户名密码设置 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -523,7 +475,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker：虚拟化容器技术"><span class="nav-number">1.</span> <span class="nav-text">Docker：虚拟化容器技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Docker"><span class="nav-number">2.</span> <span class="nav-text">安装Docker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编辑容器"><span class="nav-number">3.</span> <span class="nav-text">编辑容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#制作镜像"><span class="nav-number">4.</span> <span class="nav-text">制作镜像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IDEA中配置docker"><span class="nav-number">5.</span> <span class="nav-text">IDEA中配置docker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#k8s"><span class="nav-number">6.</span> <span class="nav-text">k8s</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#动态规划"><span class="nav-number">1.</span> <span class="nav-text">动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一般思路"><span class="nav-number">1.1.</span> <span class="nav-text">一般思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#股票问题"><span class="nav-number">1.2.</span> <span class="nav-text">股票问题</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

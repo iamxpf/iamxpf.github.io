@@ -1,6 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Leecode算法学习笔记（四）</title>
+    <url>/blogs/movStateNote/</url>
+    <content><![CDATA[<h2 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h2><h3 id="一般思路"><a href="#一般思路" class="headerlink" title="一般思路"></a>一般思路</h3><p>（1）明确状态含义</p><p>首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数</p><p>（）确定初始状态</p><p>可以考虑最多…的时候dp的状态</p><p>例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次</p><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//求分割回文字符串的次数</span></span><br><span class="line"><span class="comment">//初始状态</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;len;i++)</span><br><span class="line">  dp[i]=i;</span><br><span class="line"><span class="comment">//i个字符串，最多分割i次</span></span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+
+
+
+
+<p>（3）确定状态转移方程</p>
+<p>假设已知dp[i]的状态，列出dp[i+1]和dp[i]之间的关系式，即为状态转移方程</p>
+<p>明确目标：要求dp{i]的值</p>
+<p>例如求分割回文字符串的次数，其中状态转移方程如下：</p>
+<p>当i从1变化到len之间，求dp[i]。当0~i本身是回文时，不需要分割，即dp[i]=0。该题dp[i+1]和dp[i]之间没有明确联系，可以从分割边界考虑。假设分割边界为j，已知dp[j]，求dp[i]，就需要分两种情况考虑</p>
+<p>a）j+1~i之间是回文，那么dp[j]再分割一次就可以得到j之前的字符串和后面的回文，即dp[i]=dp[j]+1，但dp[i]有可能更小，所以dp[i]在dp[i]和dp[j]+1之间取小的</p>
+<p>b）j+1~i之间不是回文，继续移动j，找到符合回文的子串</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="number">0</span>~i是回文)</span><br><span class="line">    dp[i]=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(j+<span class="number">1</span>~i是回文)</span><br><span class="line">      dp[i]=<span class="built_in">min</span>(dp[i],dp[j]+<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（4）最终输出</p>
+<p>一般输出为dp[len-1]，例如在求分割回文字符串的次数中，最终是求len个字符串的分割次数，即求dp[len-1]</p>
+<h3 id="股票问题"><a href="#股票问题" class="headerlink" title="股票问题"></a>股票问题</h3><p>（1）明确状态含义</p>
+<p>股票有三种状态：买入，卖出，休息（不买入也不卖出）    最终状态为持有股票设置为0，不持有股票1</p>
+<p>转换关系如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200304222109.png" alt="stock"></p>
+<p>设置dp[i] [k] [s]表示第天股票的持有情况，k表示至今最多进行k笔交易，整个数组表示可以得到的最大利润</p>
+<p>（2）确定状态转移方程</p>
+<p>转换关系中就两种状态，因此分别考虑两种情况下的转移方程：</p>
+<p>a）今天持有股票，即求dp[i] [k] [1]</p>
+<p>持有股票有两种情况，一种是前一天本来就有股票，并且今天休息，即dp[i-1] [k] [1]；另一种是前一天没有股票，今天购入了，此时前一天进行了k-1笔交易，买入股票，说明利润减少，需要减掉买入的价格,即dp[i-1] [k-1] [0]-price[i]</p>
+<p>综上，求利润最大，即求两种情况的最大者，dp[i] [k] [1]=max(dp[i-1] [k] [1]，dp[i-1] [k-1] [0]-price[i])</p>
+<p>b）今天不持有股票，即求dp[i] [k] [0]</p>
+<p>不持有股票也有两种情况，一种是前一天本来就没有股票，并且今天休息，即dp[i-1] [k] [0]；另一种是前一天有股票，今天卖出了，卖出股票，说明利润增加，需要加上卖出的价格,即dp[i-1] [k] [1]+price[i]</p>
+<p>综上，求利润最大，即求两种情况的最大者，dp[i] [k] [0]=max(dp[i-1] [k] [0]]，dp[i-1] [k] [1]+price[i])</p>
+<p>综合a和b，可以得出状态转移方程</p>
+<p>（3）确定初始状态</p>
+<p>因为状态转移方程中只有两个最终状态，所以对两个最终状态的初始情况进行讨论：</p>
+<p>a）刚开始没有持有股票时，没有利润，即dp[0] [0]=0</p>
+<p>b）刚开四持有股票，之前没有利润，亏损买入的价格，即dp[0] [1]=-price[0]</p>
+<p>（4）最终输出</p>
+<p>最后一天利润是最大的，此时不持有股票的利润肯定大于持有的，即dp[len-1] [k] [0]&gt;dp[len-1] [k] [1]，所以选择dp[len-1] [k] [1]</p>
+<p>（5）实际应用</p>
+<p>a）给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。如果你最多只允许完成一笔交易（即买入和卖出一支股票），设计一个算法来计算你所能获取的最大利润。注意你不能在买入股票前卖出股票。</p>
+<p>此时k=1，代入方程得</p>
+<p>dp[i] [1] [1]=max(dp[i-1] [1] [1]，dp[i-1] [0] [0]-price[i]) 其中dp[i-1] [0] [0]=0</p>
+<p>dp[i] [1] [0]=max(dp[i-1] [1] [0]，dp[i-1] [1] [1]+price[i])</p>
+<p>可以看出，方程中k=1对转换无影响，所以省去k</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//初始状态</span></span><br><span class="line">dp[<span class="number">0</span>][<span class="number">0</span>]=<span class="number">0</span>;</span><br><span class="line">dp[<span class="number">0</span>][<span class="number">1</span>]=-price[<span class="number">0</span>];</span><br><span class="line"><span class="comment">//转移方程</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  dp[i][<span class="number">1</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][<span class="number">1</span>]，-price[i]);</span><br><span class="line">  dp[i][<span class="number">0</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][<span class="number">0</span>]，dp[i<span class="number">-1</span>][<span class="number">1</span>]+price[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>b）给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
+<p>此时k=无穷，那么k的值和k-1的值近似一样，因此k同样可以省略，此时的方程为</p>
+<p>dp[i] [1]=max(dp[i-1] [1]，dp[i-1] [0]-price[i]) 其中dp[i-1] [0]不可以省略，因为其值已经不等于0</p>
+<p>dp[i] [0]=max(dp[i-1] [0]，dp[i-1]  [1]+price[i])</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//初始状态</span></span><br><span class="line">dp[<span class="number">0</span>][<span class="number">0</span>]=<span class="number">0</span>;</span><br><span class="line">dp[<span class="number">0</span>][<span class="number">1</span>]=-price[<span class="number">0</span>];</span><br><span class="line"><span class="comment">//转移方程</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  dp[i][<span class="number">1</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][<span class="number">1</span>]，dp[i<span class="number">-1</span>][<span class="number">0</span>]-price[i]);</span><br><span class="line">  dp[i][<span class="number">0</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][<span class="number">0</span>]，dp[i<span class="number">-1</span>][<span class="number">1</span>]+price[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>c）给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。设计一个算法来计算你所能获取的最大利润。你最多可以完成 两笔 交易。注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
+<p>此时k从1变换到2，不为0是因为要有利润至少会有一笔交易，此时代码中将多一重循环</p>
+<p>dp[i] [k] [1]=max(dp[i-1] [k] [1]，dp[i-1] [k-1] [0]-price[i]) 其中dp[i-1] [0] [0]=0</p>
+<p>dp[i] [k] [0]=max(dp[i-1] [k] [0]，dp[i-1] [k] [1]+price[i])</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//转移方程</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> k=<span class="number">1</span>;k&lt;=<span class="number">2</span>;k++)</span><br><span class="line">  &#123;</span><br><span class="line">     <span class="comment">//定义初始状态</span></span><br><span class="line">    <span class="keyword">if</span>(i==<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">//刚开始时，不持有股票，利润为0</span></span><br><span class="line">      dp[i][k][<span class="number">0</span>]=<span class="number">0</span>;</span><br><span class="line">      <span class="comment">//刚开始时，持有股票，利润为亏损买入对应的股票</span></span><br><span class="line">      dp[i][k][<span class="number">1</span>]=-price[i];</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    dp[i][k][<span class="number">1</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][k][<span class="number">1</span>]，dp[i<span class="number">-1</span>][k<span class="number">-1</span>][<span class="number">0</span>]-price[i]);</span><br><span class="line">    dp[i][k][<span class="number">0</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][k][<span class="number">0</span>]，dp[i<span class="number">-1</span>][k][<span class="number">1</span>]+price[i]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>动态规划</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>mac下搭建和使用mve</title>
     <url>/blogs/useMVE/</url>
     <content><![CDATA[<p>mve可以将多角度的图片序列重构成三维点云</p><h2 id="一、搭建mve"><a href="#一、搭建mve" class="headerlink" title="一、搭建mve"></a>一、搭建mve</h2><p>搭建过程参照官方文档<a href="https://github.com/simonfuhrmann/mve" target="_blank" rel="external nofollow noopener noreferrer">https://github.com/simonfuhrmann/mve</a></p><p>以下均在终端进行操作</p><p>1.从github上下载代码</p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/simonfuhrmann/mve.git</span><br></pre></td></tr></table></figure><p>下载之后会在根目录建立mve文件夹</p><a id="more"></a>
@@ -122,9 +193,8 @@
 
 
 
-<p>分割字符串（给定一个字符串 <em>s</em>，将 <em>s</em> 分割成一些子串，使每个子串都是回文串）：每次判断当前的起始至末尾位置是否是回文，如果是就将结果压入res，继续递归。通过不断变换分割的位置</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=start;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(start~i之间不是回文)</span><br><span class="line">    继续找下一个回文的位置</span><br><span class="line">    </span><br><span class="line">   <span class="comment">//start~i之间是回文，压入结果内</span></span><br><span class="line">    res.push(s.substr(start,start+i+<span class="number">1</span>))</span><br><span class="line">    <span class="comment">//继续看下一个分割位置</span></span><br><span class="line">    dfs(i+<span class="number">1</span>,depth)</span><br><span class="line">    <span class="comment">//撤销选择，回到上一层决策</span></span><br><span class="line">    res.pop()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
+<p>分割字符串（给定一个字符串 <em>s</em>，将 <em>s</em> 分割成一些子串，使每个子串都是回文串）：每次判断当前的起始至末尾位置是否是回文，如果是就将结果压入res，继续递归。通过不断变换分割的位置，来构造决策树。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=start;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(start~i之间不是回文)</span><br><span class="line">    继续找下一个回文的位置</span><br><span class="line">    </span><br><span class="line">   <span class="comment">//start~i之间是回文，压入结果内</span></span><br><span class="line">    res.push(s.substr(start,start+i+<span class="number">1</span>))</span><br><span class="line">    <span class="comment">//继续看下一个分割位置</span></span><br><span class="line">    dfs(i+<span class="number">1</span>,depth)</span><br><span class="line">    <span class="comment">//撤销选择，回到上一层决策</span></span><br><span class="line">    res.pop()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>算法</category>
       </categories>
@@ -193,6 +263,14 @@
 <p>关于二叉搜索树的框架：利用左小右大的特点（类似二分查找）</p>
 <p>​    伪代码：</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">TreeNode* <span class="title">BTS</span><span class="params">(TreeNode* root,<span class="keyword">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">//结束条件</span></span><br><span class="line">  <span class="keyword">if</span>(root-&gt;val==num)</span><br><span class="line">  	<span class="keyword">do</span>..(可以做增删改之类的操作)</span><br><span class="line">  <span class="comment">//循环条件</span></span><br><span class="line">  <span class="comment">//大于：对左子树</span></span><br><span class="line">  <span class="keyword">if</span>(root-&gt;val&gt;num)</span><br><span class="line">  	<span class="keyword">return</span> BTS(root-&gt;left,num)</span><br><span class="line">  <span class="comment">//小于：对右子树</span></span><br><span class="line">  <span class="keyword">if</span>(root-&gt;val&lt;num)</span><br><span class="line">  	<span class="keyword">return</span> BTS(root-&gt;right,num)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="注："><a href="#注：" class="headerlink" title="注："></a>注：</h2><p>二叉树的题目大多数是遍历的变形题，往两个方向考虑：使用bfs——层次遍历还是dfs——深度遍历/回溯、递归，当使用非递归，即层次遍历的时候注意叶子节点的判断。</p>
+<p>例如求二叉树从根节点出发的路径和，可以使用层次遍历，使用两个栈，一个用来存储每层的节点，另一个用来存储每层相加的和，当出现叶子节点的时候就把相加的和累加上去。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(栈不为空)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">int</span> <span class="built_in">width</span>=p.<span class="built_in">size</span>();</span><br><span class="line">  <span class="comment">//存储每层累加的和</span></span><br><span class="line">  <span class="keyword">int</span> val=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="built_in">width</span>;i++)</span><br><span class="line">  &#123;</span><br><span class="line">    r=p.front();</span><br><span class="line">    <span class="comment">//把当前节点的值加上上一次的和的10倍</span></span><br><span class="line">    val=numQue.front()*<span class="number">10</span>+r-&gt;val;<span class="comment">//numQue中存储每层节点累加的和</span></span><br><span class="line">    p.pop();</span><br><span class="line">    numQue.pop();</span><br><span class="line">    <span class="keyword">if</span>(叶子节点)</span><br><span class="line">      res+=val;</span><br><span class="line">    <span class="keyword">if</span>(左子树存在)</span><br><span class="line">    &#123;</span><br><span class="line">      p.push(左子树)</span><br><span class="line">      <span class="comment">//之前累加的和入栈</span></span><br><span class="line">      numQue.push(val);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(右子树存在)</span><br><span class="line">    &#123;</span><br><span class="line">      p.push(右<span class="number">2</span>子树)</span><br><span class="line">      <span class="comment">//之前累加的和入栈</span></span><br><span class="line">      numQue.push(val);</span><br><span class="line">    &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
 
 ]]></content>
       <categories>
