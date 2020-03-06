@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="含义（1）支持向量：支持向量机用于解决分类问题，当给出一组线性可分的数据时，此时可以得出一条直线将数据分隔开，要求这条直线即求出了分类的依据，当根据距离分隔线最近的点，取其距离的最大值就能得到最优分割的直线。其中距离分隔线最近的点称为支持向量。（2）机：机是指该方法是一个分类器，会产生二值决策机。（3）优点：支持向量机方法只使用支持向量，并没有用全部的数据点，所以内存方面优于knn。">
+<meta name="keywords" content="机器学习,支持向量机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="监督学习笔记（一）——支持向量机">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;svm&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="含义（1）支持向量：支持向量机用于解决分类问题，当给出一组线性可分的数据时，此时可以得出一条直线将数据分隔开，要求这条直线即求出了分类的依据，当根据距离分隔线最近的点，取其距离的最大值就能得到最优分割的直线。其中距离分隔线最近的点称为支持向量。（2）机：机是指该方法是一个分类器，会产生二值决策机。（3）优点：支持向量机方法只使用支持向量，并没有用全部的数据点，所以内存方面优于knn。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200306150346.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200306150600.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200306150813.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200306151016.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200306151016.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200306155004.png">
+<meta property="og:updated_time" content="2020-03-06T08:21:59.688Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200306150346.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/svm/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>监督学习笔记（一）——支持向量机 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">12</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/svm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          监督学习笔记（一）——支持向量机
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-06 16:20:10 / 修改时间：16:21:59" itemprop="dateCreated datePublished" datetime="2020-03-06T16:20:10+08:00">2020-03-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/svm/" class="post-meta-item leancloud_visitors" data-flag-title="监督学习笔记（一）——支持向量机" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/svm/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/svm/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="含义"><a href="#含义" class="headerlink" title="含义"></a>含义</h2><p>（1）支持向量：支持向量机用于解决分类问题，当给出一组线性可分的数据时，此时可以得出一条直线将数据分隔开，要求这条直线即求出了分类的依据，当根据距离分隔线最近的点，取其距离的最大值就能得到最优分割的直线。其中距离分隔线最近的点称为支持向量。</p><p>（2）机：机是指该方法是一个分类器，会产生二值决策机。</p><p>（3）优点：支持向量机方法只使用支持向量，并没有用全部的数据点，所以内存方面优于knn。</p><a id="more"></a>
+
+
+<p>（4）缺点：支持向量机一般用于线性可分的数据，当数据线性不可分时无法使用。对于复杂数据需要借助核函数，将复杂数据映射到高维空间进行处理</p>
+<h2 id="求解的理论依据"><a href="#求解的理论依据" class="headerlink" title="求解的理论依据"></a>求解的理论依据</h2><p>（1）确定分隔平面和输出函数</p>
+<p>分隔平面：wT*x+b，其中w和b描述了所给数据的分隔平面</p>
+<p>因为是二值分类器，输出值是-1和+1，所以使用signmoid函数，当点到直线的距离f(wT*x+b)&gt;0时属于 +1类，反之属于-1类。</p>
+<p>（2）求距离：</p>
+<p>数据点到分隔平面的距离记为<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200306150346.png" alt="点到平面的几何距离">)，要求得最佳分隔平面就要找到距离平面最佳的点的距离将其最大化，则为最佳分类，所以即求<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200306150600.png" alt="求解目标">)，但是该目标函数求解困难，因此使用拉格朗日乘子法进行转换带约束调节的目标函数：<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200306150813.png" alt="转换函数">)，其中约束条件为：<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200306151016.png" alt="约束条件">，因为实际数据不可能存在100%线性可分所以此时加上一个松弛变量，可以允许一些点在分隔平面的另一边，此时前一个约束条件变为0&lt;=alpha&lt;=C，这里的常数C确保点距离平面的最大间隔和所有数据点的函数间隔小于1.0（因为是支持向量）</p>
+<p>（3）问题转换</p>
+<p>根据（2）中转换后的目标函数和约束条件可以看出，SVM（支持向量机，以下均简称为SVM）的主要求解目标转换为求alpha的值，通过alpha可以表示分隔平面。</p>
+<h2 id="使用的算法"><a href="#使用的算法" class="headerlink" title="使用的算法"></a>使用的算法</h2><p>由求解的理论依据中可知，SVM需要求解的目标为带有约束条件的函数，一般采用二次规划求解方法，但是计算复杂，这里使用platt SMO算法求解。</p>
+<p>（1）算法思路：每次选择一对alpha进行优化，当找到合适的两个alpha后，需要增大一个减小另一个，因为需要满足约束条件：<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200306151016.png" alt="约束条件">，合适是指两个alpha值要在间隔边界之外，同时没有被区间化处理或者不在边界上</p>
+<p>（2）基本算法流程：以简单smo算法为例</p>
+<p>#0.初始化alpha向量为0</p>
+<p>#1.当迭代次数小于最大迭代次数（外循环）<br>    #2.对数据集中每个向量（内循环）<br>        #3.如果该向量可以被优化<br>            #4.随机找另一个向量<br>            #5.优化这两个向量<br>            #6.如果这两个向量不能被优化，退出内循环</p>
+<p>#7.如果所有向量都不能被优化，增加迭代次数，进行下一次的循环</p>
+<p>（3）完整platt smo 算法</p>
+<p>platt smo算法在简化smo算法基础上提升时间，对数据量大的数据集执行时间大大减少。</p>
+<p>相比于传统的二次规划求解方法，每次选取两个alpha进行优化，时间效率大幅提高。</p>
+<p>算法流程：</p>
+<p>#外循环 使用两种方式交替得到第一个alpha的值</p>
+<p>#1.0 对所有数据点进行遍历扫描</p>
+<p>#2.0 对非边界值即0&lt;alpha并且alpha&gt;c的alpha进行扫描</p>
+<p>#内循环 采用最大化步长的方式得到第二个alpha的值</p>
+<h2 id="核函数的引入"><a href="#核函数的引入" class="headerlink" title="核函数的引入"></a>核函数的引入</h2><p>当面对非线性数据的时候，需要使用核函数，将复杂数据映射到高维空间，此时分类器易于理解，即可使用SVM方法。</p>
+<p>主要使用径向基函数的高斯版本：<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200306155004.png" alt="径向基函数"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">kernelTrans</span><span class="params">(X,A,kTup=<span class="params">()</span>)</span>:</span></span><br><span class="line">  m=shape(X)[<span class="number">0</span>]</span><br><span class="line">  K=zeros((m,<span class="number">1</span>))</span><br><span class="line">  <span class="comment">#对核函数的第一个参数进行不同情况的讨论</span></span><br><span class="line">  <span class="comment">#1.线性核</span></span><br><span class="line">  <span class="keyword">if</span>(kTup[<span class="number">0</span>]=<span class="string">"lin"</span>):</span><br><span class="line">    K=X*A.T</span><br><span class="line">  <span class="comment">#2.径向基核</span></span><br><span class="line">  <span class="keyword">elif</span>(kTup[<span class="number">0</span>]=<span class="string">"rbf"</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">      delta=X[i,:]-A</span><br><span class="line">      K[i]=delta*delta.T</span><br><span class="line">     K=exp(K/(<span class="number">-1</span>*kTup[<span class="number">1</span>]**<span class="number">2</span>))      </span><br><span class="line">  <span class="comment">#3.抛出异常</span></span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">raise</span> NameError()</span><br><span class="line">  <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="应用实例——手写数字识别"><a href="#应用实例——手写数字识别" class="headerlink" title="应用实例——手写数字识别"></a>应用实例——手写数字识别</h2><p>识别手写字——使用svm比knn效率高，占内存小，因为svm只需用到支持向量来进行分类</p>
+<p>将图像转换为向量</p>
+<p>（2）读取文件夹列表中各个图像文件</p>
+<p>（3）处理分类问题</p>
+<p>为方便处理，只保留了1和9两个数字，当是数字1时，分类为+1，当是数字9时分类为-1</p>
+<p>#1.读入图像转换后的数据向量和标签属性</p>
+<p>#2.调用platt smo算法得出alpha和b的值</p>
+<p>#3.根据支持向量大于0的特性得出其中alpha&gt;0的支持向量，并得出支持向量的数据点和标签数据</p>
+<p>#4.在训练集上得出分类结果</p>
+<p>#5.将分类的结果应用于测试集</p>
+<p>完整代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#plat smo可以处理数据量大的，上面simplesmo只能处理数据量较小的数据集</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#platsmo的支持函数</span></span><br><span class="line"><span class="comment">#建立一个对象</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">optStruct</span>:</span></span><br><span class="line">	<span class="comment">#各种变量初始化</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,dataMat,lableMat,C,toler,kTup)</span>:</span><span class="comment">#增加核函数初始化参数</span></span><br><span class="line">		self.dataMat=dataMat</span><br><span class="line">		self.lableMat=lableMat</span><br><span class="line">		self.C=C</span><br><span class="line">		self.toler=toler</span><br><span class="line">		self.m=shape(dataMat)[<span class="number">0</span>]</span><br><span class="line">		self.alpha=mat(zeros((self.m,<span class="number">1</span>)))</span><br><span class="line">		self.b=<span class="number">0</span></span><br><span class="line">		self.echache=mat(zeros((self.m,<span class="number">2</span>)))<span class="comment">#第一列表示cache是否有效，第二列是实际的E（误差）值</span></span><br><span class="line">		<span class="comment">#构建k</span></span><br><span class="line">		self.k=mat(zeros((self.m,self.m)))</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> range(self.m):</span><br><span class="line">			<span class="comment">#调用函数，填充k</span></span><br><span class="line">			self.k[:,i]=kernelTras(self.dataMat,self.dataMat[i,:],kTup)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#保存误差缓存</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">calcEK</span><span class="params">(oS,ke)</span>:</span></span><br><span class="line">	fk=float(multiply(oS.alpha,oS.lableMat).T*oS.k[:,ke]+oS.b)</span><br><span class="line">	EK=fk-float(oS.lableMat[ke])</span><br><span class="line">	<span class="keyword">return</span> EK</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#计算误差，并且存入缓存</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">updateEK</span><span class="params">(oS,k)</span>:</span></span><br><span class="line">	EK=calcEK(oS,k)</span><br><span class="line">	oS.echache[k]=[<span class="number">1</span>,EK]</span><br><span class="line"></span><br><span class="line"><span class="comment">#内循环中的启发方式</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#选择第二个alpha值，保证每次优化都是最大的步长，如果是第一次进入循环就先随机选择一个alpha[j],反之进入循环，根据最大步长选择alpha[j]的值</span></span><br><span class="line"><span class="comment">#alphaj的值和前一个alphai的下标和误差Ei有关</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">selectJ</span><span class="params">(i,oS,Ei)</span>:</span></span><br><span class="line">	maxk=<span class="number">-1</span></span><br><span class="line">	maxDeltaE=<span class="number">0</span></span><br><span class="line">	Ej=<span class="number">0</span></span><br><span class="line">	oS.echache[i]=[<span class="number">1</span>,Ei]</span><br><span class="line">	<span class="comment">#输入列表为目标的列表值，nozero返回不为空的值即非零alpha值</span></span><br><span class="line">	validDeltaList=nonzero(oS.echache[:,<span class="number">0</span>].A)[<span class="number">0</span>]</span><br><span class="line">	<span class="keyword">if</span> (len(validDeltaList))&gt;<span class="number">1</span>:</span><br><span class="line">		<span class="keyword">for</span> k <span class="keyword">in</span> validDeltaList:</span><br><span class="line">			<span class="keyword">if</span>(k==i):</span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line">			Ek=calcEK(oS,k)</span><br><span class="line">			delta=abs(Ek-Ei)</span><br><span class="line">			<span class="keyword">if</span>(delta&gt;maxDeltaE):</span><br><span class="line">				maxk=k</span><br><span class="line">				maxDeltaE=delta</span><br><span class="line">				Ej=Ek</span><br><span class="line">		<span class="keyword">return</span> maxk,Ej</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		j=selectRandom(i,oS.m)</span><br><span class="line">		Ej=calcEK(oS,j)</span><br><span class="line">	<span class="keyword">return</span> j,Ej</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">innerI</span><span class="params">(oS,i)</span>:</span></span><br><span class="line">	exi=calcEK(oS,i)</span><br><span class="line">	<span class="keyword">if</span> ((oS.lableMat[i]*exi&lt;-oS.toler) <span class="keyword">and</span> (oS.alpha[i]&lt;oS.C)) <span class="keyword">or</span> ((oS.lableMat[i]*exi&gt;oS.toler) <span class="keyword">and</span> (oS.alpha[i]&gt;<span class="number">0</span>)):</span><br><span class="line">		<span class="comment">#1.3启发式找另一个向量</span></span><br><span class="line">		j,exj=selectJ(i,oS,exi)</span><br><span class="line"></span><br><span class="line">		<span class="comment">#1.4优化这两个向量</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">#记录旧的，看优化之后有无变换</span></span><br><span class="line">		alphaJold=oS.alpha[j].copy()</span><br><span class="line">		alphaIold=oS.alpha[i].copy()</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(oS.lableMat[i]!=oS.lableMat[j]):</span><br><span class="line">			L=max(<span class="number">0</span>,oS.alpha[j]-oS.alpha[i])</span><br><span class="line">			H=min(oS.C,oS.C+oS.alpha[j]-oS.alpha[i])</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			L=max(<span class="number">0</span>,oS.alpha[j]+oS.alpha[i]-oS.C)</span><br><span class="line">			H=min(oS.C,oS.C+oS.alpha[j]+oS.alpha[i]-oS.C)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(L==H):</span><br><span class="line">			print(<span class="string">"L==H"</span>)</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">#最优修改量</span></span><br><span class="line">		<span class="comment">#eta=2.0*oS.dataMat[i,:]*oS.dataMat[j,:].T-oS.dataMat[i,:]*oS.dataMat[i,:].T-oS.dataMat[j,:]*oS.dataMat[j,:].T</span></span><br><span class="line">		<span class="comment">#使用核函数之后，修正eta的值</span></span><br><span class="line">		eta=<span class="number">2.0</span>*oS.k[i,j]-oS.k[i,i]-oS.k[j,j]</span><br><span class="line">		<span class="keyword">if</span>(eta&gt;=<span class="number">0</span>):</span><br><span class="line">			print(<span class="string">"eta&gt;=0"</span>)</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">		oS.alpha[j]-=oS.lableMat[j]*(exi-exj)/eta</span><br><span class="line">		oS.alpha[j]=adjustBig(oS.alpha[j],H,L)</span><br><span class="line"></span><br><span class="line">		<span class="comment">#将j的更新存到缓存</span></span><br><span class="line">		updateEK(oS,j)</span><br><span class="line"></span><br><span class="line">		<span class="comment">#优化j之后无变换</span></span><br><span class="line">		<span class="keyword">if</span> abs(alphaJold-oS.alpha[j])&lt;<span class="number">0.00001</span>:</span><br><span class="line">			print(<span class="string">"alphaJold-alpha[j])&lt;0.00001"</span>)</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">#优化j有变化，接着优化i</span></span><br><span class="line">		oS.alpha[i]+=oS.lableMat[j]*oS.lableMat[i]*(alphaJold-oS.alpha[j])</span><br><span class="line"></span><br><span class="line">		<span class="comment">#将i的更新存到缓存</span></span><br><span class="line">		updateEK(oS,i)</span><br><span class="line"></span><br><span class="line">		<span class="comment">#设置偏置量</span></span><br><span class="line">		<span class="comment">#b1=oS.b-exi-oS.lableMat[i]*(oS.alpha[i]-alphaIold)*oS.dataMat[i,:]*oS.dataMat[i,:].T-oS.lableMat[j]*(oS.alpha[j]-alphaJold)*oS.dataMat[i,:]*oS.dataMat[j,:].T</span></span><br><span class="line">		<span class="comment">#b2=oS.b-exj-oS.lableMat[i]*(oS.alpha[i]-alphaIold)*oS.dataMat[i,:]*oS.dataMat[j,:].T-oS.lableMat[j]*(oS.alpha[j]-alphaJold)*oS.dataMat[j,:]*oS.dataMat[j,:].T</span></span><br><span class="line">		<span class="comment">#使用核函数之后，修正b1,b2的值</span></span><br><span class="line">		b1=oS.b-exi-oS.lableMat[i]*(oS.alpha[i]-alphaIold)*oS.k[i,i]-oS.lableMat[j]*(oS.alpha[j]-alphaJold)*oS.k[i,j]</span><br><span class="line">		b2=oS.b-exj-oS.lableMat[i]*(oS.alpha[i]-alphaIold)*oS.k[i,j]-oS.lableMat[j]*(oS.alpha[j]-alphaJold)*oS.k[j,j]</span><br><span class="line">		</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> oS.alpha[i]&gt;<span class="number">0</span> <span class="keyword">and</span> oS.alpha[i]&lt;oS.C:</span><br><span class="line">			oS.b=b1</span><br><span class="line">		<span class="keyword">elif</span> oS.alpha[j]&gt;<span class="number">0</span> <span class="keyword">and</span> oS.alpha[j]&lt;oS.C:</span><br><span class="line">			oS.b=b2</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			oS.b=(b1+b2)/<span class="number">2.0</span></span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#完整的platt smo 外循环</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">smoP</span><span class="params">(dataMatIn,labelArr,C,toler,maxIter,kTup=<span class="params">(<span class="string">"lin"</span>,<span class="number">0</span>)</span>)</span>:</span></span><br><span class="line">	<span class="comment">#0.相关变量初始化</span></span><br><span class="line">	oS=optStruct(mat(dataMatIn),mat(labelArr).transpose(),C,toler,kTup)</span><br><span class="line"></span><br><span class="line">	entireSet=<span class="literal">True</span></span><br><span class="line">	alphaChange=<span class="number">0</span></span><br><span class="line">	iter=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#1.主循环</span></span><br><span class="line">	<span class="keyword">while</span> (iter&lt;maxIter) <span class="keyword">and</span> ((alphaChange&gt;<span class="number">0</span>) <span class="keyword">or</span> (entireSet)):</span><br><span class="line">		alphaChange=<span class="number">0</span></span><br><span class="line">		<span class="comment">#1.选择第一个alpha的两种循环</span></span><br><span class="line">		<span class="comment">#1.0对所有数据集进行遍历</span></span><br><span class="line">		<span class="keyword">if</span>(entireSet):</span><br><span class="line">			<span class="keyword">for</span> i <span class="keyword">in</span> range(oS.m):</span><br><span class="line">				alphaChange+=innerI(oS,i)</span><br><span class="line">				print(<span class="string">"fullset: iter:"</span>+str(iter)+<span class="string">" i:"</span>+str(i)+<span class="string">" alphaChange:"</span>+str(alphaChange))</span><br><span class="line">			iter+=<span class="number">1</span></span><br><span class="line">		<span class="comment">#1.1对非边界值进行遍历</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			nonBoundIs=nonzero((oS.alpha.A&gt;<span class="number">0</span>)*(oS.alpha.A&lt;C))[<span class="number">0</span>]</span><br><span class="line">			<span class="keyword">for</span> i <span class="keyword">in</span> nonBoundIs:</span><br><span class="line">				alphaChange+=innerI(oS,i)</span><br><span class="line">				print(<span class="string">"nonbound: iter:"</span>+str(iter)+<span class="string">" i:"</span>+str(i)+<span class="string">" alphaChange:"</span>+str(alphaChange))</span><br><span class="line"></span><br><span class="line">			iter+=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(entireSet):</span><br><span class="line">			entireSet=<span class="literal">False</span></span><br><span class="line">		<span class="keyword">elif</span>(alphaChange==<span class="number">0</span>):</span><br><span class="line">			entireSet=<span class="literal">True</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> oS.alpha,oS.b</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#利用求得的alpha值求得分类的超平面，其中可以求出w的值</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">calcW</span><span class="params">(alpha,dataMatIn,labelArr)</span>:</span></span><br><span class="line">	dataMat=mat(dataMatIn)</span><br><span class="line">	lableMat=mat(labelArr).transpose()</span><br><span class="line">	m,n=shape(dataMat)</span><br><span class="line">	w=zeros((n,<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">		<span class="comment">#其中起作用的只有支持向量，即不为0的alpha</span></span><br><span class="line">		w+=multiply((alpha[i]*lableMat[i]),dataMat[i,:].T)</span><br><span class="line">	<span class="keyword">return</span> w</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#在复杂数据上使用核函数</span></span><br><span class="line"><span class="comment">#将数据从一个特征空间映射到另一个空间</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">kernelTras</span><span class="params">(X,A,kTup)</span>:</span></span><br><span class="line">	m,n=shape(X)</span><br><span class="line">	k=zeros((m,<span class="number">1</span>))</span><br><span class="line">	<span class="comment">#根据ktup的第一个参数来求核函数的值</span></span><br><span class="line">	<span class="keyword">if</span>(kTup[<span class="number">0</span>]==<span class="string">"lin"</span>):</span><br><span class="line">		k=X*A.T</span><br><span class="line">	<span class="keyword">elif</span>(kTup[<span class="number">0</span>]==<span class="string">"rbf"</span>):</span><br><span class="line">		<span class="comment">#对每个元素计算高斯值</span></span><br><span class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> range(m):</span><br><span class="line">			deltaRow=X[j,:]-A</span><br><span class="line">			k[j]=deltaRow*deltaRow.T</span><br><span class="line">		k=exp(k/(<span class="number">-1</span>*kTup[<span class="number">1</span>]**<span class="number">2</span>))</span><br><span class="line">	<span class="comment">#若元祖无法识别，则抛出异常</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">raise</span> NameError(<span class="string">"the keneral name wrong"</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> k</span><br><span class="line"></span><br><span class="line"><span class="comment">#识别手写字——使用svm比knn效率高，占内存小，因为svm只需用到支持向量来进行分类</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#1.将图像转换为向量——将32*32的图像转换为1*1024的向量</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">img2vector</span><span class="params">(filename)</span>:</span></span><br><span class="line">	<span class="comment">#0.构造转换后返回的向量</span></span><br><span class="line">	returnVect=zeros((<span class="number">1</span>,<span class="number">1024</span>))</span><br><span class="line">	<span class="comment">#1.处理图像</span></span><br><span class="line">	fr=open(filename)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">32</span>):<span class="comment">#因为图像是32行的</span></span><br><span class="line">		lineArr=fr.readline() <span class="comment">#每次读入一行</span></span><br><span class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">32</span>):<span class="comment">#因为图像是32列的</span></span><br><span class="line">			returnVect[<span class="number">0</span>,<span class="number">32</span>*i+j]=int(lineArr[j])</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> returnVect</span><br><span class="line"></span><br><span class="line"><span class="comment">#2.从文件夹中读入所有图片信息并存储为向量和标签——,为方便，只保留了1和9两个数字，出现1的标签记为1，出现9的标签记为-1</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loadImage</span><span class="params">(dirname)</span>:</span></span><br><span class="line">	<span class="keyword">from</span> os <span class="keyword">import</span> listdir</span><br><span class="line">	<span class="comment">#0.用于存储标签</span></span><br><span class="line">	hwLabels=[]</span><br><span class="line"></span><br><span class="line">	<span class="comment">#1.用于存储数据向量</span></span><br><span class="line">	<span class="comment">#得到文件夹下图像名称的列表 例：1_20.txt</span></span><br><span class="line">	trainDirList=listdir(dirname)</span><br><span class="line">	m=len(trainDirList)</span><br><span class="line">	<span class="comment">#用于存储数据向量</span></span><br><span class="line">	trainMat=zeros((m,<span class="number">1024</span>))</span><br><span class="line"></span><br><span class="line">	<span class="comment">#2.处理图像文件中的内容</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">		<span class="comment">#图像文件完整名称</span></span><br><span class="line">		fullName=trainDirList[i]</span><br><span class="line">		<span class="comment">#图像文件去除后缀后的名称</span></span><br><span class="line">		fileName=fullName.split(<span class="string">"."</span>)[<span class="number">0</span>]</span><br><span class="line">		<span class="comment">#图像文件去除下划线后的名称</span></span><br><span class="line">		className=int(fileName.split(<span class="string">"_"</span>)[<span class="number">0</span>])</span><br><span class="line">		<span class="comment">#为方便，只保留了1和9两个数字，出现1的标签记为1，出现9的标签记为-1</span></span><br><span class="line">		<span class="keyword">if</span>(className==<span class="number">1</span>):</span><br><span class="line">			hwLabels.append(<span class="number">1</span>)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			hwLabels.append(<span class="number">-1</span>)</span><br><span class="line">		<span class="comment">#将图像文件中的内容转换为向量进行存储</span></span><br><span class="line">		trainMat[i,:]=img2vector(<span class="string">"%s/%s"</span>%(dirname,fullName))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> trainMat,hwLabels</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#3.使用核函数进行分类测试的径向基函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">testDigits</span><span class="params">(kTup=<span class="params">(<span class="string">"rbf"</span>,<span class="number">10</span>)</span>)</span>:</span></span><br><span class="line">	dataMatIn,labelArr=loadImage(<span class="string">"trainingDigits"</span>)</span><br><span class="line">	dataMat=mat(dataMatIn)</span><br><span class="line">	lableMat=mat(labelArr).transpose()</span><br><span class="line">	m,n=shape(dataMat)</span><br><span class="line">	<span class="comment">#根据platt smo算法得到alpha,b的值</span></span><br><span class="line">	alpha,b=smoP(dataMatIn,labelArr,<span class="number">200</span>,<span class="number">0.0001</span>,<span class="number">10000</span>,kTup)</span><br><span class="line">	print(alpha[alpha&gt;<span class="number">0</span>])</span><br><span class="line">	print(b)</span><br><span class="line">	<span class="comment">#得到支持向量</span></span><br><span class="line">	sVInd=nonzero(alpha.A&gt;<span class="number">0</span>)[<span class="number">0</span>]</span><br><span class="line">	sVs=dataMat[sVInd]</span><br><span class="line">	sVlabel=lableMat[sVInd]</span><br><span class="line">	print(<span class="string">"tere are "</span>+str(shape(sVs)[<span class="number">0</span>])+<span class="string">" support vectors"</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#在训练集上使用核函数</span></span><br><span class="line">	error=<span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">		kernel=kernelTras(sVs,dataMat[i,:],kTup)</span><br><span class="line">		precdit=kernel.T*multiply(sVlabel,alpha[sVInd])+b</span><br><span class="line">		<span class="keyword">if</span>(sign(precdit)!=sign(lableMat[i])):</span><br><span class="line">			error+=<span class="number">1</span></span><br><span class="line">	print(<span class="string">"train error rate: "</span>+str(float(error)/m)+<span class="string">"——————"</span>+str(error))</span><br><span class="line"></span><br><span class="line">	<span class="comment">#在测试集上使用核函数</span></span><br><span class="line">	dataMatIn,labelArr=loadImage(<span class="string">"testDigits"</span>)</span><br><span class="line">	dataMat=mat(dataMatIn)</span><br><span class="line">	lableMat=mat(labelArr).transpose()</span><br><span class="line">	m=shape(dataMat)[<span class="number">0</span>]</span><br><span class="line">	error=<span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">		kernel=kernelTras(sVs,dataMat[i,:],kTup)</span><br><span class="line">		precdit=kernel.T*multiply(sVlabel,alpha[sVInd])+b</span><br><span class="line">		<span class="keyword">if</span>(sign(precdit)!=sign(lableMat[i])):</span><br><span class="line">			error+=<span class="number">1</span></span><br><span class="line">	print(<span class="string">"test error rate: "</span>+str(float(error)/m)+<span class="string">"——————"</span>+str(error))</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+              <a href="/tags/%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/" rel="tag"><i class="fa fa-tag"></i> 支持向量机</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/movStateNote/" rel="next" title="Leecode算法学习笔记（四）">
+                  <i class="fa fa-chevron-left"></i> Leecode算法学习笔记（四）
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#含义"><span class="nav-number">1.</span> <span class="nav-text">含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#求解的理论依据"><span class="nav-number">2.</span> <span class="nav-text">求解的理论依据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用的算法"><span class="nav-number">3.</span> <span class="nav-text">使用的算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核函数的引入"><span class="nav-number">4.</span> <span class="nav-text">核函数的引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用实例——手写数字识别"><span class="nav-number">5.</span> <span class="nav-text">应用实例——手写数字识别</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">31k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">28 分钟</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>

@@ -56,16 +56,16 @@
   };
 </script>
 
-  <meta name="description" content="动态规划一般思路（1）明确状态含义首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数（）确定初始状态可以考虑最多…的时候dp的状态例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次12345&#x2F;&#x2F;求分割回文字符串的次数&#x2F;&#x2F;初始状态for(int i=0;i&amp;lt;len;i++)  dp[i]=i;&#x2F;&#x2F;i个字符串，最多分割i次">
+  <meta name="description" content="动态规划一般思路（1）明确状态含义首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数（2）确定初始状态可以考虑最多…的时候dp的状态例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次12345&#x2F;&#x2F;求分割回文字符串的次数&#x2F;&#x2F;初始状态for(int i=0;i&amp;lt;len;i++)  dp[i]=i;&#x2F;&#x2F;i个字符串，最多分割i次">
 <meta name="keywords" content="算法,动态规划">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Leecode算法学习笔记（四）">
 <meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;movStateNote&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="动态规划一般思路（1）明确状态含义首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数（）确定初始状态可以考虑最多…的时候dp的状态例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次12345&#x2F;&#x2F;求分割回文字符串的次数&#x2F;&#x2F;初始状态for(int i=0;i&amp;lt;len;i++)  dp[i]=i;&#x2F;&#x2F;i个字符串，最多分割i次">
+<meta property="og:description" content="动态规划一般思路（1）明确状态含义首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数（2）确定初始状态可以考虑最多…的时候dp的状态例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次12345&#x2F;&#x2F;求分割回文字符串的次数&#x2F;&#x2F;初始状态for(int i=0;i&amp;lt;len;i++)  dp[i]=i;&#x2F;&#x2F;i个字符串，最多分割i次">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200304222109.png">
-<meta property="og:updated_time" content="2020-03-05T03:25:35.643Z">
+<meta property="og:updated_time" content="2020-03-05T03:27:13.159Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200304222109.png">
 
@@ -160,7 +160,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">16</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -170,7 +170,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">11</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">12</span></a>
 
   </li>
         <li class="menu-item menu-item-sitemap">
@@ -259,7 +259,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-03-05 11:22:57 / 修改时间：11:25:35" itemprop="dateCreated datePublished" datetime="2020-03-05T11:22:57+08:00">2020-03-05</time>
+              <time title="创建时间：2020-03-05 11:22:57 / 修改时间：11:27:13" itemprop="dateCreated datePublished" datetime="2020-03-05T11:22:57+08:00">2020-03-05</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -321,7 +321,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h2><h3 id="一般思路"><a href="#一般思路" class="headerlink" title="一般思路"></a>一般思路</h3><p>（1）明确状态含义</p><p>首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数</p><p>（）确定初始状态</p><p>可以考虑最多…的时候dp的状态</p><p>例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//求分割回文字符串的次数</span></span><br><span class="line"><span class="comment">//初始状态</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;len;i++)</span><br><span class="line">  dp[i]=i;</span><br><span class="line"><span class="comment">//i个字符串，最多分割i次</span></span><br></pre></td></tr></table></figure><a id="more"></a>
+        <h2 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h2><h3 id="一般思路"><a href="#一般思路" class="headerlink" title="一般思路"></a>一般思路</h3><p>（1）明确状态含义</p><p>首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数</p><p>（2）确定初始状态</p><p>可以考虑最多…的时候dp的状态</p><p>例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//求分割回文字符串的次数</span></span><br><span class="line"><span class="comment">//初始状态</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;len;i++)</span><br><span class="line">  dp[i]=i;</span><br><span class="line"><span class="comment">//i个字符串，最多分割i次</span></span><br></pre></td></tr></table></figure><a id="more"></a>
 
 
 
@@ -436,6 +436,9 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
+                <a href="/blogs/svm/" rel="prev" title="监督学习笔记（一）——支持向量机">
+                  监督学习笔记（一）——支持向量机 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
       </footer>
@@ -490,7 +493,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -503,7 +506,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -570,13 +573,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">22k</span>
+    <span title="站点总字数">31k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">20 分钟</span>
+    <span title="站点阅读时长">28 分钟</span>
 </div>
   <div class="addthis_inline_share_toolbox">
     <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
