@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="算法原理（1）问题原理：朴素贝叶斯分类的依据是概率，假设需要分为两类c1和c2，则某个数据点属于哪一类，需要计算p(c1|x)和p{c2|x)，即计算数据点x来自c1和来自c2中的概率哪个大，如果p(c1|x)&amp;gt;p{c2|x)，则x被分到c1类别中，反之被分到c2类别中。（2）计算原理：上述概率属于条件概率，根据公式p(c|x)=p(x|c) * p(c)&#x2F; p(x)可以得到，当求（x,y）">
+<meta name="keywords" content="机器学习,贝叶斯分类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="监督学习笔记（二）——朴素贝叶斯分类器">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;bayes&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="算法原理（1）问题原理：朴素贝叶斯分类的依据是概率，假设需要分为两类c1和c2，则某个数据点属于哪一类，需要计算p(c1|x)和p{c2|x)，即计算数据点x来自c1和来自c2中的概率哪个大，如果p(c1|x)&amp;gt;p{c2|x)，则x被分到c1类别中，反之被分到c2类别中。（2）计算原理：上述概率属于条件概率，根据公式p(c|x)=p(x|c) * p(c)&#x2F; p(x)可以得到，当求（x,y）">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-03-12T11:27:00.635Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/bayes/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>监督学习笔记（二）——朴素贝叶斯分类器 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/bayes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          监督学习笔记（二）——朴素贝叶斯分类器
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-12 19:25:59 / 修改时间：19:27:00" itemprop="dateCreated datePublished" datetime="2020-03-12T19:25:59+08:00">2020-03-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/bayes/" class="post-meta-item leancloud_visitors" data-flag-title="监督学习笔记（二）——朴素贝叶斯分类器" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/bayes/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/bayes/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h2><p>（1）问题原理：朴素贝叶斯分类的依据是概率，假设需要分为两类c1和c2，则某个数据点属于哪一类，需要计算p(c1|x)和p{c2|x)，即计算数据点x来自c1和来自c2中的概率哪个大，如果p(c1|x)&gt;p{c2|x)，则x被分到c1类别中，反之被分到c2类别中。</p><p>（2）计算原理：上述概率属于条件概率，根据公式p(c|x)=p(x|c) * p(c)/ p(x)可以得到，当求（x,y）来自哪个类别时，即用（x,y）替换x，即求p(c|x,y),代入条件概率公式中得，p(c|x,y)=p(x,y|c) * p(c)/p(x,y)，因此问题转换为求p(x,y|c) * p(c)/p(x,y)中三个概率的值。</p><a id="more"></a>
+
+<p>求p(c)：对于所有数据点来说，p(c)是出现某类别的数据/总数据</p>
+<p>求p(x,y|c)：因为朴素贝叶斯的假设是所有特征是独立的，那么p(x,y|c)=p(x1,y1|c) * p(x2,y2|c) *… * p(xn,yn|c)，p(xi,yi|c)是求在某个类别下，每个特征的数据占当前类别总数据的概率，每个特征的概率求解出后连乘即可得到该概率</p>
+<p>求p(x,y)：因为对于所有类别来说p(x,y)都是相同的，所以只要比较上面两个概率乘积的大小即可</p>
+<h2 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h2><p>以二分类为例子：</p>
+<p>（1）载入数据集</p>
+<p>1.读取文件路径，并将读取的文件按照单词进行划分，划分使用正则表达式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">regex=re.compile(<span class="string">"\\W+"</span>)</span><br><span class="line">listToken=regex.split(file)</span><br></pre></td></tr></table></figure>
+
+<p>2.将数据进行存储，同时存储数据标签</p>
+<p>注：因为此时存储的数据集是文本，在测试和训练的时候需要转换为单词向量的形式</p>
+<p>输入词汇表和需要变为单词向量的文本，在词汇表中出现的单词的位置，在单词向量中对应设置为1，其余为0，这样就能构造出单词向量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> word <span class="keyword">in</span> inputWord:</span><br><span class="line">  <span class="keyword">if</span> word <span class="keyword">in</span> vocabList:</span><br><span class="line">    returnVec[vocaList.index(word)]+=<span class="number">1</span><span class="comment">#在词汇表中单词的位置的，对应的单词向量的位置设置为1</span></span><br></pre></td></tr></table></figure>
+
+<p>（ * ）可增加的部分：删除高频词</p>
+<p>因为有些词例如a,about,the等这些常用词在很多地方都会出现，这些高频出现的词，可能会对分类的概率产生影响，可以对所有数据进行遍历，找到出现频率最高的单词在词汇表中删除（可以取前20或30等，根据数据量决定）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">calcTopWord</span><span class="params">(fullText,vocabList)</span>:</span></span><br><span class="line">  //存储出现概率及单词，用到键值对</span><br><span class="line">  wordList=&#123;&#125;</span><br><span class="line">  <span class="keyword">for</span> word <span class="keyword">in</span> fullText:</span><br><span class="line">    wordlist[word]=fullText.(word)<span class="comment">#在整篇文档计算单词出现的次数，count</span></span><br><span class="line">  //从大到小排序,用值排序</span><br><span class="line">  rankList=sorted(wordList.items(),key=operator.itemgetter(<span class="number">1</span>),reverse=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>（2）得出词汇表</p>
+<p>找到数据集中不重复的单词作为词汇表，为后续统计每个单词出现的频率（即每个特征的概率）做准备</p>
+<p>用set得到不重复的单词</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> dataWord <span class="keyword">in</span> dataSet:</span><br><span class="line">		vocaList=vocaList|set(dataWord)</span><br></pre></td></tr></table></figure>
+
+<p>（3）随机选择一部分作为测试集和训练集</p>
+<p>将训练集设置为总数据集数量，测试集用随机数设置（random.uniform）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">trainSet=list(range(lenData))</span><br><span class="line"><span class="comment">#假设随机选择5个测试集</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>):</span><br><span class="line">  <span class="comment">#得出位置 int类型</span></span><br><span class="line">  testIndex=(int)(random.uniform(<span class="number">0</span>,len(trainSet)))</span><br><span class="line">  <span class="comment">#测试集的数据位置</span></span><br><span class="line">  testSet.appen(trainSet[testIndex])</span><br><span class="line">  <span class="comment">#训练集的数据位置</span></span><br><span class="line">  <span class="keyword">del</span>(trainSet[testIndex])</span><br></pre></td></tr></table></figure>
+
+<p>（4）根据训练集训练贝叶斯分类器</p>
+<p>1.计算p(c)、p(x,y|c)</p>
+<p>计算p(c)：因为是两个类别，只需要计算p(c)，用1-p(c)可以得出另一个类别出现的概率。p(c)通过对类别标记中1出现的次数求和即为1类别出现的次数，再除以文档总数，即为p(c)</p>
+<p>计算p(x,y|c)：对所有数据进行遍历，分布对0类别和1类别下，所有单词出现的概率进行计算</p>
+<p>注：为防止出现很多很小的数：计算概率时用log，即p(x,y|c)用logp(x,y|c)表示</p>
+<p>为防止各个特征的概率相乘出现0：初始设置p(x,y|c)=1，p(c)=2</p>
+<p>2.训练的结果就是得出训练集下数据属于不同类别的概率</p>
+<p>以两个类别为例，即最终得出在0类别和1类别下所有特征的出现的概率p(x,y|c0)，p(x,y|c1)和0类别、1类别数据出现的概率p(c)，得出这两个概率后，用测试集数据乘以不同类别下的p(ci|x,y)（即用数据 *p(x,y|ci) * p(c)），比较p(x,y|c0)和p(x,y|c1)得出分属的类别。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#已求出p0V,p1V,pAuixs</span></span><br><span class="line"><span class="comment">#属于两个类别的概率，进行比较即可</span></span><br><span class="line">p1=sum(inputMatrix*p1V)+log(pAuixs)</span><br><span class="line">p0=sum(inputMatrix*p0V)+log(<span class="number">1</span>-pAuixs)</span><br></pre></td></tr></table></figure>
+
+<p>（5）在测试集上，使用贝叶斯分类器，分类结果和实际标记对比，得出总体错误率</p>
+<p>1.计算条件概率，即比较两个类别的概率，确定分类的结果</p>
+<p>2.与实际结果比对，分类错误则进行标记</p>
+<h2 id="应用案例"><a href="#应用案例" class="headerlink" title="应用案例"></a>应用案例</h2><p>广告内容倾向分类</p>
+<p>该案例使用feedparse获取网页的rss源，对网页所有目录的列表读取其中的概要，输入两个网页，根据两个网页中单词出现的概率来进行分类。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#获得不重复的单词列表</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">createVocabList</span><span class="params">(dataSet)</span>:</span></span><br><span class="line">	<span class="comment">#set返回的是不重复的数据</span></span><br><span class="line">	vocaList=set([])</span><br><span class="line">	<span class="keyword">for</span> dataWord <span class="keyword">in</span> dataSet:</span><br><span class="line">		vocaList=vocaList|set(dataWord)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> list(vocaList)<span class="comment">#返回列表</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#2.0词袋模型，每个词可以出现多次</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bagOfWords2Vec</span><span class="params">(vocaList,inputWord)</span>:</span></span><br><span class="line">	returnVec=[<span class="number">0</span>]*len(vocaList)</span><br><span class="line">	<span class="keyword">for</span> word <span class="keyword">in</span> inputWord:</span><br><span class="line">		<span class="keyword">if</span>(word <span class="keyword">in</span> vocaList):</span><br><span class="line">			returnVec[vocaList.index(word)]+=<span class="number">1</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			print(<span class="string">"the word:"</span>+str(word)+<span class="string">" is not in the vocaList"</span>)</span><br><span class="line">	<span class="keyword">return</span> returnVec</span><br><span class="line"></span><br><span class="line"><span class="comment">#利用朴素贝叶斯进行文档分类</span></span><br><span class="line"><span class="comment">#主要是进行概率比较，条件概率定义为p(c|w)=p(w|c)*p(c)/p(w),对所有类别来说，p(w)都是相同的，因此可以不计算</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">trainNB0</span><span class="params">(trainMatrix,trainCatalog)</span>:</span></span><br><span class="line">	<span class="comment">#0.计算不同类别下的文档概率即p(c)</span></span><br><span class="line">	<span class="comment">#此处是二值分类，另一个概率可以用1-p(c)来计算</span></span><br><span class="line">	<span class="comment">#0.0文档的个数</span></span><br><span class="line">	numDocu=len(trainMatrix)</span><br><span class="line">	<span class="comment">#0.1侮辱性文档的概率</span></span><br><span class="line"></span><br><span class="line">	pAuixs=sum(trainCatalog)/numDocu</span><br><span class="line">	<span class="comment">#0.2初始化累加值</span></span><br><span class="line">	<span class="comment">#每行词汇的长度</span></span><br><span class="line">	numWords=len(trainMatrix[<span class="number">0</span>])</span><br><span class="line">	<span class="comment">#因为是独立的概率，如果其中一个为0，整个为0，避免这种情况，初始化为1</span></span><br><span class="line">	<span class="comment">#p1num=zeros((numWords))</span></span><br><span class="line">	<span class="comment">#p0num=zeros(numWords)</span></span><br><span class="line">	<span class="comment">#p1Denom=0</span></span><br><span class="line">	<span class="comment">#p0Denom=0</span></span><br><span class="line">	p1num=ones((numWords))</span><br><span class="line">	p0num=ones(numWords)</span><br><span class="line">	p1Denom=<span class="number">2</span></span><br><span class="line">	p0Denom=<span class="number">2</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#1.按照不同类别计算p(w|c)即计算不同类别下词向量出现的次数</span></span><br><span class="line">	<span class="comment">#根据当前类别下每个词出现的次数除以在该类别下所有单词出现的次数</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(numDocu):</span><br><span class="line">		<span class="comment">#1.0 侮辱类别</span></span><br><span class="line">		<span class="keyword">if</span>(trainCatalog[i]==<span class="number">1</span>):</span><br><span class="line">			p1num+=trainMatrix[i]</span><br><span class="line">			p1Denom+=sum(trainMatrix[i])</span><br><span class="line">		<span class="comment">#1.1 非侮辱类别</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			p0num+=trainMatrix[i]</span><br><span class="line">			p0Denom+=sum(trainMatrix[i])</span><br><span class="line"></span><br><span class="line">	<span class="comment">#为了避免出现过小的数,出现下溢出，使用log</span></span><br><span class="line">	p1Vec=log(p1num/p1Denom)</span><br><span class="line">	p0Vec=log(p0num/p0Denom)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> p0Vec,p1Vec,pAuixs</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#朴素贝叶斯分类器</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">classfyNB</span><span class="params">(wordVec,p0Vec,p1Vec,pAuixs)</span>:</span></span><br><span class="line">	<span class="comment">#比较单词向量乘以p(w|c)*p(c),因为p(w|c)使用了log处理，所以，这边的pauixs也需要加上log,log相加代表相乘</span></span><br><span class="line">	<span class="comment">#因为是独立的，所以计算每个单词出现的概率p(wi|c)，因为做了log处理，这里sum等同于去掉log后概率相乘</span></span><br><span class="line">	p1=sum(wordVec*p1Vec)+log(pAuixs)</span><br><span class="line">	p0=sum(wordVec*p0Vec)+log(<span class="number">1</span>-pAuixs)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(p1&gt;p0):</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#测试分类器</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">testingNB</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="comment">#0.载入实验样本</span></span><br><span class="line">	listPosts,listLabels=loadDataSet();</span><br><span class="line">	<span class="comment">#1.生成词汇表</span></span><br><span class="line">	vocabList=createVocabList(listPosts)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#2.文本转换为单词向量，方法中是对每行文本进行转换</span></span><br><span class="line">	m=len(listPosts)</span><br><span class="line">	wordVec=[]</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">		wordVec.append(setOfWords2Vec(vocabList,listPosts[i]))</span><br><span class="line"></span><br><span class="line">	<span class="comment">#3.构造贝叶斯分类器</span></span><br><span class="line">	p0Vec,p1Vec,pAuixs=trainNB0(wordVec,listLabels)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#4.测试数据进行测试</span></span><br><span class="line">	<span class="comment">#4.0构造测试数据</span></span><br><span class="line">	testList=[<span class="string">'love'</span>, <span class="string">'my'</span>, <span class="string">'dalmation'</span>]</span><br><span class="line">	<span class="comment">#4.1转换为单词向量</span></span><br><span class="line">	testVec=setOfWords2Vec(vocabList,testList)</span><br><span class="line">	<span class="comment">#4.2计算概率</span></span><br><span class="line">	testP=classfyNB(testVec,p0Vec,p1Vec,pAuixs)</span><br><span class="line">	print(str(testList)+<span class="string">" is:"</span>+str(testP))</span><br><span class="line"></span><br><span class="line">	<span class="comment">#4.测试数据进行测试</span></span><br><span class="line">	<span class="comment">#4.0构造测试数据</span></span><br><span class="line">	testList=[<span class="string">'stupid'</span>, <span class="string">'garbage'</span>]</span><br><span class="line">	<span class="comment">#4.1转换为单词向量</span></span><br><span class="line">	testVec=setOfWords2Vec(vocabList,testList)</span><br><span class="line">	<span class="comment">#4.2计算概率</span></span><br><span class="line">	testP=classfyNB(testVec,p0Vec,p1Vec,pAuixs)</span><br><span class="line">	print(str(testList)+<span class="string">" is:"</span>+str(testP))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#利用贝叶斯分类器进行垃圾邮件过滤</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#读取文件内的文本，对长度小于两个的单词进行过滤</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">textParse</span><span class="params">(file)</span>:</span></span><br><span class="line">	<span class="keyword">import</span> re</span><br><span class="line">	<span class="comment">#0.正则表达式进行分割</span></span><br><span class="line">	regex=re.compile(<span class="string">"\\W+"</span>)</span><br><span class="line">	<span class="comment">#1.对读入的问津进行分割</span></span><br><span class="line">	<span class="comment">#file=file.encode('utf-8')</span></span><br><span class="line"></span><br><span class="line">	listTokens=regex.split(file)</span><br><span class="line">	<span class="keyword">return</span> [token.lower() <span class="keyword">for</span> token <span class="keyword">in</span> listTokens <span class="keyword">if</span> len(token)&gt;<span class="number">2</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">#用朴素贝叶斯分类器对个人广告区域进行倾向分类</span></span><br><span class="line"><span class="comment">#从rss中获取文本</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#将文本中出现频率前30的去掉</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">calcMostFreq</span><span class="params">(vocabList,fullList)</span>:</span></span><br><span class="line">	<span class="keyword">import</span> operator</span><br><span class="line">	<span class="comment">#代表键值对</span></span><br><span class="line">	wordFreq=&#123;&#125;</span><br><span class="line">	<span class="comment">#对整篇文档计算单词表中单词出现的频率</span></span><br><span class="line">	<span class="keyword">for</span> token <span class="keyword">in</span> vocabList:</span><br><span class="line">		wordFreq[token]=fullList.count(token)</span><br><span class="line">	<span class="comment">#按照字典中值进行排序（即出现的次数），以第几个域排序，按照降序排列</span></span><br><span class="line">	<span class="comment">#此时变为了列表，可以返回前30个</span></span><br><span class="line">	freqList=sorted(wordFreq.items(),key=operator.itemgetter(<span class="number">1</span>),reverse=<span class="literal">True</span>)</span><br><span class="line">	<span class="keyword">return</span> freqList[:<span class="number">30</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#输入的参数为：从feedparse中获取的网页的rss源，feed0是0网页，里面的内容标记为0，feed1是1网页，里面的内容标记为1</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loacWords</span><span class="params">(feed0,feed1)</span>:</span></span><br><span class="line">	<span class="keyword">import</span> feedparser</span><br><span class="line">	<span class="comment">#0.获取文本</span></span><br><span class="line">	docList=[]</span><br><span class="line">	classList=[]</span><br><span class="line">	wordList=[]</span><br><span class="line">	fullList=[]</span><br><span class="line">	<span class="comment">#feed0['entries']是获取所有条目的列表</span></span><br><span class="line">	minlen=min(len(feed0[<span class="string">'entries'</span>]),len(feed1[<span class="string">'entries'</span>]))</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(minlen):</span><br><span class="line">		<span class="comment">#对第i个条目的概要提取内容，并进行单词划分</span></span><br><span class="line">		wordList=textParse(feed0[<span class="string">'entries'</span>][i][<span class="string">'summary'</span>])</span><br><span class="line">		docList.append(wordList)</span><br><span class="line">		classList.append(<span class="string">"0"</span>)</span><br><span class="line">		<span class="comment">#把所有单词加入到一个列表方便计数</span></span><br><span class="line">		fullList.extend(wordList)</span><br><span class="line"></span><br><span class="line">		wordList=textParse(feed1[<span class="string">'entries'</span>][i][<span class="string">'summary'</span>])</span><br><span class="line">		docList.append(wordList)</span><br><span class="line">		classList.append(<span class="string">"1"</span>)</span><br><span class="line">		<span class="comment">#把所有单词加入到一个列表方便计数</span></span><br><span class="line">		fullList.extend(wordList)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#1.构建词汇表</span></span><br><span class="line">	vocabList=createVocabList(docList);</span><br><span class="line"></span><br><span class="line">	<span class="comment">##0000.增加的部分，将文本中高频出现的前30个单词从词汇表中去除</span></span><br><span class="line">	mostFreq=calcMostFreq(vocabList,fullList)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#freq是键值对，[0]第0个代表单词，[1]第一个代表出现的次数</span></span><br><span class="line">	<span class="keyword">for</span> freq <span class="keyword">in</span> mostFreq:</span><br><span class="line">		<span class="keyword">if</span> freq[<span class="number">0</span>] <span class="keyword">in</span> vocabList:</span><br><span class="line">			vocabList.remove(freq[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">	<span class="comment">#2.文本转换为单词向量</span></span><br><span class="line">	<span class="comment">#inputWord=[]</span></span><br><span class="line">	<span class="comment">#for i in range(2*minlen):</span></span><br><span class="line">	<span class="comment">#	inputWord[i]=bagOfWords2Vec(vocabList,docList[i])</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#3.随机选取20个作为测试集</span></span><br><span class="line">	trainingSet=list(range(<span class="number">2</span>*minlen))</span><br><span class="line">	testingSet=[]</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">20</span>):</span><br><span class="line">		<span class="comment">#生成随机浮点数 random.uniform</span></span><br><span class="line">		testIndex=(int)(random.uniform(<span class="number">0</span>,len(trainingSet)))</span><br><span class="line">		testingSet.append(trainingSet[testIndex])</span><br><span class="line">		<span class="keyword">del</span>(trainingSet[testIndex])</span><br><span class="line"></span><br><span class="line">	<span class="comment">#将字符串转换为数字</span></span><br><span class="line">	classList=[int(x) <span class="keyword">for</span> x <span class="keyword">in</span> classList]</span><br><span class="line">	<span class="comment">#4.剩余的作为训练集，计算分类器的概率，用于分类</span></span><br><span class="line">	traingData=[]</span><br><span class="line">	traingLabels=[]</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> trainingSet:</span><br><span class="line">		<span class="comment">#2.文本转换为单词向量</span></span><br><span class="line">		traingData.append(bagOfWords2Vec(vocabList,docList[i]))</span><br><span class="line">		traingLabels.append(classList[i])</span><br><span class="line">	p0Vec,p1Vec,pAuixs=trainNB0(traingData,traingLabels)</span><br><span class="line">	<span class="comment">#5.对测试集进行测试</span></span><br><span class="line">	error=<span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> testingSet:</span><br><span class="line">		testingData=bagOfWords2Vec(vocabList,docList[i])</span><br><span class="line">		testResult=classfyNB(testingData,p0Vec,p1Vec,pAuixs)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(testResult!=classList[i]):</span><br><span class="line">			error+=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">	print(<span class="string">"the error rate is:"</span>+str((float)(error)/<span class="number">20</span>))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> vocabList,p0Vec,p1Vec</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+              <a href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%88%86%E7%B1%BB/" rel="tag"><i class="fa fa-tag"></i> 贝叶斯分类</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/svm/" rel="next" title="监督学习笔记（一）——支持向量机">
+                  <i class="fa fa-chevron-left"></i> 监督学习笔记（一）——支持向量机
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法原理"><span class="nav-number">1.</span> <span class="nav-text">算法原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法流程"><span class="nav-number">2.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用案例"><span class="nav-number">3.</span> <span class="nav-text">应用案例</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">40k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">36 分钟</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
