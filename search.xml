@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>kMeans</title>
+    <url>/blogs/kMeans/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title>监督学习笔记（二）——朴素贝叶斯分类器</title>
     <url>/blogs/bayes/</url>
     <content><![CDATA[<h2 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h2><p>（1）问题原理：朴素贝叶斯分类的依据是概率，假设需要分为两类c1和c2，则某个数据点属于哪一类，需要计算p(c1|x)和p{c2|x)，即计算数据点x来自c1和来自c2中的概率哪个大，如果p(c1|x)&gt;p{c2|x)，则x被分到c1类别中，反之被分到c2类别中。</p><p>（2）计算原理：上述概率属于条件概率，根据公式p(c|x)=p(x|c) * p(c)/ p(x)可以得到，当求（x,y）来自哪个类别时，即用（x,y）替换x，即求p(c|x,y),代入条件概率公式中得，p(c|x,y)=p(x,y|c) * p(c)/p(x,y)，因此问题转换为求p(x,y|c) * p(c)/p(x,y)中三个概率的值。</p><a id="more"></a>
