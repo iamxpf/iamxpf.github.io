@@ -56,17 +56,18 @@
   };
 </script>
 
-  <meta name="description" content="好好学习，天天向上">
-<meta name="keywords" content="good good good">
-<meta property="og:type" content="website">
-<meta property="og:title" content="八戒大强攻">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;tags&#x2F;%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA&#x2F;index.html">
+  <meta name="description" content="问题描述给出一个数组，求数组中前k个最大&#x2F;最小的数或者求数组中第k个最大&#x2F;最小的数。解题思路暴力法（1）思路：调用sort函数将数组排序，选择前k个或者第k个输出（2）复杂度分析：时间复杂度：主要是在比较排序上了，该方法对整个数组排序，c++中的sort使用的是快速排序，时间复杂度为O(nlogn)空间复杂度：没有用到额外的空间，复杂度为O（1）">
+<meta name="keywords" content="算法,topK">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leecode算法学习笔记（五）面试高频题——topk问题">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;topK&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="好好学习，天天向上">
+<meta property="og:description" content="问题描述给出一个数组，求数组中前k个最大&#x2F;最小的数或者求数组中第k个最大&#x2F;最小的数。解题思路暴力法（1）思路：调用sort函数将数组排序，选择前k个或者第k个输出（2）复杂度分析：时间复杂度：主要是在比较排序上了，该方法对整个数组排序，c++中的sort使用的是快速排序，时间复杂度为O(nlogn)空间复杂度：没有用到额外的空间，复杂度为O（1）">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-03-23T10:57:39.102Z">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://www.xiapf.com/tags/%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/">
+<link rel="canonical" href="https://www.xiapf.com/blogs/topK/">
 
 
 <script id="page-configurations">
@@ -74,13 +75,13 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: false,
+    isPost: true,
     isPage: false,
     isArchive: false
   };
 </script>
 
-  <title>标签: 支持向量机 | 八戒大强攻</title>
+  <title>Leecode算法学习笔记（五）面试高频题——topk问题 | 八戒大强攻</title>
   
 
 
@@ -227,52 +228,201 @@
           <div class="content">
             
 
+  <div class="posts-expand">
+      
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">支持向量机
-          <small>标签</small>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/topK/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          Leecode算法学习笔记（五）面试高频题——topk问题
         </h2>
-      </div>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-23 18:56:18 / 修改时间：18:57:39" itemprop="dateCreated datePublished" datetime="2020-03-23T18:56:18+08:00">2020-03-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/topK/" class="post-meta-item leancloud_visitors" data-flag-title="Leecode算法学习笔记（五）面试高频题——topk问题" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/topK/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/topK/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <h2 class="collection-header">2020</h2>
+        <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>给出一个数组，求数组中前k个最大/最小的数或者求数组中第k个最大/最小的数。</p><h2 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h2><h3 id="暴力法"><a href="#暴力法" class="headerlink" title="暴力法"></a>暴力法</h3><p>（1）思路：调用sort函数将数组排序，选择前k个或者第k个输出</p><p>（2）复杂度分析：</p><p>时间复杂度：主要是在比较排序上了，该方法对整个数组排序，c++中的sort使用的是快速排序，时间复杂度为O(nlogn)</p><p>空间复杂度：没有用到额外的空间，复杂度为O（1）</p><a id="more"></a>
+
+
+
+
+<p>（3）代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sort(num.<span class="built_in">begin</span>(),num.<span class="built_in">end</span>())</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h3><p>（1）思路：</p>
+<p>维护一个k个元素的堆，将数组中元素和队首元素比较，形成最终稳定的堆：</p>
+<p>求前k个最大的数即需要维护一个小顶堆，队首是最小的元素，当读入的数据大于等于队首元素，则加入堆中，保证其余元素都大于队首的元素，每次仅需比较队首元素即可，当遍历到最后，堆中剩下前k个最大的数；</p>
+<p>当求前k个最小的数即需要维护一个大顶堆，队首是最大的元素，当读入的数据小于等于队首元素，则加入堆中，保证其他元素都小于队首的元素，最终，堆中剩下前k个最小的数。</p>
+<p>（2）复杂度分析：</p>
+<p>时间复杂度：每次维护一个k个元素的堆，相当于建立一个二叉树，深度是logk，最差的情况是n个数都需要排序比较，则复杂度是O（nlogk）</p>
+<p>空间复杂度：用到了k大小的堆，复杂度为O（k）</p>
+<p>（3）代码：</p>
+<p>以求前k个最大的元素为例</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1.建小顶堆 后两个元素缺省，自动建立大顶堆</span></span><br><span class="line">prioriy_queue&lt;<span class="keyword">int</span>,<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;,greater&lt;<span class="keyword">int</span>&gt;&gt; p;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;k;i++)</span><br><span class="line">  p.push(num[i])</span><br><span class="line">  </span><br><span class="line"> <span class="comment">//2.队首元素比较</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=k;i&lt;num.<span class="built_in">size</span>();i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//队首元素小，则把新元素加入</span></span><br><span class="line">  <span class="keyword">if</span>(p.top()&lt;num[i])</span><br><span class="line">  &#123;</span><br><span class="line">    p.pop();</span><br><span class="line">    p.push(num[i]);</span><br><span class="line">  &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h3><p>（1）思路：快速排序是以一个基准点进行排序，当在基准点的左边都是小于该数的，右边都是大于该数的。从这个思路出发可以想到，求前k个最小的数可以转换为在第k个位置进行排序，左边是小于的数，右边是大于的数，求前k个最小的数就是前k个数。因为快速排序时每次排序可以得到当前基准点的位置，以此判断是否在第k个位置。这种方法不用遍历整个数组，排序的次数减少了。快速排序处理两边的数，这边只需要对一边的数进行排序。</p>
+<p>当求前k个最大的数时可以进行转换：首先第k个最大的数，如果6个数，从小到大排列，则索引是6-k，即求第6-k个最小的数，前k个最大的数，就是从该位置到数组末尾。</p>
+<p>eg.假设有6个数字2，5，7，1，3，9，排序之后为1，2，3，5，7，9，求第3大的数字即5，从左往右数，元素5的索引为3，3=6-3（k的值），所以第k个最大的数=第6-k个最小的数</p>
+<p>（2）复杂度分析：</p>
+<p>时间复杂度：相比较sort方法来说，减少了排序的次数，获取每次排序的位置，当该位置小于k，则说明下一次排序需要在当前位置和right位置之间寻找第k个位置，反之需要在left和当前位置之间寻找。每次减少一半需要排序的数字，则为n+n/2+…=O（n）</p>
+<p>空间复杂度：递归调用栈，复杂度为O（n）</p>
+<p>（3）代码：</p>
+<p>以求前k个最大的元素为例</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//主函数</span></span><br><span class="line"><span class="keyword">int</span> pos=num.<span class="built_in">size</span>()-k <span class="comment">//进行位置转换</span></span><br><span class="line">quickSort(num,<span class="number">0</span>,num.<span class="built_in">size</span>(),pos)</span><br><span class="line"></span><br><span class="line"><span class="comment">//快速排序函数</span></span><br><span class="line"><span class="keyword">void</span> quickSort(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;num,<span class="keyword">int</span> lef,<span class="keyword">int</span> right,<span class="keyword">int</span> k)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">int</span> p=partition(num,left,right);</span><br><span class="line">  <span class="keyword">if</span>(p==k)</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(p&gt;k)</span><br><span class="line">      quickSort(num,left,p<span class="number">-1</span>,k)</span><br><span class="line">     <span class="keyword">else</span></span><br><span class="line">       quickSort(num,p+<span class="number">1</span>,right,k)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//排序位置函数</span></span><br><span class="line"><span class="keyword">int</span> partition(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;num,<span class="keyword">int</span> left,<span class="keyword">int</span> right)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">int</span> i=left;</span><br><span class="line">  <span class="keyword">int</span> j=right;</span><br><span class="line">  <span class="keyword">int</span> base=num[i];</span><br><span class="line">  <span class="comment">//找到基准值的位置</span></span><br><span class="line">  <span class="keyword">while</span>(i&lt;j)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">//找到比基准值小的</span></span><br><span class="line">    <span class="keyword">while</span>(i&lt;j&amp;&amp;num[j]&gt;=base)</span><br><span class="line">      j--;</span><br><span class="line">    <span class="comment">//找到比基准值大的</span></span><br><span class="line">    <span class="keyword">while</span>(i&lt;j&amp;&amp;num[i]&lt;=base)</span><br><span class="line">      i++;</span><br><span class="line">    <span class="comment">//交换</span></span><br><span class="line">    <span class="keyword">if</span>(i&lt;j)</span><br><span class="line">      swap(num[i],num[j]);</span><br><span class="line">  &#125;</span><br><span class="line">  num[left]=num[i];</span><br><span class="line">  num[i]=base;</span><br><span class="line">  <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated" datetime="2020-03-06T16:20:10+08:00" content="2020-03-06">
-          03-06
-        </time>
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
       </div>
 
-      <h3 class="post-title">
-          <a class="post-title-link" href="/blogs/svm/" itemprop="url">
-            <span itemprop="name">监督学习笔记（一）——支持向量机</span>
-          </a>
-      </h3>
-
-    </header>
-  </article>
-
-    </div>
   </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+              <a href="/tags/topK/" rel="tag"><i class="fa fa-tag"></i> topK</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/kMeans/" rel="next" title="非监督学习笔记（一）——K均值聚类">
+                  <i class="fa fa-chevron-left"></i> 非监督学习笔记（一）——K均值聚类
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
   
   
   
 
-  
-
+  </div>
 
 
           </div>
           
+    <div class="comments" id="comments"></div>
 
         </div>
           
@@ -297,6 +447,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解题思路"><span class="nav-number">2.</span> <span class="nav-text">解题思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#暴力法"><span class="nav-number">2.1.</span> <span class="nav-text">暴力法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆排序"><span class="nav-number">2.2.</span> <span class="nav-text">堆排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#快速排序"><span class="nav-number">2.3.</span> <span class="nav-text">快速排序</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

@@ -56,16 +56,21 @@
   };
 </script>
 
-  <meta name="description" content="好好学习，天天向上">
-<meta name="keywords" content="good good good">
+  <meta name="description" content="非监督学习和监督学习不同，监督学习知道需要寻找的内容，即目标变量，会通过数据训练出能得出目标变量学习模型，而监督学习不知道目标变量，非监督学习中有一种聚类方法，把相似的点放在一个簇（类）中，类似于全自动分类，度量数据的相似有很多函数，包括欧式距离，球面距离等。含义k均值聚类属于一种聚类算法，通过给定的数值k，将数据点分为k类，分类依据为相似的数据点放到一个簇里，这里簇的中心称为质心，一般可以用距离">
+<meta name="keywords" content="机器学习,k均值聚类">
 <meta property="og:type" content="article">
-<meta property="og:title" content="kMeans">
+<meta property="og:title" content="非监督学习笔记（一）——K均值聚类">
 <meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;kMeans&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="好好学习，天天向上">
+<meta property="og:description" content="非监督学习和监督学习不同，监督学习知道需要寻找的内容，即目标变量，会通过数据训练出能得出目标变量学习模型，而监督学习不知道目标变量，非监督学习中有一种聚类方法，把相似的点放在一个簇（类）中，类似于全自动分类，度量数据的相似有很多函数，包括欧式距离，球面距离等。含义k均值聚类属于一种聚类算法，通过给定的数值k，将数据点分为k类，分类依据为相似的数据点放到一个簇里，这里簇的中心称为质心，一般可以用距离">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-19T07:46:28.449Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200319144017.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200319150954.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200319150954.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200319151338.png">
+<meta property="og:updated_time" content="2020-03-19T07:51:58.568Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200319144017.png">
 
 <link rel="canonical" href="https://www.xiapf.com/blogs/kMeans/">
 
@@ -81,7 +86,7 @@
   };
 </script>
 
-  <title>kMeans | 八戒大强攻</title>
+  <title>非监督学习笔记（一）——K均值聚类 | 八戒大强攻</title>
   
 
 
@@ -158,7 +163,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">21</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -168,7 +173,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">14</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">15</span></a>
 
   </li>
         <li class="menu-item menu-item-sitemap">
@@ -246,7 +251,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          kMeans
+          非监督学习笔记（一）——K均值聚类
         </h2>
 
         <div class="post-meta">
@@ -255,12 +260,24 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-03-19 15:46:28" itemprop="dateCreated datePublished" datetime="2020-03-19T15:46:28+08:00">2020-03-19</time>
+              <time title="创建时间：2020-03-19 15:46:28 / 修改时间：15:51:58" itemprop="dateCreated datePublished" datetime="2020-03-19T15:46:28+08:00">2020-03-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
             </span>
 
           
-            <span id="/blogs/kMeans/" class="post-meta-item leancloud_visitors" data-flag-title="kMeans" title="阅读次数">
+            <span id="/blogs/kMeans/" class="post-meta-item leancloud_visitors" data-flag-title="非监督学习笔记（一）——K均值聚类" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -286,14 +303,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>0</span>
+              <span>4.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>4 分钟</span>
             </span>
 		  
 			
@@ -307,7 +324,90 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <p>非监督学习和监督学习不同，监督学习知道需要寻找的内容，即目标变量，会通过数据训练出能得出目标变量学习模型，而监督学习不知道目标变量，非监督学习中有一种聚类方法，把相似的点放在一个簇（类）中，类似于全自动分类，度量数据的相似有很多函数，包括欧式距离，球面距离等。</p><h2 id="含义"><a href="#含义" class="headerlink" title="含义"></a>含义</h2><p>k均值聚类属于一种聚类算法，通过给定的数值k，将数据点分为k类，分类依据为相似的数据点放到一个簇里，这里簇的中心称为质心，一般可以用距离公式来度量数据点之间的相似度。假设以欧式距离作为相似度评价依据，则点到各个质心中的最小距离的那个簇是该数据点所在的位置，最终可以将数据分为k类。</p><a id="more"></a>
+
+<h2 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h2><p>注：因为度量数据之间相似度的函数通常都需要将数据转换为矩阵进行处理，所以程序中需要注意数据的存储形式，如果是列表形式需要转换为矩阵进行处理。</p>
+<p>当有赋值操作的时候，mat类型不能直接赋值，需要转换为list类型。例如，matop=matop.tolist()[0]</p>
+<p>（1）读入数据</p>
+<p>根据输入的文件名读入数据，根据相似度计算方法，需要把数据转换为float数值类型，同时转换为矩阵</p>
+<p>（2）确定相似度计算方法</p>
+<p>以欧式距离为例：计算两个矩阵对应位置相减平方求和，最后再开根号作为两个矩阵之间的距离</p>
+<p>sqrt(sum(power)(veca-vecb))   列表或者矩阵之间求次方用power函数</p>
+<p>（3）确定初始质心选择方法</p>
+<p>设定输入的数据形式为（x,y）</p>
+<p>一般初始质心使用随机选择的方法，为了将随机矩阵的值控制在数据范围内，根据每列的最大值和最小值，生成k*n（n此时为2）个随机数据，以此作为初始的k个质心。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#获取数据点的列数</span></span><br><span class="line">n=shape(data)[<span class="number">1</span>]</span><br><span class="line"><span class="comment">#随机数组</span></span><br><span class="line">centroids=mat(zeros((k,n)))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">  minI=min(data[:,i])</span><br><span class="line">  maxI=max(data[:,i])</span><br><span class="line">  rangeI=float(maxI-minI)</span><br><span class="line">  centroids[:,i]=mat(minI+rangeI*rand(k,<span class="number">1</span>))<span class="comment">#返回k*1个0~1之间的随机数</span></span><br></pre></td></tr></table></figure>
+
+<p>（4）根据相似度将数据分类</p>
+<p>a）初始化质心：以随机选择的方式</p>
+<p>b）当簇仍在发生变化</p>
+<p>对每个数据点，计算当前点到各个质心的距离，选择最近的距离，将该点放入</p>
+<p>将簇内所有数据点取均值，重新计算当前的质心</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">n=shape(data)[<span class="number">0</span>]</span><br><span class="line">clusterAssment=mat(zeros((n,<span class="number">2</span>)))<span class="comment">#存储对应行的点属于哪个簇，以及误差</span></span><br><span class="line"><span class="keyword">while</span>(簇在变化):</span><br><span class="line">  flag=false<span class="comment">#标记簇是否在变化</span></span><br><span class="line">  <span class="comment">#1.对每个数据点</span></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">    minDist=inf</span><br><span class="line">    minIndex=<span class="number">-1</span></span><br><span class="line">    <span class="comment">#计算该点到各个质心的距离		</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(k):</span><br><span class="line">      pstCurret=distmes(centroids[k,:],data[i,:])<span class="comment">#distmes为相似度计算方法</span></span><br><span class="line">      <span class="keyword">if</span>(pstCurret&lt;minDist):</span><br><span class="line">        最小值交换</span><br><span class="line">   	 <span class="keyword">if</span>(clusterAssment[i,<span class="number">0</span>]!=minIndex):</span><br><span class="line">      flag=true<span class="comment">#说明簇还在变化</span></span><br><span class="line">     <span class="comment">#2.将点加入到簇中</span></span><br><span class="line">    clusterAssment[i,:]=minIndex,minDist**<span class="number">2</span></span><br><span class="line">  <span class="comment">#3.对每个簇（即质心），对簇内数据点取均值</span></span><br><span class="line">  <span class="keyword">for</span> cent <span class="keyword">in</span> range(k):</span><br><span class="line">    pstCurret=data[nonzero(clusterAssment[:,<span class="number">0</span>].A[<span class="number">0</span>]==cent)]</span><br><span class="line">    centroids[cent,:]=mean(pstCurret,axis=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="算法改进"><a href="#算法改进" class="headerlink" title="算法改进"></a>算法改进</h2><p>k均值聚类算法依赖与用户给定的数值k，此时无法确定根据k得出的簇是最优的。评价算法的优劣是根据误差平方和（称SSE），即数据真实值为y，预测值为y1，则误差平方和为（y-y1）2，k均值聚类算法的改进是根据SSE最小时，将数据分为k个类。</p>
+<p>初始时将所有数据点作为一个簇，每次将簇一分为二，选择哪个簇进行划分要看能否最大化减少sse，当划分之后的sse比原来的小，则保存当前的质心，最终得到的簇误差平方和最小，改进的算法也称二分k均值聚类。</p>
+<p>（1）将所有数据作为一个簇，取均值得到初始的质心</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#所有数据取均值</span></span><br><span class="line">centroids0=mean(data,axis=<span class="number">0</span>).tolist[<span class="number">0</span>]</span><br><span class="line"><span class="comment">#转换为矩阵形式</span></span><br><span class="line">centroids=mat(centroids0)</span><br><span class="line"><span class="comment">#求初始质心到各点的距离</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(k):</span><br><span class="line">  clusterAssment[i,<span class="number">1</span>]=distmes(centroids,data[i,:])**<span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）当簇的长度小于k</p>
+<p>a）对所有簇</p>
+<p>将簇一分为二，得到此时的误差，找到一分为二之后误差最小的簇</p>
+<p>b）误差最小的簇，将其保存</p>
+<p>注：当有赋值操作的时候，mat类型不能直接赋值，需要转换为list类型。例如，matop=matop.tolist()[0]</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#将每个质心放入一个大列表中进行操作</span></span><br><span class="line">centroList=[centroids0]</span><br><span class="line"><span class="keyword">while</span>(len(centroList)&lt;k):</span><br><span class="line">  lossSSE=inf</span><br><span class="line">  <span class="comment">#1.对所有簇，找误差最小的</span></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> range(len(centroList)):</span><br><span class="line">    <span class="comment">#当前簇的所有数据点 clusterAssment第0列</span></span><br><span class="line">    pstCurrent=data[nonzero(clusterAssment[:,<span class="number">0</span>].A==i)[<span class="number">0</span>],:]</span><br><span class="line">    <span class="comment">#二分簇</span></span><br><span class="line">    centroids,splitCluster=kmeans(pstCurrent,<span class="number">2</span>)</span><br><span class="line">    <span class="comment">#求误差</span></span><br><span class="line">    sseSplit=sum(splitCluster[:,<span class="number">1</span>])</span><br><span class="line">    sseNotSplit=sum(clusterAssment[nonzero(clusterAssment[:,<span class="number">0</span>].A!=i)[<span class="number">0</span>],<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">if</span>(sseSplit+sseNotSplit&lt;lossSSE):</span><br><span class="line">      bestCent=i</span><br><span class="line">      bestCluster=splitCluster.copy()</span><br><span class="line">      bestCentroid=centroids</span><br><span class="line">      lossSSE=sseSplit+sseNotSplit</span><br><span class="line">   <span class="comment">#2.更新簇的结果，一个取代成为第i个簇，另一个成为第m+1个簇，原来一共有m个簇</span></span><br><span class="line">  bestCluster[nonzero(bestCluster[:,<span class="number">0</span>].A==<span class="number">0</span>)[<span class="number">0</span>],<span class="number">0</span>]=bestCent</span><br><span class="line">  bestCluster[nonzero(bestCluster[:,<span class="number">0</span>].A==<span class="number">1</span>)[<span class="number">0</span>],<span class="number">0</span>]=len(centroList)</span><br><span class="line">  </span><br><span class="line">  <span class="comment">#3.将最佳分类的质心加入簇列表 二分类所以质心是两个</span></span><br><span class="line">  centroList[bestCent]=bestCentroid[<span class="number">0</span>,:].tolist()[<span class="number">0</span>]</span><br><span class="line">  centroList.append(bestCentroid[<span class="number">1</span>,:].tolist()[<span class="number">0</span>])</span><br><span class="line">  </span><br><span class="line">  <span class="comment">#4.将簇分类的结果加入列表中</span></span><br><span class="line">  clusterAssment[nonzero(clusterAssment[:,<span class="number">0</span>].A==bestCent)[<span class="number">0</span>],:]=bestCluster</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="应用实例"><a href="#应用实例" class="headerlink" title="应用实例"></a>应用实例</h2><p>给出地图上一些点的经度和纬度，将其分为合适的类，使得通过中心点能很快到达其余点。同时观察不同的簇数目k的分类效果。</p>
+<p>（1）数据来源</p>
+<p>从谷歌api上获取一些club的经度和纬度保存为place.txt，其中每一行代表一个club的位置，最后两行保存了对应地点的纬度和经度</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200319144017.png" alt="数据点"></p>
+<p>（2）运行kmeans.clubsCluster(“place.txt”,5)</p>
+<p>结果如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200319150954.png" alt="效果图"></p>
+<p>可以看出数据点被分成了5个簇，每个簇的中心用“+”号标记出来了，此时从簇的中心到其余点是最近的。</p>
+<p>（3）观察不同k下的运行结果</p>
+<p>当分的簇越多，簇的误差就越小，但是数量越多不符合实际，因此需要找一个折中点。</p>
+<p>（4）程序：</p>
+<p>a）相似度计算方法使用球面距离公式：</p>
+<p>设所求点A纬度角β1，经度角α1， 点B 纬度角β2， 经度角α2  R*arccos[cosβ1cosβ2cos（α1-α2）+sinβ1sinβ2] </p>
+<p>b）聚类：</p>
+<p>1.读入文件中最后两行数据，并转换为数值类型的mat类型矩阵</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">fr=open(filename)</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> fr.readlines():</span><br><span class="line">  <span class="comment">#以\t分割每行数据，并且去掉每行最后的回车符</span></span><br><span class="line">  lineList=line.rstrip(<span class="string">"\n"</span>).split(<span class="string">"\t"</span>)</span><br><span class="line">  dataList.append((float(lineList[<span class="number">4</span>],float(lineList[<span class="number">5</span>])))</span><br><span class="line">dataList=mat(dataList)</span><br></pre></td></tr></table></figure>
+
+<p>2.使用二分k均值分类，得出最佳分类簇centroids</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">centroids,clusterAssment=biKmeans(dataList,k,distMes=球面距离公式)</span><br></pre></td></tr></table></figure>
+
+<p>3.画图</p>
+<p>将得到的分类结果展示出来，使用matplotlib库中的pyplot进行画图</p>
+<p>画图准备</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">fig=plt.figure()</span><br><span class="line"><span class="comment">#设置显示图形的位置和比例</span></span><br><span class="line">ret=[<span class="number">0.1</span>,<span class="number">0.1</span>,<span class="number">0.8</span>,<span class="number">0.8</span>]</span><br><span class="line">.....</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>画背景</p>
+<p>读入背景图片，并显示</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">img=plt.imread(背景图片)</span><br><span class="line"><span class="comment">#按照横纵坐标数据比列设置坐标轴,并会去掉预设坐标数字</span></span><br><span class="line">axpos=dict[xticks[],yticks[]]</span><br><span class="line"><span class="comment">#为显示的图像设置底层区域</span></span><br><span class="line">axis0=fig.add_axis(ret,label=<span class="string">""</span>,**axpos)</span><br><span class="line">axis0.imshow(img)</span><br></pre></td></tr></table></figure>
+
+<p>加上**axpos效果，此时按照数据点数值大小设置坐标轴</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200319150954.png" alt="加上**axpos"></p>
+<p>去掉**axpos效果，发现坐标轴数字出现重叠</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200319151338.png" alt="去掉**axpos"></p>
+<p>画数据点</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#设置图案标记</span></span><br><span class="line">markerList=[<span class="string">'s'</span>,....]</span><br><span class="line"><span class="comment">#为显示的图像增加子区域,frameon设置是否覆盖下面的区域</span></span><br><span class="line">axis1=fig.add_axis(ret,label=<span class="string">""</span>,frameon=false)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(k):</span><br><span class="line">  <span class="comment">#获取第i个簇的数据点</span></span><br><span class="line">  pstCurrent=dataList[nonzero(clusterAssment[:,<span class="number">0</span>].A==i)[<span class="number">0</span>],:]</span><br><span class="line">  pstMarker=markerList[i/len]</span><br><span class="line">  <span class="comment">#二维转换为一维显示</span></span><br><span class="line"> axis1.scatter(pstCurrent[:,<span class="number">0</span>].flattern().A[<span class="number">0</span>],pstCurrent[:,<span class="number">1</span>].flattern().A[<span class="number">0</span>],marker=pstMarker,s=<span class="number">90</span>)</span><br></pre></td></tr></table></figure>
+
+<p>注：</p>
+<p>1.subplot，add_axis的区别</p>
+<p>subplot是设置一整个区域中的子图，不存在重叠：subplot(221)表示将显示图像的区域分为2*2个，当前图案显示在第一个位置。</p>
+<p>add_axis是设置同一个图像中的区域，存在重叠。</p>
+<p>2.scatter，plot的区别</p>
+<p>scatter是绘制数据点，属于离散型图案</p>
+<p>plot是将数据点连接起来，属于连续型图案</p>
+<p>画每个簇的中心</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(k):  </span><br><span class="line">  axis1.scatter(centroids[i,<span class="number">0</span>],centroids[i,<span class="number">1</span>],marker=<span class="string">"+"</span>,s=<span class="number">300</span>)<span class="comment">#每个质心颜色会不一样</span></span><br><span class="line">  或者 axis1.scatter(centroids[:,<span class="number">0</span>].flattern().A[<span class="number">0</span>],centroids[:,<span class="number">1</span>].flattern().A[<span class="number">0</span>],marker=<span class="string">"+"</span>,s=<span class="number">300</span>)<span class="comment">#每个质心颜色一样</span></span><br></pre></td></tr></table></figure>
+
+
     </div>
 
     
@@ -345,6 +445,11 @@
 
 
       <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+              <a href="/tags/k%E5%9D%87%E5%80%BC%E8%81%9A%E7%B1%BB/" rel="tag"><i class="fa fa-tag"></i> k均值聚类</a>
+          </div>
 
         
 
@@ -358,6 +463,9 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
+                <a href="/blogs/topK/" rel="prev" title="Leecode算法学习笔记（五）面试高频题——topk问题">
+                  Leecode算法学习笔记（五）面试高频题——topk问题 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
       </footer>
@@ -397,6 +505,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#含义"><span class="nav-number">1.</span> <span class="nav-text">含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法流程"><span class="nav-number">2.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法改进"><span class="nav-number">3.</span> <span class="nav-text">算法改进</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用实例"><span class="nav-number">4.</span> <span class="nav-text">应用实例</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -411,7 +520,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -424,7 +533,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -491,13 +600,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">40k</span>
+    <span title="站点总字数">46k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">36 分钟</span>
+    <span title="站点阅读时长">42 分钟</span>
 </div>
   <div class="addthis_inline_share_toolbox">
     <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
