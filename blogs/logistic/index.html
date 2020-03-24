@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="算法原理原理分析（1）数据拟合给出一些数据，用一条直线来拟合这些数据称作logictic回归用logistic回归来进行数据分类是通过给出的所有数据点拟合出分类边界的直线，确定这条直线的系数就称为回归系数，当用回归系数乘以当前特征则得出该条直线：z=w0 * x0+w1 * x1+…+wn * xn，其中w0wn是回归习俗，x0xn是各个特征，得出的z是当前特征下的预测值。">
+<meta name="keywords" content="机器学习,logistic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="监督学习笔记（三）——logistic回归">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;logistic&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="算法原理原理分析（1）数据拟合给出一些数据，用一条直线来拟合这些数据称作logictic回归用logistic回归来进行数据分类是通过给出的所有数据点拟合出分类边界的直线，确定这条直线的系数就称为回归系数，当用回归系数乘以当前特征则得出该条直线：z=w0 * x0+w1 * x1+…+wn * xn，其中w0wn是回归习俗，x0xn是各个特征，得出的z是当前特征下的预测值。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200324153824.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200324154722.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200324155903.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200324163550.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200324164025.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200324170500.png">
+<meta property="og:updated_time" content="2020-03-24T09:45:28.247Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200324153824.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/logistic/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>监督学习笔记（三）——logistic回归 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/logistic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          监督学习笔记（三）——logistic回归
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-24 17:43:06 / 修改时间：17:45:28" itemprop="dateCreated datePublished" datetime="2020-03-24T17:43:06+08:00">2020-03-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/logistic/" class="post-meta-item leancloud_visitors" data-flag-title="监督学习笔记（三）——logistic回归" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/logistic/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/logistic/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h2><h3 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h3><p>（1）数据拟合</p><p>给出一些数据，用一条直线来拟合这些数据称作logictic回归</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324153824.png" alt="直线拟合"></p><p>用logistic回归来进行数据分类是通过给出的所有数据点拟合出分类边界的直线，确定这条直线的系数就称为回归系数，当用回归系数乘以当前特征则得出该条直线：</p><p>z=w0 * x0+w1 * x1+…+wn * xn，其中w0<del>wn是回归习俗，x0</del>xn是各个特征，得出的z是当前特征下的预测值。</p><a id="more"></a>
+
+
+
+
+<p>为了表示直线上下的浮动，需要将x0设置为1，这时的w0就相当于直线方程中的偏置b.</p>
+<p>（2）分类函数</p>
+<p>当logistic回归用作二值分类器的时候，可以用sigmoid函数进行类别判定，sigmoid（x)=1/1+e-x，图像如下</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324154722.png" alt="sigmoid"></p>
+<p>当z&gt;0.5时，函数值趋近与1，当z&lt;0.5时，函数趋近于0。可以利用这个特性，对将每个特征乘以回归系数得到的输出类别进行判定。</p>
+<p>因此logistic回归就是要求最佳的回归系数，这是求解最优问题，可以使用梯度上升的方法。</p>
+<p>（3）寻求最优</p>
+<p>梯度上升算法是通过每次都向梯度变化最佳的的地方走，最终找到最优值，迭代公式为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324155903.png" alt="迭代公式"></p>
+<p>其中w是回归系数，alpha是每次沿着梯度方向变化的步长，f(w)是梯度变化函数，即损失函数。这里明确一点，求最佳的回归系数的过程中沿着梯度变化最佳的方向变化，这里的最佳可以理解为是误差最小，也就是w0 * x0+w1 * x1+…+wn * xn得出的预测值f和实际值之间的误差最小，那么就是最佳的方向，即对所有特征来说 f(w)=∑（y-f)xi，这是对公式的直观理解，<a href="https://blog.csdn.net/CharlieLincy/article/details/70767791" target="_blank" rel="external nofollow noopener noreferrer">这里也有对人做了对整个过程的详细推导</a>。到这里为止，logistic回归的核心思想很明确了，就是在一个循环中，对所有的向量乘以当前的回归系数，根据得出的误差调整回归系数，不断循环，直至回归系数稳定。</p>
+<h3 id="和SVM的区别"><a href="#和SVM的区别" class="headerlink" title="和SVM的区别"></a>和SVM的区别</h3><p>相同点：二者都是分类器</p>
+<p>不同点：</p>
+<p>logistic回归用到了所有数据点，svm只用了靠近分类平面的点即支持向量。</p>
+<p>logistic回归利用极大似然估计的思想求解参数，svm通过最大化几何间隔求得最优平面</p>
+<h2 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h2><h3 id="梯度上升"><a href="#梯度上升" class="headerlink" title="梯度上升"></a>梯度上升</h3><p>批处理的方式，将所有数据点一次输入处理</p>
+<p>（1）初始化回归系数，以及每次向梯度方向变化的步长</p>
+<p>根据每个特征的个数，将回归系数初始化为1，假设有3个特征，则回归系数被初始化为3*1的列向量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">m,n=shape(dataMat)</span><br><span class="line">weights=ones((n,<span class="number">1</span>))</span><br><span class="line">alpha=<span class="number">0.01</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）不断迭代，直至回归系数稳定</p>
+<p>一般来说，回归系数稳定很难判定，因此通过控制迭代次数来修正回归系数</p>
+<p>这里的dataMat格式为<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324163550.png" alt="dataMat">，每个数据点都有三个特征</p>
+<p>weight的格式为<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324164025.png" alt="weights">，两者相乘，拿第一行来说得到x01w0+x11w1+x21*w0，每行都得出这个值，将每行的结果通过sigmoid函数预测即可得到预测得值，用实际值减去该值，则为误差值。因为这个结果时100 *1 的矩阵，所以实际标签矩阵也应该是100 * 1的矩阵，因此，输入的labelMat需要进行转置。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#对输入的数据进行处理</span></span><br><span class="line">labelMat=labelMat.transpose()</span><br><span class="line">numIter=<span class="number">500</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(numIter):</span><br><span class="line">  h=sigmoid(dataMat*weight)</span><br><span class="line">  error=y-h</span><br><span class="line">  weights=weights+alpha*dataMat.transpose()*error <span class="comment">#这里error是100 *1 的矩阵，矩阵乘法要求行列相同，因此x应该转换为3*100的矩阵进行计算</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="随机梯度上升"><a href="#随机梯度上升" class="headerlink" title="随机梯度上升"></a>随机梯度上升</h3><p>上面的批处理方式的梯度上升方法每次都要遍历整个数据集，当数据量大的时候就比较费时，因此引入一种在线学习方式的梯度上升，每次随机选择一个样本对回归系数进行修正</p>
+<p>（1）初始化回归系数</p>
+<p>因为每次是对一个数据点处理，因此，只需要初始化一个长度为n的数组，n是数据集中数据特征的个数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">m,n=shape(dataMat)</span><br><span class="line">weights=ones(n)</span><br></pre></td></tr></table></figure>
+
+<p>（2）每次的步长都更新</p>
+<p>当刚开始的时候离最优值很远，可以步长大点，快速向最优值逼近，当到后面的时候，需要减小步长，慢慢逼近，不然可能会错过最优值。</p>
+<p>j控制迭代次数，i控制每个样本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alpha=<span class="number">4</span>/(<span class="number">1</span>+i+j)+<span class="number">0.01</span></span><br></pre></td></tr></table></figure>
+
+<p>（3）随机选择样本修正回归系数</p>
+<p>设置一个dataIndex里面存储0<del>m-1的数字，每次通过random.uniform生成一个在0</del>len(dataIndex)之间的随机数，代表此次选择这行的样本进行回归系数的修正，每次将该次选择的随机数在dataIndex中删除，防止下次重复选择</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#为了实现对应位置相乘dataMat需要转换为数组</span></span><br><span class="line">dataArr=array(dataMat)</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(numIter):</span><br><span class="line">  dataIndex=list(range(m))</span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">    alpha=<span class="number">4</span>/(<span class="number">1</span>+i+j)+<span class="number">0.01</span></span><br><span class="line">    </span><br><span class="line">    randomIndex=int(random.uniform(<span class="number">0</span>,len(dataIndex)))</span><br><span class="line">    chooseIndex=dataIndex[randomIndex]</span><br><span class="line">    h=sigmoid(dataArr[chooseIndex]*weights) <span class="comment">#datamat[i]是1*3数组，weights是1*3数组，对应位置相乘</span></span><br><span class="line">    error=labelMat[chooseIndex]-h</span><br><span class="line">    weights=weights+alpha*error*dataMat[]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">del</span>(dataIndex[randomIndex])</span><br></pre></td></tr></table></figure>
+
+<p>该方法不需要对矩阵进行转置，运算简洁，同时每次迭代就修改回归系数m次，而批处理的方法每次只能修改一次，这种方法只需要迭代很少的次数，回归系数就趋于稳定了。</p>
+<h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><p>因为数据集本身只有两列，即两个数据特征，因此x0设置为1，w0作为偏置，最终得出的拟和直线为y=w0+w1x1+w2x2，因为使用的是sigmoid函数，分割的直线的y值应该是0，因为sigmoid(0)=0.5，直线转换为w0+w1x1+w2x2=0 =&gt; x2=-w0-w1x1/w2，用plt.plot(x,x2)，这里的x可以在x的取值范围内，取一定步长进行显示（利用arange），可以将图像画出来，如下图</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324170500.png" alt="效果图"></p>
+<h2 id="应用实例"><a href="#应用实例" class="headerlink" title="应用实例"></a>应用实例</h2><p>问题：用logistic回归预测得疝气病的病马死亡率</p>
+<h3 id="数据集描述"><a href="#数据集描述" class="headerlink" title="数据集描述"></a>数据集描述</h3><p>数据集是从UCI上下载的，里面包含22列属性，其中前21列是马的一些生理特征，最后一列是是否存活，属于类别标签。该案例是从前21列的特征中的出回归系数，得到拟合的回归直线，对马是否存活进行分类。</p>
+<p>该数据集中部分数据（约30%）丢失，对特征丢失的情况进行处理：由于logistic回归中z=w0x0+w1x1+…，其中当特征等于0的时候不影响等式的结果，同时因为使用的判定类别的函数为sigmoid函数，当取值为0，即simoid(0)=0.5，不影响分类，所有丢失的特质均设置为0；对类别标签丢失的情况进行处理：当类别标签丢失的时候无法判断马的存活情况，因此将该条数据丢弃。</p>
+<h3 id="应用描述"><a href="#应用描述" class="headerlink" title="应用描述"></a>应用描述</h3><p>（1）类别判定</p>
+<p>对输入的向量乘以回归系数求和，如果大于0.5，则分类为1，反之分类为0</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">prob=sigmoid(sum(inX*weights))</span><br><span class="line"><span class="keyword">if</span> prob&gt;<span class="number">0.5</span>:</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）建立logistic回归模型并进行测试</p>
+<p>训练集建立模型：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">trainingFile=open(<span class="string">"horseColicTraining.txt"</span>)</span><br><span class="line">trainingMat=[]</span><br><span class="line">trainingLabels=[]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> curLine <span class="keyword">in</span> trainingFile.readlines():</span><br><span class="line">	pstLine=curLine.strip().split(<span class="string">"\t"</span>)</span><br><span class="line">	dataList=[]</span><br><span class="line">	<span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">21</span>):</span><br><span class="line">		dataList.append(float(pstLine[j]))</span><br><span class="line">	trainingMat.append(dataList)</span><br><span class="line">	trainingLabels.append(float(pstLine[<span class="number">21</span>]))</span><br><span class="line"></span><br><span class="line">weights=stoGradAscent1(trainingMat,trainingLabels,<span class="number">500</span>)</span><br></pre></td></tr></table></figure>
+
+<p>测试次测试错误率：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">testFile=open(<span class="string">"horseColicTest.txt"</span>)</span><br><span class="line"></span><br><span class="line">testMat=[]</span><br><span class="line">testLabels=[]</span><br><span class="line"><span class="keyword">for</span> curLine <span class="keyword">in</span> testFile.readlines():</span><br><span class="line">	pstLine=curLine.strip().split(<span class="string">"\t"</span>)</span><br><span class="line">	dataList=[]</span><br><span class="line">	<span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">21</span>):</span><br><span class="line">		dataList.append(float(pstLine[j]))</span><br><span class="line">	testMat.append(dataList)</span><br><span class="line">	testLabels.append(float(pstLine[<span class="number">21</span>]))</span><br><span class="line"></span><br><span class="line">error=<span class="number">0</span></span><br><span class="line">n=shape(testMat)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">	predictData=classfyVec(testMat[i],weights)</span><br><span class="line">	<span class="keyword">if</span>(predictData!=testLabels[i]):</span><br><span class="line">		error+=<span class="number">1</span></span><br><span class="line">errorRate=float(error)/n</span><br><span class="line">print(<span class="string">"error rate is:"</span>+str(errorRate))</span><br></pre></td></tr></table></figure>
+
+<p>（3）取平均数</p>
+<p>一次数据可能存在偶然性，因此运行10次取平均值，作为该模型的分类正确率</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">numTest=<span class="number">10</span></span><br><span class="line">errorCount=<span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(numTest):</span><br><span class="line">	errorCount+=colicTest()</span><br><span class="line"></span><br><span class="line">allError=float(errorCount/<span class="number">10</span>)</span><br><span class="line">print(<span class="string">"the average of ten times error is:"</span>)</span><br><span class="line">print(allError)</span><br></pre></td></tr></table></figure>
+
+<p>最终运行10次的结果为：</p>
+<blockquote>
+<p>error rate is:0.6268656716417911<br>error rate is:0.3582089552238806<br>error rate is:0.26865671641791045<br>error rate is:0.2537313432835821<br>error rate is:0.44776119402985076<br>error rate is:0.29850746268656714<br>error rate is:0.47761194029850745<br>error rate is:0.26865671641791045<br>error rate is:0.26865671641791045<br>error rate is:0.5522388059701493<br>the average of ten times error is:<br>25.6</p>
+</blockquote>
+<p>平均错误率25%左右，因为数据集有30%的数据丢失，因此错误率相对较高。</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+              <a href="/tags/logistic/" rel="tag"><i class="fa fa-tag"></i> logistic</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/topK/" rel="next" title="Leecode算法学习笔记（五）面试高频题——topk问题">
+                  <i class="fa fa-chevron-left"></i> Leecode算法学习笔记（五）面试高频题——topk问题
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法原理"><span class="nav-number">1.</span> <span class="nav-text">算法原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理分析"><span class="nav-number">1.1.</span> <span class="nav-text">原理分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#和SVM的区别"><span class="nav-number">1.2.</span> <span class="nav-text">和SVM的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法流程"><span class="nav-number">2.</span> <span class="nav-text">算法流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度上升"><span class="nav-number">2.1.</span> <span class="nav-text">梯度上升</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#随机梯度上升"><span class="nav-number">2.2.</span> <span class="nav-text">随机梯度上升</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结果"><span class="nav-number">2.3.</span> <span class="nav-text">结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用实例"><span class="nav-number">3.</span> <span class="nav-text">应用实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据集描述"><span class="nav-number">3.1.</span> <span class="nav-text">数据集描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应用描述"><span class="nav-number">3.2.</span> <span class="nav-text">应用描述</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">51k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">46 分钟</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
