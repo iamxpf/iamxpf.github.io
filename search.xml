@@ -3,12 +3,12 @@
   <entry>
     <title>监督学习笔记（三）——logistic回归</title>
     <url>/blogs/logistic/</url>
-    <content><![CDATA[<h2 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h2><h3 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h3><p>（1）数据拟合</p><p>给出一些数据，用一条直线来拟合这些数据称作logictic回归</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324153824.png" alt="直线拟合"></p><p>用logistic回归来进行数据分类是通过给出的所有数据点拟合出分类边界的直线，确定这条直线的系数就称为回归系数，当用回归系数乘以当前特征则得出该条直线：</p><p>z=w0 * x0+w1 * x1+…+wn * xn，其中w0<del>wn是回归习俗，x0</del>xn是各个特征，得出的z是当前特征下的预测值。</p><a id="more"></a>
+    <content><![CDATA[<h2 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h2><h3 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h3><p>（1）数据拟合</p><p>给出一些数据，用一条直线来拟合这些数据称为logictic回归</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324153824.png" alt="直线拟合"></p><p>用logistic回归来进行数据分类是通过给出的所有数据点拟合出分类边界的直线，确定这条直线的系数就称为回归系数，当用回归系数乘以当前特征则得出该条直线：</p><p>z=w0 * x0+w1 * x1+…+wn * xn，其中w0 - wn是回归系数，x0 - xn是各个特征，得出的z是当前特征下的预测值。</p><a id="more"></a>
 
 
 
 
-<p>为了表示直线上下的浮动，需要将x0设置为1，这时的w0就相当于直线方程中的偏置b.</p>
+<p>为了表示直线上下的浮动，需要将x0设置为1，这时的w0就相当于直线方程中的偏置b。</p>
 <p>（2）分类函数</p>
 <p>当logistic回归用作二值分类器的时候，可以用sigmoid函数进行类别判定，sigmoid（x)=1/1+e-x，图像如下</p>
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324154722.png" alt="sigmoid"></p>
@@ -29,8 +29,8 @@
 
 <p>（2）不断迭代，直至回归系数稳定</p>
 <p>一般来说，回归系数稳定很难判定，因此通过控制迭代次数来修正回归系数</p>
-<p>这里的dataMat格式为<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324163550.png" alt="dataMat">，每个数据点都有三个特征</p>
-<p>weight的格式为<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324164025.png" alt="weights">，两者相乘，拿第一行来说得到x01w0+x11w1+x21*w0，每行都得出这个值，将每行的结果通过sigmoid函数预测即可得到预测得值，用实际值减去该值，则为误差值。因为这个结果时100 *1 的矩阵，所以实际标签矩阵也应该是100 * 1的矩阵，因此，输入的labelMat需要进行转置。</p>
+<p>这里的dataMat格式为<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324163550.png" alt="dataMat">每个数据点都有三个特征</p>
+<p>weight的格式为<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200324164025.png" alt="weights">dataMat和weight两者相乘，拿第一行来说得到x01w0+x11w1+x21*w0，每行都得出这个值，将每行的结果通过sigmoid函数预测即可得到预测得值，用实际值减去该值，则为误差值。因为这个结果时100 *1 的矩阵，所以实际标签矩阵也应该是100 * 1的矩阵，因此，输入的labelMat需要进行转置。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#对输入的数据进行处理</span></span><br><span class="line">labelMat=labelMat.transpose()</span><br><span class="line">numIter=<span class="number">500</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(numIter):</span><br><span class="line">  h=sigmoid(dataMat*weight)</span><br><span class="line">  error=y-h</span><br><span class="line">  weights=weights+alpha*dataMat.transpose()*error <span class="comment">#这里error是100 *1 的矩阵，矩阵乘法要求行列相同，因此x应该转换为3*100的矩阵进行计算</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="随机梯度上升"><a href="#随机梯度上升" class="headerlink" title="随机梯度上升"></a>随机梯度上升</h3><p>上面的批处理方式的梯度上升方法每次都要遍历整个数据集，当数据量大的时候就比较费时，因此引入一种在线学习方式的梯度上升，每次随机选择一个样本对回归系数进行修正</p>
