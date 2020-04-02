@@ -1,3 +1,4 @@
+https://www.xiapf.com/blogs/regression/
 https://www.xiapf.com/blogs/logistic/
 https://www.xiapf.com/blogs/topK/
 https://www.xiapf.com/blogs/kMeans/

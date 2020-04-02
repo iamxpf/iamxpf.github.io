@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="算法作用应用场景之前的监督学习方法如：贝叶斯分类、logistic回归、svm支持向量机都是将数据点分成对应类，这里是利用回归对连续型数值预测，即给出一个数据能预测其输出。这里主要讨论线性回归，通过找到线性回归中的系数构造回归方程来预测数值。算法核心：求回归系数。“回归”的含义回归是用来预测目标值的输出，例如给定一个x，它满足方程y=a*x+b，那么我们就能通过公式得出x的输出。用回归来预测也类似">
+<meta name="keywords" content="机器学习,回归">
+<meta property="og:type" content="article">
+<meta property="og:title" content="监督学习笔记（四）——利用回归预测数值型数值">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;regression&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="算法作用应用场景之前的监督学习方法如：贝叶斯分类、logistic回归、svm支持向量机都是将数据点分成对应类，这里是利用回归对连续型数值预测，即给出一个数据能预测其输出。这里主要讨论线性回归，通过找到线性回归中的系数构造回归方程来预测数值。算法核心：求回归系数。“回归”的含义回归是用来预测目标值的输出，例如给定一个x，它满足方程y=a*x+b，那么我们就能通过公式得出x的输出。用回归来预测也类似">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200401155534.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200401161414.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200401161238.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200401170052.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200401170423.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200402165626.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200402173125.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200402180915.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200402182822.png">
+<meta property="og:updated_time" content="2020-04-02T10:45:48.222Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200401155534.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/regression/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>监督学习笔记（四）——利用回归预测数值型数值 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">17</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/regression/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          监督学习笔记（四）——利用回归预测数值型数值
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-04-02 18:44:05 / 修改时间：18:45:48" itemprop="dateCreated datePublished" datetime="2020-04-02T18:44:05+08:00">2020-04-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/regression/" class="post-meta-item leancloud_visitors" data-flag-title="监督学习笔记（四）——利用回归预测数值型数值" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/regression/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/regression/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="算法作用"><a href="#算法作用" class="headerlink" title="算法作用"></a>算法作用</h2><h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>之前的监督学习方法如：贝叶斯分类、logistic回归、svm支持向量机都是将数据点分成对应类，这里是利用回归对连续型数值预测，即给出一个数据能预测其输出。</p><p>这里主要讨论线性回归，通过找到线性回归中的系数构造回归方程来预测数值。算法核心：求回归系数。</p><h3 id="“回归”的含义"><a href="#“回归”的含义" class="headerlink" title="“回归”的含义"></a>“回归”的含义</h3><p>回归是用来预测目标值的输出，例如给定一个x，它满足方程y=a*x+b，那么我们就能通过公式得出x的输出。用回归来预测也类似于这个过程，上面提到的方程是回归中的回顾方程，主要是需要确定回归系数a、b，这里记为w，将所有特征乘以回归系数即可以得到预测值。</p><a id="more"></a>
+
+
+<h2 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h2><p>回归的目的是为确定回归系数w，即找到误差最小的w，误差是指实际值y减去预测值yhat，为了使得误差中的正值和负值抵消掉，一般采用平方误差来找到最优w，平方误差定义为：∑（y-w * x)^2，对该式子求导化简可得w=(x^T * x)^-1 * x^T * y，因此可以通过输入的x和y的值求得w，这样就能建立出回归方程即学习模型。</p>
+<p>w的等式中需要对x^T * x求逆矩阵，因此在计算之前需要判断该矩阵是否可逆，可以通过行列式的值判断。</p>
+<h3 id="标准线性回归"><a href="#标准线性回归" class="headerlink" title="标准线性回归"></a>标准线性回归</h3><p>（1）应用场景及原理</p>
+<p>应用场景：几乎所有数据都可以用线性回归来拟合数据</p>
+<p>原理：使用w=(x^T * x)^-1 * x^T * y求解回归系数</p>
+<p>（2）代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">standRegres</span><span class="params">(x,y)</span>:</span></span><br><span class="line">  xMat=mat(x)</span><br><span class="line">  yMat=mat(y).transpose()</span><br><span class="line">  m,n=shape(xMat)</span><br><span class="line">  xTx=xMat.T*xMat</span><br><span class="line">  </span><br><span class="line">  <span class="comment">#判断是否可逆</span></span><br><span class="line">  <span class="keyword">if</span>(linalg.det(xTx)==<span class="number">0</span>):</span><br><span class="line">    print(<span class="string">"行列式不可逆"</span>)</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    inv=linalg.inv(xTx)</span><br><span class="line">    ws=inv*xMat.T*yMat</span><br><span class="line">    <span class="keyword">return</span> ws</span><br></pre></td></tr></table></figure>
+
+<p>导入如图所示的数据</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200401155534.png" alt="数据"></p>
+<p>数据集中前两列为输入的特征，最后一列是预测值，其中第0列是手动设置为1，为了得出回归方程中的常数项，使用xMat*ws即可得到预测值，在图像中对第一列数据画出拟合的直线：plot(xMat[:,1],yhat)</p>
+<p>结果如图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200401161414.png" alt="线性回归"></p>
+<p>判断模型的好坏可以通过相关系数，使用corrcoef(yMat,yHat)，可得</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200401161238.png" alt="相关系数"></p>
+<p>可以看出模型大致贴合数据。</p>
+<h3 id="局部加权线性回归"><a href="#局部加权线性回归" class="headerlink" title="局部加权线性回归"></a>局部加权线性回归</h3><p>（1）应用场景及原理</p>
+<p>应用场景：由标准线性回归效果可以看出模型存在欠拟合，数据点和直线只能大致匹配，因此需要使用局部加权线性回归，对每个数据点引入权重，通过核函数对周围的点赋权重w(i,i)=exp(|x(i)-x)|/-2k^2，这里的k是由用户各处需要给周围的点赋予多大的权重。</p>
+<p>原理：回归系数w=(x^T * w * x)^-1 * w *x^T * y</p>
+<p>（2）代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#局部加权线性回归</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">lwlr</span><span class="params">(testPoint,x,y,k)</span>:</span></span><br><span class="line">  xMat=mat(x)</span><br><span class="line">  yMat=mat(y).transpose()</span><br><span class="line">  m,n=shape(xMat)</span><br><span class="line">  <span class="comment">#创建权重对角矩阵</span></span><br><span class="line">  w=mat(eye(m))</span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> m:</span><br><span class="line">    diff=testPoint-xMat[i,:]</span><br><span class="line">    <span class="comment">#通过高斯核赋予权重，越靠近点(i，i),权重越大</span></span><br><span class="line">    w[i,i]=exp(diff*diff.T)/(<span class="number">-2</span>*k**<span class="number">2</span>)</span><br><span class="line">  xTx=xMat.T*w*xMat</span><br><span class="line">  </span><br><span class="line">  <span class="comment">#判断是否可逆</span></span><br><span class="line">  <span class="keyword">if</span>(linalg.det(xTx)==<span class="number">0</span>):</span><br><span class="line">    print(<span class="string">"行列式不可逆"</span>)</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    inv=linalg.inv(xTx)</span><br><span class="line">    ws=inv*w*xMat.T*yMat</span><br><span class="line">    <span class="keyword">return</span> testPoint*ws <span class="comment">#返回对该点的预测值，遍历数据集xmat，则可以得到所有数的预测输出</span></span><br></pre></td></tr></table></figure>
+
+<p>画图时需要将数据重新排序</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sid=argsort(xmat[:,<span class="number">1</span>],axis=<span class="number">0</span>)<span class="comment">#第一列数据按序排列获得位置</span></span><br><span class="line">xcopy=xmat[sid][:,<span class="number">0</span>,:]<span class="comment">#取第一列和第二列</span></span><br><span class="line">plot(xcopy[:,<span class="number">1</span>],yhat[sid])</span><br></pre></td></tr></table></figure>
+
+<p>运行效果如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200401170052.png" alt="局部回归"></p>
+<p>对uci上鲍鱼年龄进行测试，当使用不同的参数运行可得，当参数越大，在测试集上误差越大，但是当参数越大，在训练集上误差越小，因此需要根据测试集误差选择合适模型。</p>
+<p>这里参数选择0.1、1、10：<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200401170423.png" alt="不同参数"></p>
+<h3 id="缩减系数"><a href="#缩减系数" class="headerlink" title="缩减系数"></a>缩减系数</h3><p>以下两种算法属于缩减系数，即通过将一些不重要的特征缩减至0，来降低模型复杂度，减小误差。因为当模型越复杂，误差就会越大。缩减系数也需要根据具体数据集选择误差小的模型。</p>
+<h3 id="岭回归"><a href="#岭回归" class="headerlink" title="岭回归"></a>岭回归</h3><p>（1）应用场景及原理</p>
+<p>应用场景：当数据特征多余数据点个数时，求解w的公式中xtx会是奇异矩阵；或者当出现数据点特征过多，需要缩减特征的时候也可以使用岭回归。岭回归因为引入了对角矩阵I，其中对角矩阵为n*n矩阵，其中n=数据集中特征的数量，对角线上均是1，形似岭，所以称为岭回归。当引入单位矩阵I之后，可以保证矩阵可逆。</p>
+<p>原理：在单位矩阵前需要乘以一个系数λ，这里的系数需要用户给出。</p>
+<p>回归系数w=(x^T * x+λI)^-1  *x^T * y</p>
+<p>（2）代码</p>
+<p>整体过程类似于标准线性回归，虽然加入了对角矩阵也需要判断x^T * x+λI是否可逆，因为给出的系数可能为0，因为根据输入的λ不同，ws的结果会不同，因此，测试时可以输入30组λ，根据λ取值选择误差最小的回归系数ws。</p>
+<p>（3）注意点——数据标准化与还原</p>
+<p>因为岭回归可以用来缩减数据特征，当标准化之后所有数据特征同等重要，每个数据特征在最终回归方程中的大小会不同，小的数据说明该对应特征相比于其他更不重要，如果需要丢弃特征，可以从小的数据开始。</p>
+<p>所以，岭回归中需要将所有数据进行标准化，最终求得ws之后，需要进行数据还原才能得出最终的回归矩阵。</p>
+<p>用标准化数据进行模型建立：x=(x-xmean)/xvar，y=y-ymean</p>
+<p>当得出ws时，回归方程应为y=((x-xmean) / xvar) * ws+ymean，其中(x-xmean) /xvar * ws是使用标准化后的x得出预测y值（标准化后的值），加上ymean就是实际值。</p>
+<p>（4）代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">standRidge</span><span class="params">(xMat,yMat,lam)</span>:</span></span><br><span class="line">  <span class="comment">#xMat=mat(x)</span></span><br><span class="line">  <span class="comment">#yMat=mat(y).transpose()</span></span><br><span class="line">  m,n=shape(xMat)</span><br><span class="line">  xTx=xMat.T*xMat+lam*eye(n)</span><br><span class="line">  </span><br><span class="line">  <span class="comment">#判断是否可逆</span></span><br><span class="line">  <span class="keyword">if</span>(linalg.det(xTx)==<span class="number">0</span>):</span><br><span class="line">    print(<span class="string">"行列式不可逆"</span>)</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    inv=linalg.inv(xTx)</span><br><span class="line">    ws=inv*xMat.T*yMat</span><br><span class="line">    <span class="keyword">return</span> ws</span><br><span class="line">  </span><br><span class="line"><span class="comment">#得到30个系数中ws的变化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ridgeTest</span><span class="params">(x,y)</span>:</span></span><br><span class="line">  numIter=<span class="number">30</span></span><br><span class="line">  xMat=mat(x)</span><br><span class="line">  yMat=mat(y).transpose()</span><br><span class="line">  m,n=shape(xMat)</span><br><span class="line">  xMean=mean(xMat,axis=<span class="number">0</span>)</span><br><span class="line">  xVar=var(xMat,axis=<span class="number">0</span>)</span><br><span class="line">  yMean=mean(yMat,axis=<span class="number">0</span>)</span><br><span class="line">  xTest=(xMat-xMean)/xVar</span><br><span class="line">  yTest=yMat-yMean</span><br><span class="line">  <span class="comment">#将30次系数保存下来</span></span><br><span class="line">  returnMat=zeros((numIter,n))</span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> range(numIter):</span><br><span class="line">    ws=standRidge(xTest,yTest,exp(i<span class="number">-10</span>))</span><br><span class="line">    returnMat[i,:]=ws</span><br><span class="line">   <span class="keyword">return</span> returnMat</span><br></pre></td></tr></table></figure>
+
+<p>最终得出logλ和回归系数之间的关系</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200402165626.png" alt="logλ和回归系数关系图"></p>
+<p>实际应用中可以通过对wsMat矩阵求预测值，根据预测值-真实值的平方，再求和得出平法误差，找到使得平法误差最小的回归系数矩阵对应的λ则为最佳系数。</p>
+<h3 id="前向逐步回归"><a href="#前向逐步回归" class="headerlink" title="前向逐步回归"></a>前向逐步回归</h3><p>（1）应用场景及原理</p>
+<p>应用场景：该算法属于贪心算法，每次都选择正方向和负方向变化很小的步长，来计算回归系数，每次选择误差最小的回归系数，前向逐步回归也用于缩减特征，当不重要的特征在迭代次数很小的时候不会对数据产生影响即对于特征向量在回归方程中系数等于0，因为需要缩减特征，观察特征的重要性，数据也需要进行标准化。</p>
+<p>（2）代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">standWise</span><span class="params">(x,y,eps=<span class="number">0.001</span>,numIter=<span class="number">300</span>)</span>:</span></span><br><span class="line">  xMat=mat(x)</span><br><span class="line">  yMat=mat(y).transpose()</span><br><span class="line">  m,n=shape(xMat)</span><br><span class="line">  xMean=mean(xMat,axis=<span class="number">0</span>)</span><br><span class="line">  xVar=var(xMat,axis=<span class="number">0</span>)</span><br><span class="line">  yMean=mean(yMat,axis=<span class="number">0</span>)</span><br><span class="line">  xMat=(xMat-xMean)/xVar</span><br><span class="line">  yMat=yMat-yMean</span><br><span class="line">  <span class="comment">#回归系数初始化</span></span><br><span class="line">  ws=zeros((n,<span class="number">1</span>))</span><br><span class="line">  wsMax=ws.copy()</span><br><span class="line">  returnMat=zeros((numIter))</span><br><span class="line">  <span class="comment">#在迭代次数中进行移动ws方向</span></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> range(numIter):</span><br><span class="line">    lossErr=inf</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(m):</span><br><span class="line">      <span class="keyword">for</span> sign <span class="keyword">in</span> [<span class="number">-1</span>,<span class="number">1</span>]:</span><br><span class="line">        wsTest=ws.copy()</span><br><span class="line">        wsTest[j]+=eps*sign</span><br><span class="line">        yHat=xMat*ws</span><br><span class="line">        err=rssRrr(yMat.A,yHat.A)</span><br><span class="line">        <span class="keyword">if</span>(err&lt;lossErr):</span><br><span class="line">          lossErr=err</span><br><span class="line">          wsMax=ws</span><br><span class="line">      ws=wsMax</span><br><span class="line">      returnMat[i,:]=ws.T</span><br><span class="line">    <span class="keyword">return</span> returnMat</span><br></pre></td></tr></table></figure>
+
+<p>得出在鲍鱼数据集上，步长0.001，迭代300次后回归系数和迭代次数的效果图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200402173125.png" alt="回归系数和迭代次数关系图"></p>
+<h3 id="衡量误差"><a href="#衡量误差" class="headerlink" title="衡量误差"></a>衡量误差</h3><p>判断一个模型的好坏，需要通过预测值和真实值之间的差值进行计算，为了抵消正负值，这里采用平方和形式，假设真实值为ymat，预测值为yhat，则误差error=sum(ymat-yhat)**2，这里需要注意是对应位置相加，所以真实值和预测值都需要转换为数组形式进行计算。</p>
+<p>ymat和yhat需要格式一致，假设ymat为矩阵，则二者需要转换为ymat.A，yhat.A；如果ymat是列表，则则二者需要转换为array(ymat)，yhat.T.A</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rssRrr</span><span class="params">(ymat,yhat)</span>:</span></span><br><span class="line">  <span class="keyword">return</span> sum((ymat-yhat)**<span class="number">2</span>)<span class="comment">#ymat和yhat都需要转换为数组形式进行计算</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="应用实例"><a href="#应用实例" class="headerlink" title="应用实例"></a>应用实例</h2><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>预测乐高玩具的价格：根据给出的乐高销售网页中不同年份的乐高套装的价格建立回归模型，从而预测玩具价格。</p>
+<h3 id="实现结果"><a href="#实现结果" class="headerlink" title="实现结果"></a>实现结果</h3><p>（1）网页数据获取</p>
+<p>导入bs4中的BeautifulSoup，该模块可以用来获取网页中的数据，主要是读取html文件，find_all可以得出各个属性模块中的值，因为乐高销售网页中的玩具都是放在table中，可以读取每个table，获取玩具的标题，是否全新，是否售出（表格第三列），售出的价格（表格第4列）等。将玩具的年份、套装数量、是否全新、价格存到列表中，作为模型数据集。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">获取数据</span><br><span class="line"><span class="comment">#从页面读取数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">scrapePage</span><span class="params">(retX,retY,fileName,yr,numPce,OriPrice)</span>:</span></span><br><span class="line">	<span class="comment">#1.读取网页</span></span><br><span class="line">	fr=open(fileName)</span><br><span class="line">	<span class="comment">#2.用beautifulSoup处理,把读取的网页转换为数据</span></span><br><span class="line">	soup=BeautifulSoup(fr)</span><br><span class="line">	i=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#soup数据全部以列表形式返回</span></span><br><span class="line">	<span class="comment">#3.读取table的长度，当还有table即还有商品的时候循环</span></span><br><span class="line">	tableCur=soup.find_all(<span class="string">'table'</span>,r=i)</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">while</span>(len(tableCur)&gt;<span class="number">0</span>):</span><br><span class="line">		<span class="comment">#读取商品每次，根据有无售出来获取价格</span></span><br><span class="line">		title=tableCur[<span class="number">0</span>].find_all(<span class="string">'a'</span>)[<span class="number">1</span>].text.lower()<span class="comment">#a标签中第一个有名称,获取文本并转换为小写</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">#3.1判断是否全新</span></span><br><span class="line">		<span class="keyword">if</span>(title.find(<span class="string">'new'</span>)!=<span class="number">-1</span>) <span class="keyword">or</span> (title.find(<span class="string">'nstd'</span>)!=<span class="number">-1</span>):</span><br><span class="line">			newFlag=<span class="number">1</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			newFlag=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">#3.2判断是否卖出</span></span><br><span class="line">		<span class="comment">#读取td</span></span><br><span class="line">		sellFlag=tableCur[<span class="number">0</span>].find_all(<span class="string">'td'</span>)[<span class="number">3</span>].find_all(<span class="string">"span"</span>)</span><br><span class="line">		<span class="keyword">if</span>(len(sellFlag)==<span class="number">0</span>):<span class="comment">#此时没有卖出</span></span><br><span class="line">			print(<span class="string">"the item"</span>+str(i)+<span class="string">" do not sell out"</span>)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			soldPrice=tableCur[<span class="number">0</span>].find_all(<span class="string">'td'</span>)[<span class="number">4</span>]</span><br><span class="line">			price=soldPrice.text</span><br><span class="line">			price=price.replace(<span class="string">'$'</span>,<span class="string">''</span>)</span><br><span class="line">			price=price.replace(<span class="string">','</span>,<span class="string">''</span>)</span><br><span class="line">			<span class="keyword">if</span>(len(soldPrice)&gt;<span class="number">1</span>):</span><br><span class="line">				price=price.replace(<span class="string">'Free shipping'</span>,<span class="string">''</span>)</span><br><span class="line"></span><br><span class="line">		sellPrice=float(price)</span><br><span class="line"></span><br><span class="line">		<span class="comment">#3.3去掉不完整的价格</span></span><br><span class="line">		<span class="keyword">if</span>(sellPrice&gt;OriPrice*<span class="number">0.5</span>):</span><br><span class="line">			retX.append([yr,numPce,newFlag,OriPrice])</span><br><span class="line">			<span class="comment">#print(str(price)+"\t"+str(newFlag)+"\t"+title)</span></span><br><span class="line">			retY.append(sellPrice)</span><br><span class="line"></span><br><span class="line">		i=i+<span class="number">1</span></span><br><span class="line">		tableCur=soup.find_all(<span class="string">'table'</span>,r=i)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> retX,retY</span><br></pre></td></tr></table></figure>
+
+<p>（2）算法选择</p>
+<p>可以采用十折交叉验证：可以建立随机数据randomList=list(range(m))，使用random.shuffle打乱序列中的元素，90%作为训练集，10%作为测试集。</p>
+<p>a）标准线性回归</p>
+<p>为了得出回归方程中的常数项，需要在原有数据上插入常数1，新建一个全为1的矩阵，除了第一列之外其余列用原有数据填充。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">m,n=shape(lgX)</span><br><span class="line">retX=mat(ones((m,n+<span class="number">1</span>)))</span><br><span class="line">retX[:,<span class="number">1</span>:<span class="number">5</span>]=mat(lgX)</span><br></pre></td></tr></table></figure>
+
+<p>根据standRegres得出回归系数，回归系数每一列对应方程中的系数值，以乐高数据中4列数据为例，y=ws[0]+ws[1] * 年份+ws[1] * 套装数量+ws[2] * 是否全新+ws[3] * 价格，得出方程为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200402180915.png" alt="标准线性回归方程"></p>
+<p>可以看出标准线性回归得出的回归系数有些不合理的地方，当部件数量多，价格会更低，因此选择岭回归查看效果。</p>
+<p>b）岭回归</p>
+<p>因为岭回归中含有参数，根据测试集得出误差最小的参数，对误差集求平均，得出最小的误差所在的行即为最佳回归系数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#最小的误差下的回归系数</span></span><br><span class="line">meanError=mean(testErr,axis=<span class="number">0</span>)</span><br><span class="line">minErr=min(meanError)</span><br><span class="line">minWs=wsMat[nonzero(meanError=minErr)]</span><br></pre></td></tr></table></figure>
+
+<p>得出回归系数后需要得出回归方程，因为是用标准化数据进行模型建立：x=(x-xmean)/xvar，y=y-ymean。</p>
+<p>当得出ws时，回归方程应为y=((x-xmean) / xvar) * ws+ymean，其中(x-xmean) /xvar * ws是使用标准化后的x得出预测y值（标准化后的值），加上ymean就是实际值。</p>
+<p>所有回归方程可以写成：y=x * ws/xvar -(xmean/xvar) * ws+ymean，后面-(xmean/xvar) * ws+ymean是方程得常数项。记ureg=ws/xvar，以乐高数据中4列数据为例，y=常数项+ureg[0,0] * 年份+ureg[0,1] * 套装数量+ureg[0,2] * 是否全新+ureg[0,3] * 价格，得出方程为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200402182822.png" alt="岭回归"></p>
+<p>因为测试集随机选取，每次结果略有不同。可以看出岭回归的方程比标准回归方程拟合效果要好，更符合实际。</p>
+<p>这是ws缩减系数中第一次得出的回归系数：</p>
+<blockquote>
+<p>[[-1.07635546e+02]<br> [-1.54119215e+04]<br> [-1.42998055e+01]<br> [ 4.32941501e+04]]</p>
+</blockquote>
+<p>可以看出第4个系数最大，说明其最重要，当只能选择一个特征时，可以选择第4个特征，如果要选择两个特征，可以选择第2个和第4个特征。</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+              <a href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag"><i class="fa fa-tag"></i> 回归</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/logistic/" rel="next" title="监督学习笔记（三）——logistic回归">
+                  <i class="fa fa-chevron-left"></i> 监督学习笔记（三）——logistic回归
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法作用"><span class="nav-number">1.</span> <span class="nav-text">算法作用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#应用场景"><span class="nav-number">1.1.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#“回归”的含义"><span class="nav-number">1.2.</span> <span class="nav-text">“回归”的含义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法原理"><span class="nav-number">2.</span> <span class="nav-text">算法原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#标准线性回归"><span class="nav-number">2.1.</span> <span class="nav-text">标准线性回归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#局部加权线性回归"><span class="nav-number">2.2.</span> <span class="nav-text">局部加权线性回归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缩减系数"><span class="nav-number">2.3.</span> <span class="nav-text">缩减系数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#岭回归"><span class="nav-number">2.4.</span> <span class="nav-text">岭回归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前向逐步回归"><span class="nav-number">2.5.</span> <span class="nav-text">前向逐步回归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#衡量误差"><span class="nav-number">2.6.</span> <span class="nav-text">衡量误差</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用实例"><span class="nav-number">3.</span> <span class="nav-text">应用实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-number">3.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现结果"><span class="nav-number">3.2.</span> <span class="nav-text">实现结果</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">57k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">52 分钟</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
