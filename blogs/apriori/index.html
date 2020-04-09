@@ -56,21 +56,21 @@
   };
 </script>
 
-  <meta name="description" content="问题描述 测量绿萝叶片使用kinect相机对图像做标定，将图像映射到坐标系中，使用matlab程序计算叶片整体占图像的像素从而计算面积，对绿萝每层的叶片都需要分次进行标定求解过程较为复杂，因此针对这种情况，采用bp网络来预测绿萝叶片面积。 数据采集测量9盆绿萝叶片，实测数据共557片。训练集1-7盆，共449片，测试集8-9盆，共108片。数据集中共四个属性，分别是宽度为w，长边为L1,短边为L2">
-<meta name="keywords" content="神经网络,算法">
+  <meta name="description" content="算法目的从数据中找到各属性之间的隐含关系，Aprior算法就是在数据集中构造出频繁项集，从其中找出关联规则。这里的频繁项集是指经常出现在一起的数据属性，通过出现的频率来衡量频繁项集。关联规则是指两个集合之间存在的联系，如p-&amp;gt;q就是一种关联规则，关联规则通过置信度衡量，两个集合之间的置信度=p和q并集的支持度&#x2F;p的支持度。">
+<meta name="keywords" content="机器学习,关联分析">
 <meta property="og:type" content="article">
-<meta property="og:title" content="用bp网络预测绿萝叶片面积">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;bp-net&#x2F;index.html">
+<meta property="og:title" content="非监督学习笔记（二）——使用Aprior算法进行关联分析">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;apriori&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="问题描述 测量绿萝叶片使用kinect相机对图像做标定，将图像映射到坐标系中，使用matlab程序计算叶片整体占图像的像素从而计算面积，对绿萝每层的叶片都需要分次进行标定求解过程较为复杂，因此针对这种情况，采用bp网络来预测绿萝叶片面积。 数据采集测量9盆绿萝叶片，实测数据共557片。训练集1-7盆，共449片，测试集8-9盆，共108片。数据集中共四个属性，分别是宽度为w，长边为L1,短边为L2">
+<meta property="og:description" content="算法目的从数据中找到各属性之间的隐含关系，Aprior算法就是在数据集中构造出频繁项集，从其中找出关联规则。这里的频繁项集是指经常出现在一起的数据属性，通过出现的频率来衡量频繁项集。关联规则是指两个集合之间存在的联系，如p-&amp;gt;q就是一种关联规则，关联规则通过置信度衡量，两个集合之间的置信度=p和q并集的支持度&#x2F;p的支持度。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;bp%E7%BD%91%E7%BB%9C%E7%A4%BA%E6%84%8F%E5%9B%BE%E5%8F%8A%E5%90%84%E5%8F%98%E9%87%8F%E5%90%AB%E4%B9%89.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;bp%E5%AD%A6%E4%B9%A0%E7%8E%87%E5%8F%98%E5%8C%96.png">
-<meta property="og:updated_time" content="2020-01-20T12:17:50.704Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200409183650.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200409184446.png">
+<meta property="og:updated_time" content="2020-04-09T10:51:29.863Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;bp%E7%BD%91%E7%BB%9C%E7%A4%BA%E6%84%8F%E5%9B%BE%E5%8F%8A%E5%90%84%E5%8F%98%E9%87%8F%E5%90%AB%E4%B9%89.png">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200409183650.png">
 
-<link rel="canonical" href="https://www.xiapf.com/blogs/bp-net/">
+<link rel="canonical" href="https://www.xiapf.com/blogs/apriori/">
 
 
 <script id="page-configurations">
@@ -84,7 +84,7 @@
   };
 </script>
 
-  <title>用bp网络预测绿萝叶片面积 | 八戒大强攻</title>
+  <title>非监督学习笔记（二）——使用Aprior算法进行关联分析 | 八戒大强攻</title>
   
 
 
@@ -236,7 +236,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/bp-net/">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/apriori/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
@@ -249,7 +249,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          用bp网络预测绿萝叶片面积
+          非监督学习笔记（二）——使用Aprior算法进行关联分析
         </h2>
 
         <div class="post-meta">
@@ -258,16 +258,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2019-12-11 10:46:04" itemprop="dateCreated datePublished" datetime="2019-12-11T10:46:04+08:00">2019-12-11</time>
+              <time title="创建时间：2020-04-09 18:50:13 / 修改时间：18:51:29" itemprop="dateCreated datePublished" datetime="2020-04-09T18:50:13+08:00">2020-04-09</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-20 20:17:50" itemprop="dateModified" datetime="2020-01-20T20:17:50+08:00">2020-01-20</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -281,7 +275,7 @@
             </span>
 
           
-            <span id="/blogs/bp-net/" class="post-meta-item leancloud_visitors" data-flag-title="用bp网络预测绿萝叶片面积" title="阅读次数">
+            <span id="/blogs/apriori/" class="post-meta-item leancloud_visitors" data-flag-title="非监督学习笔记（二）——使用Aprior算法进行关联分析" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -296,8 +290,8 @@
       </span>
       <span class="post-meta-item-text">评论数：</span>
     
-    <a title="valine" href="/blogs/bp-net/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/blogs/bp-net/" itemprop="commentCount"></span>
+    <a title="valine" href="/blogs/apriori/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/apriori/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -307,7 +301,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -328,118 +322,77 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><blockquote>
-<p>测量绿萝叶片使用kinect相机对图像做标定，将图像映射到坐标系中，使用matlab程序计算叶片整体占图像的像素从而计算面积，对绿萝每层的叶片都需要分次进行标定求解过程较为复杂，因此针对这种情况，采用bp网络来预测绿萝叶片面积。</p>
-</blockquote><hr><h1 id="数据采集"><a href="#数据采集" class="headerlink" title="数据采集"></a>数据采集</h1><p><em>测量9盆绿萝叶片，实测数据共557片。训练集1-7盆，共449片，测试集8-9盆，共108片。<br>数据集中共四个属性，分别是宽度为w，长边为L1,短边为L2，面积area。</em><br><strong>其中宽度，长边，短边为手动实测，面积根据叶片像素点占图片整体像素点计算得出。</strong></p><a id="more"></a>
+        <h2 id="算法目的"><a href="#算法目的" class="headerlink" title="算法目的"></a>算法目的</h2><p>从数据中找到各属性之间的隐含关系，Aprior算法就是在数据集中构造出频繁项集，从其中找出关联规则。</p><p>这里的频繁项集是指经常出现在一起的数据属性，通过出现的频率来衡量频繁项集。</p><p>关联规则是指两个集合之间存在的联系，如p-&gt;q就是一种关联规则，关联规则通过置信度衡量，两个集合之间的置信度=p和q并集的支持度/p的支持度。</p><a id="more"></a>
 
 
-<ul>
-<li>计算面积的MATLAB程序<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">%% 分割</span><br><span class="line">k=graythresh(I);              %得到最优阈值</span><br><span class="line">j=im2bw(I,k);                  %转换成二值图，k为分割阈值</span><br><span class="line">%imshow(j); </span><br><span class="line">f = bwmorph(j,&apos;open&apos;);  %开运算</span><br><span class="line">figure, imshow(f)</span><br><span class="line">%% 像素点统计</span><br><span class="line">[m,n]=size(f);</span><br><span class="line">k=0;</span><br><span class="line">for i=1:1:m</span><br><span class="line">    for j=1:1:n</span><br><span class="line">        if f(i,j)==0</span><br><span class="line">            k=k+1;</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line">p=k/(m*n);</span><br><span class="line">s=21*29.7*p;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<hr>
-<h1 id="bp网络设计"><a href="#bp网络设计" class="headerlink" title="bp网络设计"></a>bp网络设计</h1><p>bp网络示意图及各变量含义<br><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/bp%E7%BD%91%E7%BB%9C%E7%A4%BA%E6%84%8F%E5%9B%BE%E5%8F%8A%E5%90%84%E5%8F%98%E9%87%8F%E5%90%AB%E4%B9%89.png" alt="bp结构图片"></p>
-<ol>
-<li><p>结构选取<br>a.隐含层数量选取：单隐层结构选择，当仅有一层隐含层时，测试数据正确率已达100%，为降低网络复杂度，所以选择单隐层结构。<br>b.隐含层神经元个数选取</p>
-<table>
-<thead>
-<tr>
-<th align="left">隐含层神经元个数</th>
-<th align="left">达到最小误差时需要迭代的次数</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">5</td>
-<td align="left">1873</td>
-</tr>
-<tr>
-<td align="left">10</td>
-<td align="left">2009</td>
-</tr>
-<tr>
-<td align="left">15</td>
-<td align="left">2259</td>
-</tr>
-</tbody></table>
-<p>根据程序运行来看，当隐藏层神经元个数选择过小（小于5）收敛速度很慢，当到达最大迭代次数时，误差仍很大，当个数选择过大（大于15），网络出现振荡，因此，考虑隐藏层神经元个数在5-15之间，因为本实验数据集属性少，因此选择隐藏层神经元个数为5个，减少复杂度。<br> c.误差函数选择均方差公式：$[    {E_{k} } =1/2*( \hat{y}-y) ]$<br> d.结束条件：<br> 训练结束条件：当误差函数值小于1e-3或者迭代次数大于50000次时结束训练<br> 测试误差判断：当测试集输出面积和实际面积误差函数值大于1e-5时，预测错误，反之预测正确。</p>
-</li>
-<li><p>初始值设置<br>a.权值矩阵的初始值<br>产生0-1之间的随机数作为权值的初始值<br>代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">srand(time(NULL));//设置随机数种子，使每次产生的随机序列不同</span><br><span class="line">for (int i = 0; i &lt; n; i++)</span><br><span class="line">    w[i] = rand() % (N + 1) / (float)(N + 1);//N为设置的精度</span><br></pre></td></tr></table></figure>
-<p>b.学习率的初始值<br>学习率控制着算法每一轮的迭代的更新步长，若太大则容易振荡，太小则收敛速度又过慢因此需要选择适合的初始值。<br><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/bp%E5%AD%A6%E4%B9%A0%E7%8E%87%E5%8F%98%E5%8C%96.png" alt="学习率变化图片"><br>由图可以看出，当学习率小于1时，网络训练次数多集中在1000以上，但当学习率大于5时，测试集数据会出现错误，因此选择训练次数少并且误差低的学习率=5.</p>
-</li>
-<li><p>数据归一化<br>前三列属性取值∈[2,9]，因此采用对数函数y=log10(x) 以10为底的对数函数转换。<br>最后一列属性取值∈[10,100]，因此采用反余弦函数y=atan(x)*2/PI，保证输入的数据在0-1之间，让网络更快的收敛。</p>
-</li>
-<li><p>前向传播和反向传播<br>a.前向传播<br>激活函数选择sigmod函数，第i个输入层神经元到第h个隐藏层神经元的权值为Vih,第h个隐藏层神经元输入为α=∑Vih<em>Xi，输出为bh;第h个输入层神经元到第j个隐藏层神经元的权值为Whj,第j个输出层神经元的输入β=∑Whj</em>bh,输出为<br>求出激活值，代入sigmod函数中，求得输出值<br>代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">for(int j=0;j&lt;hideSum;j++)</span><br><span class="line">&#123;</span><br><span class="line">   o1[j]=0.0;</span><br><span class="line">   for(int i=0;i&lt;inSum;i++)</span><br><span class="line">   //激活值</span><br><span class="line">   o1[j]=o1[j]+w[i][j]*x[i];</span><br><span class="line">   //实际输出</span><br><span class="line">   x1[j]=1.0/(1+exp(-o1[j]-b1[j])); //b1为偏置量</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>b.反向传播<br>网络在（Xk,Yk)上的均方差为，BP算法基于梯度下降的策略，以目标的负梯度方向进行调整在学习率下，采用链式法则对权值进行更新：<br>从输出层到隐藏层，有:<br>从隐藏层到输入层，有:</p>
-</li>
-</ol>
-<ul>
-<li>算法描述:<blockquote>
-<p>在（0，1）范围内初始化权值和学习率<br>REPEAT<br>FOR all（Xk,Yk)：<br>输入正向传播公式计算输出<br>计算输出层需修改的梯度项gj<br>计算隐藏层层需修改的梯度项eh<br>根据公式更新权值wjh,vij<br>END FOR<br>UNTIL 达到停止条件</p>
-</blockquote>
-</li>
-</ul>
-<p>标准BP算法：上述算法是对每个样本更新权值，属于标准BP算法，参数更新的频繁<br>累积BP算法：当读取完所有样本之后才更新参数，参数更新的频率低<br>区别：累积BP算法在误差下降到一定阶段，下降回非常缓慢，所以往往标准BP算法能更快得到较好解。<br><em>使用标准BP算法：对每个样本更新权值</em></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">//输出层</span><br><span class="line">for(int k=0;k&lt;outSum;k++)</span><br><span class="line">&#123;</span><br><span class="line">    //与实际输出的偏差</span><br><span class="line">    qq[k]=(yd[k]-x2[k])*x2[k]*(1-x2[k]);</span><br><span class="line">    for (int j = 0; j&lt; hideSum; ++j)</span><br><span class="line">        //调整隐藏层到输出层之间的连接权</span><br><span class="line">        w1[j][k]+=rate_w1*qq[k]*x1[j];</span><br><span class="line">&#125;</span><br><span class="line">//隐藏层</span><br><span class="line">for(int j=0;j&lt;hideSum;j++)</span><br><span class="line">&#123;</span><br><span class="line">    pp[j]=0;</span><br><span class="line">    //隐藏层的偏差</span><br><span class="line">    for (int k = 0; k&lt; outSum; k++)</span><br><span class="line">        pp[j]=pp[j]+qq[k]*w1[j][k];  //隐藏层的偏差和后面所有连接的对应输出层都有关系</span><br><span class="line">    pp[j]=pp[j]*x1[j]*(1-x1[j]);</span><br><span class="line">   for (int i = 0; i &lt; inSum; ++i)</span><br><span class="line">        //调整输入层到隐藏层之间的连接权</span><br><span class="line">        w[i][j]+=rate_w*pp[j]*x[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因此Aprior算法主要目的就是从数据中找到频繁集合，从频繁集合中找出关联规则。用户输入最小支持度得出频繁集合，根据设定的最小置信度得出想要的关联规则</p>
+<h2 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h2><h3 id="构造频繁集"><a href="#构造频繁集" class="headerlink" title="构造频繁集"></a>构造频繁集</h3><p>总体思路：</p>
+<p>从集合元素个数为1开始构造频繁集，非频繁集的单个元素不加入后续构造频繁集中，因为非频繁集的超集也是非频繁集。</p>
+<p>当集合个数大于等于2个时，每次取前k-2个集合进行合并，得出候选集，再根据最小置信度求出频繁集合</p>
+<p>1.构造单个元素的集合</p>
+<p>输入数值为整个数据集合</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.对每一个列表数据</span></span><br><span class="line">	<span class="keyword">for</span> tran <span class="keyword">in</span> dataSet:</span><br><span class="line">		<span class="comment">#2.对每个单个数据项</span></span><br><span class="line">		<span class="keyword">for</span> item <span class="keyword">in</span> tran:</span><br><span class="line">			<span class="keyword">if</span> [item] <span class="keyword">not</span> <span class="keyword">in</span> C1:</span><br><span class="line">				C1.append([item])</span><br></pre></td></tr></table></figure>
 
-<p><em>使用累积BP算法：遍历完所有样本再更新权值<br>增加权值修改矩阵，将误差进行累加</em></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">//输出层</span><br><span class="line">for(int k=0;k&lt;outSum;k++)</span><br><span class="line">&#123;</span><br><span class="line">    //与实际输出的偏差</span><br><span class="line">    qq[k]=(yd[k]-x2[k])*x2[k]*(1-x2[k]);</span><br><span class="line">    for (int j = 0; j&lt; hideSum; ++j)</span><br><span class="line">    &#123;</span><br><span class="line">        //调整隐藏层到输出层之间的连接权</span><br><span class="line">        chg_w2[j][k]+=rate_w1*qq[k]*x1[j];</span><br><span class="line">        chg_b2[k]+=rate_b2*qq[k];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//隐藏层</span><br><span class="line">for(int j=0;j&lt;hideSum;j++)</span><br><span class="line">&#123;</span><br><span class="line">    pp[j]=0;</span><br><span class="line">    //隐藏层的偏差</span><br><span class="line">    for (int k = 0; k&lt; outSum; k++)</span><br><span class="line">    &#123;</span><br><span class="line">        pp[j]=pp[j]+qq[k]*w1[j][k];  //隐藏层的偏差和后面所有连接的对应输出层都有关系</span><br><span class="line">    &#125;</span><br><span class="line">    pp[j]=pp[j]*x1[j]*(1-x1[j]);</span><br><span class="line">   for (int i = 0; i &lt; inSum; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        //调整输入层到隐藏层之间的连接权</span><br><span class="line">        chg_w1[i][j]=chg_w1[i][j]+rate_w1*pp[j]*x[i];</span><br><span class="line">        chg_b1[j]+=rate_b1*pp[j];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h1 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h1><table>
-<thead>
-<tr>
-<th align="left">对比</th>
-<th align="left">标准BP算法</th>
-<th align="left">累积BP算法</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">迭代次数</td>
-<td align="left">548</td>
-<td align="left">348</td>
-</tr>
-<tr>
-<td align="left">训练平均误差</td>
-<td align="left">小于1e-5</td>
-<td align="left">小于1e-5</td>
-</tr>
-<tr>
-<td align="left">识别结果</td>
-<td align="left">100%</td>
-<td align="left">100%</td>
-</tr>
-</tbody></table>
-<p>使用标准BP算法和累积BP算法识别率都能达到100%，但是因数据量小，使用累积BP 算法训练时间更短。</p>
-<hr>
-<h1 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h1><ul>
-<li>如果将长边短边合成一条边，效果还是一样吗？<br>将数据集中长边L1和短边L2相加得到叶子的长为L，输入的属性列变为长L,宽W,面积area<br>网络结构采取上述结构，训练效果如下图：<table>
-<thead>
-<tr>
-<th align="left">对比</th>
-<th align="left">标准BP算法</th>
-<th align="left">累积BP算法</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">迭代次数</td>
-<td align="left">566</td>
-<td align="left">717</td>
-</tr>
-<tr>
-<td align="left">训练平均误差</td>
-<td align="left">小于1e-5</td>
-<td align="left">小于1e-5</td>
-</tr>
-<tr>
-<td align="left">识别结果</td>
-<td align="left">94.5%</td>
-<td align="left">97.3%</td>
-</tr>
-</tbody></table>
-</li>
-</ul>
-<p>因实验所用的叶片有破损存在，直接用长边加上短边得到的叶片长度存在一定误差，因此使用BP算法时，识别结果略有下降.<br>使用标准BP算法和累积BP算法识别率都能达到100%，但是因数据量小，使用累积BP 算法训练时间更短。</p>
+<p>2.计算各个数据集合的出现概率，并把大于最小支持度的集合保存，作为频繁集</p>
+<p>2.1计算各个数据集合的出现概率</p>
+<p>输入候选集合，对每个候选集合判断是否是当前集合的子集，如果是就需要增加其出现的次数，如果是首次出现则设置为1</p>
+<p>注：A.issubset(B):判断a是否是b的子集</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.计算所有数据项在原始数据集中出现的次数</span></span><br><span class="line">	sSet=&#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> tran <span class="keyword">in</span> D:</span><br><span class="line">		<span class="keyword">for</span> item <span class="keyword">in</span> C1:</span><br><span class="line">			<span class="comment">#判断item是否是tran的子集</span></span><br><span class="line">			<span class="keyword">if</span> item.issubset(tran):</span><br><span class="line">				<span class="keyword">if</span> item <span class="keyword">not</span> <span class="keyword">in</span> sSet:<span class="comment">#初始字典中没有这个键</span></span><br><span class="line">					sSet[item]=<span class="number">1</span></span><br><span class="line">				<span class="keyword">else</span>:</span><br><span class="line">					sSet[item]+=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>2.2根据最小支持度保存频繁集合</p>
+<p>将每个候选集合出现的次数除以集合总数，得出出现的概率，再和最小支持度比较</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#2.计算每个数据项的支持度，并把小于最小支持度的数据项删除</span></span><br><span class="line">	numLen=len(D)</span><br><span class="line">	retList=[]</span><br><span class="line">	supportData=&#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> key <span class="keyword">in</span> sSet:</span><br><span class="line">		support=sSet[key]/numLen</span><br><span class="line">		<span class="keyword">if</span>(support&gt;=minSupport):</span><br><span class="line">			<span class="comment">#在索引为0的位置之前插入</span></span><br><span class="line">			retList.insert(<span class="number">0</span>,key)</span><br><span class="line">			supportData[key]=support</span><br></pre></td></tr></table></figure>
+
+<p>3.apriori算法得出频繁集合</p>
+<p>注：当一个集合不是频繁集，那么他的超集也不是频繁集，以这个原则来减少需要构造的集合数。所以每次从一个元素的集合开始寻找频繁集，非频繁集的元素集合不保存，依次作为初始构造起点，非频繁集的元素自然不会加入到后续筛选多个元素的集合中去。</p>
+<p>3.1 从长度为1的集合开始找到频繁集合</p>
+<p>（1）构造数据 从原始数据集中得出不重复的总的数据集合</p>
+<p>（2）构造初始频繁集合</p>
+<p>得出单个数据集中的频繁集</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">#1.构造数据</span></span><br><span class="line"> D=list(map(set,dataSet))</span><br><span class="line"></span><br><span class="line"><span class="comment">#2.构造初始数据项</span></span><br><span class="line">C1=createC1(dataSet)</span><br><span class="line">L1,supportData=scanD(D,C1,minSupport)</span><br><span class="line">L=[L1]</span><br></pre></td></tr></table></figure>
+
+<p>（3）构造元素数多于2个的频繁集合</p>
+<p>令k=2,假设初始频繁集为L=[L1],当L[K-2]即前一个元素数量有频繁集合，那么就可以循环查看当前长度的元素数量是否也有频繁集合（假设前一个元素数量是1，频繁集合中元素数为1），从L[K-2]中构造当前的候选集合，并进行支持度判断</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#3.构造长度为2开始的频繁数据集</span></span><br><span class="line">k=<span class="number">2</span></span><br><span class="line"><span class="keyword">while</span>(len(L[k<span class="number">-2</span>])&gt;<span class="number">0</span>):</span><br><span class="line">	<span class="comment">#3.1得到构造的频繁数据集</span></span><br><span class="line">	Ck=aprioriGen(L[k<span class="number">-2</span>],k)</span><br><span class="line">	<span class="comment">#3.2判断是否是频繁项</span></span><br><span class="line">	Lk,Suk=scanD(D,Ck,minSupport)</span><br><span class="line"></span><br><span class="line">	L.append(Lk)</span><br><span class="line">	<span class="comment">#字典插入/更新数值</span></span><br><span class="line">	supportData.update(Suk)</span><br><span class="line">	k=k+<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>3.2 构造长度大于2的频繁集合</p>
+<p>注：这里有个小技巧：取前k-2个集合，当长度相同时合并则为该数量下集合构成的候选集，如k=2时，此时输入的L[k-2]={1},{2},{3},取前k-2个，则是{1},{2},合并为{1,2}，每次i从0开始取值，下一层循环j从i+1开始取值，则得到k=2时的候选集为{1,2},{1,3},{2,3}</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(L)):</span><br><span class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> range(i+<span class="number">1</span>,len(L)):</span><br><span class="line">			<span class="comment">#取前k-2个作为集合，如果相同则合并，即为上一层得出下一层的集合</span></span><br><span class="line">			L1=list(L[i])[:k<span class="number">-2</span>]<span class="comment">#取出两个集合前k-1个元素list[:]从开始到末尾位置</span></span><br><span class="line">			L2=list(L[j])[:k<span class="number">-2</span>]</span><br><span class="line">			L1.sort()</span><br><span class="line">			L2.sort()</span><br><span class="line">			<span class="keyword">if</span>(L1==L2):</span><br><span class="line">				retList.append(L[i]|L[j])</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="挖掘关联规则"><a href="#挖掘关联规则" class="headerlink" title="挖掘关联规则"></a>挖掘关联规则</h3><p>根据p的置信度=supprot (p|q) /support (p)求出频繁集的置信度</p>
+<p>总体思路：</p>
+<p>输入的频繁集合，支持度</p>
+<p>（1）单元素的频繁集没有关联规则，所以从L[1]开始遍历</p>
+<p>（2）对L[i]中的每个单项，构造出不重复的单个元素集合组成的列表H</p>
+<p>当只有两个元素时，直接得到关联规则</p>
+<p>当有两个以上的元素时，不断构造2个元素及以上的不重复子集来得出关联规则</p>
+<p>1.构造2个元素的频繁集合的置信度</p>
+<p>输入频繁项集和只有单个元素的列表H</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> freq <span class="keyword">in</span> H:</span><br><span class="line">		conf=supportData[freqSet]/supportData[freqSet-freq]</span><br><span class="line">		<span class="keyword">if</span>(conf&gt;minConf):</span><br><span class="line">			print(freqSet-freq,<span class="string">"-&gt;"</span>,freq,<span class="string">":"</span>,conf)</span><br><span class="line">			br1.append((freqSet-freq,freq,conf))</span><br><span class="line">			cbr1.append(freq)</span><br></pre></td></tr></table></figure>
+
+<p>2.构造2个元素以上的频繁集合的置信度</p>
+<p>输入单元素的频繁集合，在此基础上不断根据2个元素以上的频繁集合合并，得出不重复的集合元素，并得出关联规则</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">m=len(H[<span class="number">0</span>])</span><br><span class="line"><span class="keyword">if</span>(len(freqSet)&gt;(m+<span class="number">1</span>)):</span><br><span class="line">	hmq=aprioriGen(H,m+<span class="number">1</span>) <span class="comment">#得出2个元素以上的频繁集合</span></span><br><span class="line">	hmq=calConf(freqSet,hmq,supportData,br1,minConf)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(len(hmq)&gt;<span class="number">1</span>):</span><br><span class="line">		ruleFromConf(freqSet,hmq,supportData,br1,minConf)</span><br></pre></td></tr></table></figure>
+
+<p>3.将单个元素得出的关联规则和多个元素的频繁集得出的关联规则合并</p>
+<p>根据输入的频繁集合，支持度中，L[1]是包含2个元素的频繁集，L[2]是包含3个元素的频繁集</p>
+<p>当时2个元素的频繁集合时，直接根据公式得出置信度，即关联规则，当时多个元素的频繁集合时，需要将子集合并得出关联规则</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,len(L)):</span><br><span class="line">	<span class="keyword">for</span> freq <span class="keyword">in</span> L[i]:</span><br><span class="line">		H1=[frozenset([item]) <span class="keyword">for</span> item <span class="keyword">in</span> freq]</span><br><span class="line">     <span class="comment">#多个元素的频繁集合</span></span><br><span class="line">		<span class="keyword">if</span>(i&gt;<span class="number">1</span>):</span><br><span class="line">			ruleFromConf(freq,H1,supportData,bigRulesList,minConf)</span><br><span class="line">     <span class="comment">#单个元素的频繁集合</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			calConf(freq,H1,supportData,bigRulesList,minConf)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="应用实例"><a href="#应用实例" class="headerlink" title="应用实例"></a>应用实例</h2><p>问题：发现毒蘑菇的相似特征</p>
+<p>数据集：原始数据集在UCI上，使用关联规则需要把样本数据转换为特征集合，有人做了解析，直接使用该数据集</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200409183650.png" alt="毒蘑菇数据"></p>
+<p>第一列1代表无毒，2代表有毒。</p>
+<p>利用apriori算法得出频繁集合，查看有毒特征一般和哪些特征一起出现，这样就可以通过其他特征分辨出毒蘑菇。</p>
+<p>根据得出的频繁项集，找到长度为2的频繁项集中有毒蘑菇特征的集合为</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200409184446.png" alt="毒蘑菇频繁集"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">data=apriori.loadMushroomData(<span class="string">"mushroom.dat"</span>)</span><br><span class="line">L,supportData=apriori.apriori(data,<span class="number">0.3</span>)</span><br><span class="line">print(L)</span><br><span class="line">print(supportData)</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> L[<span class="number">1</span>]:</span><br><span class="line">	<span class="keyword">if</span> &#123;<span class="number">2</span>&#125;.issubset(item):</span><br><span class="line">		print(item)</span><br></pre></td></tr></table></figure>
+
+<p>也可以选择其他长度的频繁项集查看</p>
 
     </div>
 
@@ -480,22 +433,22 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 神经网络</a>
-              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+              <a href="/tags/%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90/" rel="tag"><i class="fa fa-tag"></i> 关联分析</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
+                <a href="/blogs/regression/" rel="next" title="监督学习笔记（四）——利用回归预测数值型数值">
+                  <i class="fa fa-chevron-left"></i> 监督学习笔记（四）——利用回归预测数值型数值
+                </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/blogs/future-futuretask/" rel="prev" title="future与futuretask用法区别">
-                  future与futuretask用法区别 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -535,7 +488,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据采集"><span class="nav-number">2.</span> <span class="nav-text">数据采集</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bp网络设计"><span class="nav-number">3.</span> <span class="nav-text">bp网络设计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结果分析"><span class="nav-number">4.</span> <span class="nav-text">结果分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#思考"><span class="nav-number">5.</span> <span class="nav-text">思考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法目的"><span class="nav-number">1.</span> <span class="nav-text">算法目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法原理"><span class="nav-number">2.</span> <span class="nav-text">算法原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#构造频繁集"><span class="nav-number">2.1.</span> <span class="nav-text">构造频繁集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#挖掘关联规则"><span class="nav-number">2.2.</span> <span class="nav-text">挖掘关联规则</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用实例"><span class="nav-number">3.</span> <span class="nav-text">应用实例</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
