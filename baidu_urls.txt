@@ -1,3 +1,4 @@
+https://www.xiapf.com/blogs/nginx/
 https://www.xiapf.com/blogs/apriori/
 https://www.xiapf.com/blogs/regression/
 https://www.xiapf.com/blogs/logistic/
