@@ -1,6 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Leecode学习笔记（六）——系统设计题</title>
+    <url>/blogs/sysDesignNote/</url>
+    <content><![CDATA[<h2 id="缓存机制"><a href="#缓存机制" class="headerlink" title="缓存机制"></a>缓存机制</h2><p>（1）LRU</p><p>least recently use:最近最少使用</p><p>删除缓存依据：按照时间计算，每次删除最久未使用的数据。</p><p>（2）LFU</p><p>least frequently use：最近最不常使用</p><p>删除缓存依据：按照时间和使用频率计算，以使用频率为主，每次删除数据时，查看使用频率最小的数据进行删除，当使用频率相同时，根据最久未使用即时间来删除。</p><a id="more"></a>
+
+
+
+
+
+<p>总体思路：</p>
+<p>缓存主要是为了获取数据和插入数据，因此需要对缓存数据进行节点设计，根据其特性设置key.value用于根据key查找值，同时需要设置使用时间time,使用频率cnt.</p>
+<p>为了方便查找可以使用hash表存储key以及node,可以方便的在hash表内通过node-&gt;key查找到node，但是哈希表无序，因此还需要存储节点的使用时间/频率，这时候有两种思路：</p>
+<p>第一种是利用set容器，c++内置的set是使用红黑树排序，即会形成平衡二叉树，使用运算符重载，将set内部根据时间和频率来进行排序，使用频率最少或者时间最少的会排在前面，以set记录时间/频率，但是搜索时间复杂度是O（logn）。</p>
+<p>第二种思路是建立双链表list存储节点，哈希表中存储key映射到list节点的迭代器，当数据使用是，将其从原来位置删除，插入最前面，当需要删除数据的时候，从末位删除，链表操作的时间复杂度是O（1）。</p>
+<p>获取数据（根据密钥获得值）：</p>
+<p>根据哈希表中的key查找节点，并进行缓存数据更新。</p>
+<p>（2）插入数据（将key,value插入）：</p>
+<p>判断key是否存储过了，当存储过之后更新数据值，反之需要插入数据，此时需要判断是否已经达到容量顶端，达到了，需要删除最不常使用的数据。，并进行缓存数据更新。</p>
+<p>注：每次操作过后都需要进行缓存数据更新，即在哈希表中更新数据节点以及set/双向链表list进行更新。</p>
+<h2 id="设计简单推特"><a href="#设计简单推特" class="headerlink" title="设计简单推特"></a>设计简单推特</h2><p>题目：355. 设计推特设计一个简化版的推特(Twitter)，可以让用户实现发送推文，关注/取消关注其他用户，能够看见关注人（包括自己）的最近十条推文。你的设计需要支持以下的几个功能：postTweet(userId, tweetId): 创建一条新的推文,getNewsFeed(userId): 检索最近的十条推文。每个推文都必须是由此用户关注的人或者是用户自己发出的。推文必须按照时间顺序由最近的开始排序。,follow(followerId, followeeId): 关注一个用户,unfollow(followerId, followeeId): 取消关注一个用户</p>
+<p>思路：</p>
+<p>（1）初始化两个hash表</p>
+<p>题目要求中功能3，4是需要能够关注和取消关注一个用户，那么就需要存储当前用户到自己关注的人之间的映射，需要用到hash表。</p>
+<p>题目要求中的功能1，2是需要对推文进行操作，需要存储当前用户在某个时刻写的推文（这里的推文用数字代替），为了方便通过id查找推文，后面的数据用pair形式存储时间和推文。这里需要一个全局变量来计算发推的时间。初始化时间为0，离现在越近，时间越大。</p>
+<p>存储当前用户到自己关注的人之间的映射 map1&lt;int,set<int>&gt;</int></p>
+<p>存储当前用户在某个时刻写的推文的映射 map2&lt;int,vector&lt;pair&lt;int,int&gt;&gt; ，为了方便通过id查找推文，后面的数据用pair形式存储时间和推文</p>
+<p>（2）关注和取消关注</p>
+<p>直接操作map1，加入当前用户关注的id和删除取消关注的id</p>
+<p>（3）创建推文</p>
+<p>直接操作map2，加入当前用户，在当前时间，写下的推文</p>
+<p>（4）检索推文</p>
+<p>需要注意的是搜索推文的时候需要把自己也加上。检索推文的时候需要进行比较，取前10条，这里可以建立优先队列，根据时间进行自动排序。</p>
+<p>建立优先级队列即大顶堆priori_queue&lt;pair&lt;int,int&gt;&gt;，这里会根据pair中第一个元素进行降序排列，当第一个元素相等会根据第二个元素排序，但由于时间肯定是不一样的，这里默认是对时间进行自动排序，离现在越近，时间越大。</p>
+<p>首先将自己加入自己关注的用户列表中，通过当前用户的id查到所有关注的人（这里需要包括自己），再通过查到关注的用户的id，找到他们在某个时间发的推文，将其插入队列中。这时候输出堆顶前10个就是最近的推文。</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>系统设计</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>mac下使用nginx实现负载均衡</title>
     <url>/blogs/nginx/</url>
     <content><![CDATA[<h2 id="安装流程"><a href="#安装流程" class="headerlink" title="安装流程"></a>安装流程</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">brew install nginx</span><br></pre></td></tr></table></figure><h3 id="查看是否安装成功"><a href="#查看是否安装成功" class="headerlink" title="查看是否安装成功"></a>查看是否安装成功</h3><p>nginx默认的端口号为8080，默认的启动页面为index.html，初始页面的默认路径为/usr/local/var/www/index.html，在命令行内输入</p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nginx</span><br></pre></td></tr></table></figure><p>这时已启动nginx服务，打开浏览器输入localhose:8080，显示如下页面说明安装成功。</p><a id="more"></a>
@@ -580,7 +623,7 @@
       </tags>
   </entry>
   <entry>
-    <title>Leecode算法学习笔记（四）</title>
+    <title>Leecode算法学习笔记（四）——动态规划</title>
     <url>/blogs/movStateNote/</url>
     <content><![CDATA[<h2 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h2><h3 id="一般思路"><a href="#一般思路" class="headerlink" title="一般思路"></a>一般思路</h3><p>（1）明确状态含义</p><p>首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数</p><p>（2）确定初始状态</p><p>可以考虑最多…的时候dp的状态</p><p>例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次</p><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//求分割回文字符串的次数</span></span><br><span class="line"><span class="comment">//初始状态</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;len;i++)</span><br><span class="line">  dp[i]=i;</span><br><span class="line"><span class="comment">//i个字符串，最多分割i次</span></span><br></pre></td></tr></table></figure><a id="more"></a>
 
@@ -596,7 +639,7 @@
 <p>当i从1变化到len之间，求dp[i]。当0~i本身是回文时，不需要分割，即dp[i]=0。该题dp[i+1]和dp[i]之间没有明确联系，可以从分割边界考虑。假设分割边界为j，已知dp[j]，求dp[i]，就需要分两种情况考虑</p>
 <p>a）j+1~i之间是回文，那么dp[j]再分割一次就可以得到j之前的字符串和后面的回文，即dp[i]=dp[j]+1，但dp[i]有可能更小，所以dp[i]在dp[i]和dp[j]+1之间取小的</p>
 <p>b）j+1~i之间不是回文，继续移动j，找到符合回文的子串</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="number">0</span>~i是回文)</span><br><span class="line">    dp[i]=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(j+<span class="number">1</span>~i是回文)</span><br><span class="line">      dp[i]=<span class="built_in">min</span>(dp[i],dp[j]+<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="number">0</span>~i是回文)</span><br><span class="line">    dp[i]=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(j+<span class="number">1</span>~i是回文)</span><br><span class="line">      dp[i]=<span class="built_in">min</span>(dp[i],dp[j]+<span class="number">1</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>（4）最终输出</p>
 <p>一般输出为dp[len-1]，例如在求分割回文字符串的次数中，最终是求len个字符串的分割次数，即求dp[len-1]</p>
@@ -639,6 +682,23 @@
 <p>dp[i] [k] [1]=max(dp[i-1] [k] [1]，dp[i-1] [k-1] [0]-price[i]) 其中dp[i-1] [0] [0]=0</p>
 <p>dp[i] [k] [0]=max(dp[i-1] [k] [0]，dp[i-1] [k] [1]+price[i])</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//转移方程</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> k=<span class="number">1</span>;k&lt;=<span class="number">2</span>;k++)</span><br><span class="line">  &#123;</span><br><span class="line">     <span class="comment">//定义初始状态</span></span><br><span class="line">    <span class="keyword">if</span>(i==<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">//刚开始时，不持有股票，利润为0</span></span><br><span class="line">      dp[i][k][<span class="number">0</span>]=<span class="number">0</span>;</span><br><span class="line">      <span class="comment">//刚开始时，持有股票，利润为亏损买入对应的股票</span></span><br><span class="line">      dp[i][k][<span class="number">1</span>]=-price[i];</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    dp[i][k][<span class="number">1</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][k][<span class="number">1</span>]，dp[i<span class="number">-1</span>][k<span class="number">-1</span>][<span class="number">0</span>]-price[i]);</span><br><span class="line">    dp[i][k][<span class="number">0</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][k][<span class="number">0</span>]，dp[i<span class="number">-1</span>][k][<span class="number">1</span>]+price[i]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h3><p>动态规划题：</p>
+<p>一般都是当前状态和之前的状态有关，或者和其他的位置有关，这时候需要考虑动态规划。常见于字符串问题。</p>
+<p>1：221. 最大正方形</p>
+<p>（0）确定状态方程的含义</p>
+<p>dp[i] [j]代表当前位置最大正方形的边长，明确一点当前位置的边长取决于左边，上边和斜对角，可以理解当前位置为右下角位置，这三个位置的最小值再加上1就是当前位置的边长。加上这三个位置的值一样，那么直接加1，也无需比较，但是假设有一个比较小，就说明有一边缺一个角，所以这时候需要取最小值。</p>
+<p>初始边长设为-1，每次与当前位置边长比较，找到最大的边长</p>
+<p>（1）初始状态：</p>
+<p>第一行和第一列无法形成三角形，即自身的值就是当前正方形的边长</p>
+<p>因为这里存储的是字符，所以需要通过“-’0‘”取得实际数值</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; dp(m,<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;(n));</span><br><span class="line">dp[<span class="number">0</span>][<span class="number">0</span>]=matrix[<span class="number">0</span>][<span class="number">0</span>]-<span class="string">'0'</span>;</span><br><span class="line">res=dp[<span class="number">0</span>][<span class="number">0</span>];</span><br><span class="line"><span class="comment">//第0行</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">&#123;</span><br><span class="line">    dp[<span class="number">0</span>][i]=matrix[<span class="number">0</span>][i]-<span class="string">'0'</span>;</span><br><span class="line">    res=<span class="built_in">max</span>(res, dp[<span class="number">0</span>][i]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//第0列</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;m;i++)</span><br><span class="line">&#123;</span><br><span class="line">    dp[i][<span class="number">0</span>]=matrix[i][<span class="number">0</span>]-<span class="string">'0'</span>;</span><br><span class="line">    res=<span class="built_in">max</span>(res, dp[i][<span class="number">0</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（2）状态转移方程</p>
+<p>只有当前位置是1才更新边长，否则如果是’0‘，说明当前位置不可能有正方形形成</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//2.状态转移方程</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;m;i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">1</span>;j&lt;n;j++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//注意输入的字符，不是数字</span></span><br><span class="line">        <span class="comment">//1.dp[i][j]表示右下角元素的最大正方形，当当前位置是1时，可以更新正方形大小,找上左斜对角的最小值再加一（因为当前位置是1）</span></span><br><span class="line">        <span class="keyword">if</span>(matrix[i][j]==<span class="string">'1'</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            dp[i][j]=<span class="built_in">min</span>(dp[i<span class="number">-1</span>][j],<span class="built_in">min</span>(dp[i<span class="number">-1</span>][j<span class="number">-1</span>], dp[i][j<span class="number">-1</span>]))+<span class="number">1</span>;</span><br><span class="line">            res=<span class="built_in">max</span>(res, dp[i][j]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//2.当前位置为0，那正方形大小为0</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            dp[i][j]=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 ]]></content>

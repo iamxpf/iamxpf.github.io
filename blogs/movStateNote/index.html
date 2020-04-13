@@ -59,13 +59,13 @@
   <meta name="description" content="动态规划一般思路（1）明确状态含义首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数（2）确定初始状态可以考虑最多…的时候dp的状态例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次12345&#x2F;&#x2F;求分割回文字符串的次数&#x2F;&#x2F;初始状态for(int i=0;i&amp;lt;len;i++)  dp[i]=i;&#x2F;&#x2F;i个字符串，最多分割i次">
 <meta name="keywords" content="算法,动态规划">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Leecode算法学习笔记（四）">
+<meta property="og:title" content="Leecode算法学习笔记（四）——动态规划">
 <meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;movStateNote&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
 <meta property="og:description" content="动态规划一般思路（1）明确状态含义首先要明确dp[i]的含义，例如在求分割回文字符串的次数中，dp[i]表示i个回文字符串的分割次数（2）确定初始状态可以考虑最多…的时候dp的状态例如求分割回文字符串的次数，初始状态即为i个字符串最多分割i次12345&#x2F;&#x2F;求分割回文字符串的次数&#x2F;&#x2F;初始状态for(int i=0;i&amp;lt;len;i++)  dp[i]=i;&#x2F;&#x2F;i个字符串，最多分割i次">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200304222109.png">
-<meta property="og:updated_time" content="2020-03-05T03:27:13.159Z">
+<meta property="og:updated_time" content="2020-04-13T07:33:32.893Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200304222109.png">
 
@@ -83,7 +83,7 @@
   };
 </script>
 
-  <title>Leecode算法学习笔记（四） | 八戒大强攻</title>
+  <title>Leecode算法学习笔记（四）——动态规划 | 八戒大强攻</title>
   
 
 
@@ -160,7 +160,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">25</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">26</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -170,7 +170,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">19</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">20</span></a>
 
   </li>
         <li class="menu-item menu-item-sitemap">
@@ -248,7 +248,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          Leecode算法学习笔记（四）
+          Leecode算法学习笔记（四）——动态规划
         </h2>
 
         <div class="post-meta">
@@ -257,10 +257,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-03-05 11:22:57 / 修改时间：11:27:13" itemprop="dateCreated datePublished" datetime="2020-03-05T11:22:57+08:00">2020-03-05</time>
+              <time title="创建时间：2020-03-05 11:22:57" itemprop="dateCreated datePublished" datetime="2020-03-05T11:22:57+08:00">2020-03-05</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-13 15:33:32" itemprop="dateModified" datetime="2020-04-13T15:33:32+08:00">2020-04-13</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -274,7 +280,7 @@
             </span>
 
           
-            <span id="/blogs/movStateNote/" class="post-meta-item leancloud_visitors" data-flag-title="Leecode算法学习笔记（四）" title="阅读次数">
+            <span id="/blogs/movStateNote/" class="post-meta-item leancloud_visitors" data-flag-title="Leecode算法学习笔记（四）——动态规划" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -300,14 +306,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
+              <span>4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>4 分钟</span>
             </span>
 		  
 			
@@ -335,7 +341,7 @@
 <p>当i从1变化到len之间，求dp[i]。当0~i本身是回文时，不需要分割，即dp[i]=0。该题dp[i+1]和dp[i]之间没有明确联系，可以从分割边界考虑。假设分割边界为j，已知dp[j]，求dp[i]，就需要分两种情况考虑</p>
 <p>a）j+1~i之间是回文，那么dp[j]再分割一次就可以得到j之前的字符串和后面的回文，即dp[i]=dp[j]+1，但dp[i]有可能更小，所以dp[i]在dp[i]和dp[j]+1之间取小的</p>
 <p>b）j+1~i之间不是回文，继续移动j，找到符合回文的子串</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="number">0</span>~i是回文)</span><br><span class="line">    dp[i]=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(j+<span class="number">1</span>~i是回文)</span><br><span class="line">      dp[i]=<span class="built_in">min</span>(dp[i],dp[j]+<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="number">0</span>~i是回文)</span><br><span class="line">    dp[i]=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(j+<span class="number">1</span>~i是回文)</span><br><span class="line">      dp[i]=<span class="built_in">min</span>(dp[i],dp[j]+<span class="number">1</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>（4）最终输出</p>
 <p>一般输出为dp[len-1]，例如在求分割回文字符串的次数中，最终是求len个字符串的分割次数，即求dp[len-1]</p>
@@ -378,6 +384,23 @@
 <p>dp[i] [k] [1]=max(dp[i-1] [k] [1]，dp[i-1] [k-1] [0]-price[i]) 其中dp[i-1] [0] [0]=0</p>
 <p>dp[i] [k] [0]=max(dp[i-1] [k] [0]，dp[i-1] [k] [1]+price[i])</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//转移方程</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> k=<span class="number">1</span>;k&lt;=<span class="number">2</span>;k++)</span><br><span class="line">  &#123;</span><br><span class="line">     <span class="comment">//定义初始状态</span></span><br><span class="line">    <span class="keyword">if</span>(i==<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">//刚开始时，不持有股票，利润为0</span></span><br><span class="line">      dp[i][k][<span class="number">0</span>]=<span class="number">0</span>;</span><br><span class="line">      <span class="comment">//刚开始时，持有股票，利润为亏损买入对应的股票</span></span><br><span class="line">      dp[i][k][<span class="number">1</span>]=-price[i];</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    dp[i][k][<span class="number">1</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][k][<span class="number">1</span>]，dp[i<span class="number">-1</span>][k<span class="number">-1</span>][<span class="number">0</span>]-price[i]);</span><br><span class="line">    dp[i][k][<span class="number">0</span>]=<span class="built_in">max</span>(dp[i<span class="number">-1</span>][k][<span class="number">0</span>]，dp[i<span class="number">-1</span>][k][<span class="number">1</span>]+price[i]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h3><p>动态规划题：</p>
+<p>一般都是当前状态和之前的状态有关，或者和其他的位置有关，这时候需要考虑动态规划。常见于字符串问题。</p>
+<p>1：221. 最大正方形</p>
+<p>（0）确定状态方程的含义</p>
+<p>dp[i] [j]代表当前位置最大正方形的边长，明确一点当前位置的边长取决于左边，上边和斜对角，可以理解当前位置为右下角位置，这三个位置的最小值再加上1就是当前位置的边长。加上这三个位置的值一样，那么直接加1，也无需比较，但是假设有一个比较小，就说明有一边缺一个角，所以这时候需要取最小值。</p>
+<p>初始边长设为-1，每次与当前位置边长比较，找到最大的边长</p>
+<p>（1）初始状态：</p>
+<p>第一行和第一列无法形成三角形，即自身的值就是当前正方形的边长</p>
+<p>因为这里存储的是字符，所以需要通过“-’0‘”取得实际数值</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; dp(m,<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;(n));</span><br><span class="line">dp[<span class="number">0</span>][<span class="number">0</span>]=matrix[<span class="number">0</span>][<span class="number">0</span>]-<span class="string">'0'</span>;</span><br><span class="line">res=dp[<span class="number">0</span>][<span class="number">0</span>];</span><br><span class="line"><span class="comment">//第0行</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">&#123;</span><br><span class="line">    dp[<span class="number">0</span>][i]=matrix[<span class="number">0</span>][i]-<span class="string">'0'</span>;</span><br><span class="line">    res=<span class="built_in">max</span>(res, dp[<span class="number">0</span>][i]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//第0列</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;m;i++)</span><br><span class="line">&#123;</span><br><span class="line">    dp[i][<span class="number">0</span>]=matrix[i][<span class="number">0</span>]-<span class="string">'0'</span>;</span><br><span class="line">    res=<span class="built_in">max</span>(res, dp[i][<span class="number">0</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（2）状态转移方程</p>
+<p>只有当前位置是1才更新边长，否则如果是’0‘，说明当前位置不可能有正方形形成</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//2.状态转移方程</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;m;i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">1</span>;j&lt;n;j++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//注意输入的字符，不是数字</span></span><br><span class="line">        <span class="comment">//1.dp[i][j]表示右下角元素的最大正方形，当当前位置是1时，可以更新正方形大小,找上左斜对角的最小值再加一（因为当前位置是1）</span></span><br><span class="line">        <span class="keyword">if</span>(matrix[i][j]==<span class="string">'1'</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            dp[i][j]=<span class="built_in">min</span>(dp[i<span class="number">-1</span>][j],<span class="built_in">min</span>(dp[i<span class="number">-1</span>][j<span class="number">-1</span>], dp[i][j<span class="number">-1</span>]))+<span class="number">1</span>;</span><br><span class="line">            res=<span class="built_in">max</span>(res, dp[i][j]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//2.当前位置为0，那正方形大小为0</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            dp[i][j]=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
@@ -478,7 +501,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#动态规划"><span class="nav-number">1.</span> <span class="nav-text">动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一般思路"><span class="nav-number">1.1.</span> <span class="nav-text">一般思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#股票问题"><span class="nav-number">1.2.</span> <span class="nav-text">股票问题</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#动态规划"><span class="nav-number">1.</span> <span class="nav-text">动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一般思路"><span class="nav-number">1.1.</span> <span class="nav-text">一般思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#股票问题"><span class="nav-number">1.2.</span> <span class="nav-text">股票问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#例题"><span class="nav-number">1.3.</span> <span class="nav-text">例题</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -493,7 +516,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">20</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -506,7 +529,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">26</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -573,13 +596,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">62k</span>
+    <span title="站点总字数">65k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">56 分钟</span>
+    <span title="站点阅读时长">59 分钟</span>
 </div>
   <div class="addthis_inline_share_toolbox">
     <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>

@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.xiapf.com/blogs/sysDesignNote/</loc>
+    
+    <lastmod>2020-04-13T07:38:00.472Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.xiapf.com/blogs/movStateNote/</loc>
+    
+    <lastmod>2020-04-13T07:33:32.893Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.xiapf.com/blogs/nginx/</loc>
     
     <lastmod>2020-04-10T06:42:10.471Z</lastmod>
@@ -72,13 +86,6 @@
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/blogs/movStateNote/</loc>
-    
-    <lastmod>2020-03-05T03:27:13.159Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.xiapf.com/blogs/backTrackNote/</loc>
     
     <lastmod>2020-03-04T04:56:30.496Z</lastmod>
@@ -135,13 +142,6 @@
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/categories/index.html</loc>
-    
-    <lastmod>2019-12-13T12:52:51.112Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.xiapf.com/about/index.html</loc>
     
     <lastmod>2019-12-13T12:52:51.112Z</lastmod>
@@ -149,7 +149,14 @@
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/blogs/docker/</loc>
+    <loc>https://www.xiapf.com/categories/index.html</loc>
+    
+    <lastmod>2019-12-13T12:52:51.112Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.xiapf.com/blogs/hello-world/</loc>
     
     <lastmod>2019-12-13T12:52:51.111Z</lastmod>
     
@@ -163,7 +170,7 @@
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/blogs/hello-world/</loc>
+    <loc>https://www.xiapf.com/blogs/docker/</loc>
     
     <lastmod>2019-12-13T12:52:51.111Z</lastmod>
     

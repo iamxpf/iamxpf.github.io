@@ -56,17 +56,18 @@
   };
 </script>
 
-  <meta name="description" content="好好学习，天天向上">
-<meta name="keywords" content="good good good">
-<meta property="og:type" content="website">
-<meta property="og:title" content="八戒大强攻">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;archives&#x2F;2019&#x2F;index.html">
+  <meta name="description" content="缓存机制（1）LRUleast recently use:最近最少使用删除缓存依据：按照时间计算，每次删除最久未使用的数据。（2）LFUleast frequently use：最近最不常使用删除缓存依据：按照时间和使用频率计算，以使用频率为主，每次删除数据时，查看使用频率最小的数据进行删除，当使用频率相同时，根据最久未使用即时间来删除。">
+<meta name="keywords" content="算法,系统设计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leecode学习笔记（六）——系统设计题">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;sysDesignNote&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="好好学习，天天向上">
+<meta property="og:description" content="缓存机制（1）LRUleast recently use:最近最少使用删除缓存依据：按照时间计算，每次删除最久未使用的数据。（2）LFUleast frequently use：最近最不常使用删除缓存依据：按照时间和使用频率计算，以使用频率为主，每次删除数据时，查看使用频率最小的数据进行删除，当使用频率相同时，根据最久未使用即时间来删除。">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-04-13T07:38:00.472Z">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://www.xiapf.com/archives/2019/">
+<link rel="canonical" href="https://www.xiapf.com/blogs/sysDesignNote/">
 
 
 <script id="page-configurations">
@@ -74,13 +75,13 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: false,
+    isPost: true,
     isPage: false,
-    isArchive: true
+    isArchive: false
   };
 </script>
 
-  <title>归档 | 八戒大强攻</title>
+  <title>Leecode学习笔记（六）——系统设计题 | 八戒大强攻</title>
   
 
 
@@ -227,141 +228,199 @@
           <div class="content">
             
 
+  <div class="posts-expand">
+      
   
   
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/sysDesignNote/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          Leecode学习笔记（六）——系统设计题
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-04-13 15:35:46 / 修改时间：15:38:00" itemprop="dateCreated datePublished" datetime="2020-04-13T15:35:46+08:00">2020-04-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/sysDesignNote/" class="post-meta-item leancloud_visitors" data-flag-title="Leecode学习笔记（六）——系统设计题" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
   
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 20 篇日志。 继续努力。</span>
-      </div>
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/sysDesignNote/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/sysDesignNote/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <h2 class="collection-header">2019</h2>
-    </div>
+        <h2 id="缓存机制"><a href="#缓存机制" class="headerlink" title="缓存机制"></a>缓存机制</h2><p>（1）LRU</p><p>least recently use:最近最少使用</p><p>删除缓存依据：按照时间计算，每次删除最久未使用的数据。</p><p>（2）LFU</p><p>least frequently use：最近最不常使用</p><p>删除缓存依据：按照时间和使用频率计算，以使用频率为主，每次删除数据时，查看使用频率最小的数据进行删除，当使用频率相同时，根据最久未使用即时间来删除。</p><a id="more"></a>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
 
-      <div class="post-meta">
-        <time itemprop="dateCreated" datetime="2019-12-26T14:27:48+08:00" content="2019-12-26">
-          12-26
-        </time>
-      </div>
 
-      <h3 class="post-title">
-          <a class="post-title-link" href="/blogs/sort/" itemprop="url">
-            <span itemprop="name">排序算法</span>
-          </a>
-      </h3>
 
-    </header>
-  </article>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated" datetime="2019-12-13T20:52:51+08:00" content="2019-12-13">
-          12-13
-        </time>
-      </div>
-
-      <h3 class="post-title">
-          <a class="post-title-link" href="/blogs/hello-world/" itemprop="url">
-            <span itemprop="name">Hello World</span>
-          </a>
-      </h3>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated" datetime="2019-12-13T14:48:37+08:00" content="2019-12-13">
-          12-13
-        </time>
-      </div>
-
-      <h3 class="post-title">
-          <a class="post-title-link" href="/blogs/hexo-deploy/" itemprop="url">
-            <span itemprop="name">hexo部署时用户名密码设置</span>
-          </a>
-      </h3>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated" datetime="2019-12-12T13:44:29+08:00" content="2019-12-12">
-          12-12
-        </time>
-      </div>
-
-      <h3 class="post-title">
-          <a class="post-title-link" href="/blogs/docker/" itemprop="url">
-            <span itemprop="name">docker简易教程</span>
-          </a>
-      </h3>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated" datetime="2019-12-12T13:32:37+08:00" content="2019-12-12">
-          12-12
-        </time>
-      </div>
-
-      <h3 class="post-title">
-          <a class="post-title-link" href="/blogs/future-futuretask/" itemprop="url">
-            <span itemprop="name">future与futuretask用法区别</span>
-          </a>
-      </h3>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated" datetime="2019-12-11T10:46:04+08:00" content="2019-12-11">
-          12-11
-        </time>
-      </div>
-
-      <h3 class="post-title">
-          <a class="post-title-link" href="/blogs/bp-net/" itemprop="url">
-            <span itemprop="name">用bp网络预测绿萝叶片面积</span>
-          </a>
-      </h3>
-
-    </header>
-  </article>
-
+<p>总体思路：</p>
+<p>缓存主要是为了获取数据和插入数据，因此需要对缓存数据进行节点设计，根据其特性设置key.value用于根据key查找值，同时需要设置使用时间time,使用频率cnt.</p>
+<p>为了方便查找可以使用hash表存储key以及node,可以方便的在hash表内通过node-&gt;key查找到node，但是哈希表无序，因此还需要存储节点的使用时间/频率，这时候有两种思路：</p>
+<p>第一种是利用set容器，c++内置的set是使用红黑树排序，即会形成平衡二叉树，使用运算符重载，将set内部根据时间和频率来进行排序，使用频率最少或者时间最少的会排在前面，以set记录时间/频率，但是搜索时间复杂度是O（logn）。</p>
+<p>第二种思路是建立双链表list存储节点，哈希表中存储key映射到list节点的迭代器，当数据使用是，将其从原来位置删除，插入最前面，当需要删除数据的时候，从末位删除，链表操作的时间复杂度是O（1）。</p>
+<p>获取数据（根据密钥获得值）：</p>
+<p>根据哈希表中的key查找节点，并进行缓存数据更新。</p>
+<p>（2）插入数据（将key,value插入）：</p>
+<p>判断key是否存储过了，当存储过之后更新数据值，反之需要插入数据，此时需要判断是否已经达到容量顶端，达到了，需要删除最不常使用的数据。，并进行缓存数据更新。</p>
+<p>注：每次操作过后都需要进行缓存数据更新，即在哈希表中更新数据节点以及set/双向链表list进行更新。</p>
+<h2 id="设计简单推特"><a href="#设计简单推特" class="headerlink" title="设计简单推特"></a>设计简单推特</h2><p>题目：355. 设计推特设计一个简化版的推特(Twitter)，可以让用户实现发送推文，关注/取消关注其他用户，能够看见关注人（包括自己）的最近十条推文。你的设计需要支持以下的几个功能：postTweet(userId, tweetId): 创建一条新的推文,getNewsFeed(userId): 检索最近的十条推文。每个推文都必须是由此用户关注的人或者是用户自己发出的。推文必须按照时间顺序由最近的开始排序。,follow(followerId, followeeId): 关注一个用户,unfollow(followerId, followeeId): 取消关注一个用户</p>
+<p>思路：</p>
+<p>（1）初始化两个hash表</p>
+<p>题目要求中功能3，4是需要能够关注和取消关注一个用户，那么就需要存储当前用户到自己关注的人之间的映射，需要用到hash表。</p>
+<p>题目要求中的功能1，2是需要对推文进行操作，需要存储当前用户在某个时刻写的推文（这里的推文用数字代替），为了方便通过id查找推文，后面的数据用pair形式存储时间和推文。这里需要一个全局变量来计算发推的时间。初始化时间为0，离现在越近，时间越大。</p>
+<p>存储当前用户到自己关注的人之间的映射 map1&lt;int,set<int>&gt;</int></p>
+<p>存储当前用户在某个时刻写的推文的映射 map2&lt;int,vector&lt;pair&lt;int,int&gt;&gt; ，为了方便通过id查找推文，后面的数据用pair形式存储时间和推文</p>
+<p>（2）关注和取消关注</p>
+<p>直接操作map1，加入当前用户关注的id和删除取消关注的id</p>
+<p>（3）创建推文</p>
+<p>直接操作map2，加入当前用户，在当前时间，写下的推文</p>
+<p>（4）检索推文</p>
+<p>需要注意的是搜索推文的时候需要把自己也加上。检索推文的时候需要进行比较，取前10条，这里可以建立优先队列，根据时间进行自动排序。</p>
+<p>建立优先级队列即大顶堆priori_queue&lt;pair&lt;int,int&gt;&gt;，这里会根据pair中第一个元素进行降序排列，当第一个元素相等会根据第二个元素排序，但由于时间肯定是不一样的，这里默认是对时间进行自动排序，离现在越近，时间越大。</p>
+<p>首先将自己加入自己关注的用户列表中，通过当前用户的id查到所有关注的人（这里需要包括自己），再通过查到关注的用户的id，找到他们在某个时间发的推文，将其插入队列中。这时候输出堆顶前10个就是最近的推文。</p>
 
     </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
   </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+              <a href="/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" rel="tag"><i class="fa fa-tag"></i> 系统设计</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/nginx/" rel="next" title="mac下使用nginx实现负载均衡">
+                  <i class="fa fa-chevron-left"></i> mac下使用nginx实现负载均衡
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
   
   
   
 
-  
-
+  </div>
 
 
           </div>
           
+    <div class="comments" id="comments"></div>
 
         </div>
           
@@ -386,6 +445,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存机制"><span class="nav-number">1.</span> <span class="nav-text">缓存机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设计简单推特"><span class="nav-number">2.</span> <span class="nav-text">设计简单推特</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
