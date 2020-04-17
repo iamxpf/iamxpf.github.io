@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="神经网络中的设定设定(x,y)是单独的一个样本，m个训练样本为{ ((x(1),y(1)), ((x(12),y(2)), ….((x(m),y(m))}设定输入的样本为即将X中所有输入的样本都纵向排列（不使用横向排列的方式），每一列代表一条数据，每一行代表一个输入特征，如原输入样本x1中的特征为a,b,c，a,b,c分别对应了数值，输入样本x2中也有这三个特征，但是数值可能不一样，所以X是nx维">
+<meta name="keywords" content="神经网络,回归">
+<meta property="og:type" content="article">
+<meta property="og:title" content="神经网络和深度学习——第二周编程作业">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;NNet2&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="神经网络中的设定设定(x,y)是单独的一个样本，m个训练样本为{ ((x(1),y(1)), ((x(12),y(2)), ….((x(m),y(m))}设定输入的样本为即将X中所有输入的样本都纵向排列（不使用横向排列的方式），每一列代表一条数据，每一行代表一个输入特征，如原输入样本x1中的特征为a,b,c，a,b,c分别对应了数值，输入样本x2中也有这三个特征，但是数值可能不一样，所以X是nx维">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200417221326.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200417225111.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200417231506.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200417232700.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200417234704.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200417234727.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200417235032.png">
+<meta property="og:updated_time" content="2020-04-17T16:05:50.033Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200417221326.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/NNet2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>神经网络和深度学习——第二周编程作业 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">26</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">21</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/NNet2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          神经网络和深度学习——第二周编程作业
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-04-18 00:03:55 / 修改时间：00:05:50" itemprop="dateCreated datePublished" datetime="2020-04-18T00:03:55+08:00">2020-04-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">神经网络</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/NNet2/" class="post-meta-item leancloud_visitors" data-flag-title="神经网络和深度学习——第二周编程作业" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/NNet2/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/NNet2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="神经网络中的设定"><a href="#神经网络中的设定" class="headerlink" title="神经网络中的设定"></a>神经网络中的设定</h2><p>设定(x,y)是单独的一个样本，m个训练样本为{ ((x(1),y(1)), ((x(12),y(2)), ….((x(m),y(m))}</p><p>设定输入的样本为</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200417221326.png" alt></p><p>即将X中所有输入的样本都纵向排列（不使用横向排列的方式），每一列代表一条数据，每一行代表一个输入特征，如原输入样本x1中的特征为a,b,c，a,b,c分别对应了数值，输入样本x2中也有这三个特征，但是数值可能不一样，所以X是nx维向量，有m个列（代表m条数据）</p><a id="more"></a>
+
+
+
+<p>Y则将所有样本输出依次排列成m维行向量</p>
+<h2 id="logistic原理"><a href="#logistic原理" class="headerlink" title="logistic原理"></a>logistic原理</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>logistic是用一条直线去拟合数据点，即需要得到y=wx+b这条直线，当已知输入样本为{ ((x(1),y(1)), ((x(12),y(2)), ….((x(m),y(m))}，通过不断调整w和b的值，让预测输出yhat近似等于实际输出y。</p>
+<p>其中w对应每个输入特征，即需要构建的w是个nx维的列向量，则需要得到的直线为y=w.T*X+b</p>
+<h3 id="模型公式"><a href="#模型公式" class="headerlink" title="模型公式"></a>模型公式</h3><p>y=w.T*X+b</p>
+<p>由于logistic是个二分类器，需要分类函数，这里选择sigmoid，即a=sigmoid(z)，其中z=y</p>
+<p>同时，衡量一个算法运行情况使用误差函数，常用的误差函数为均方差函数，即L=1/2(yhat-y)2，但是该函数不是凸函数，logistic中使用梯度下降法，找到最优的w和b，适合用凸函数，只有一个最优解，均方差函数有多个局部最优解，不适合该求解方法，这里选择的损失函数为L=-(ylogyhat+(1-y)log(1-yhat))，这是训练一个样本时算法的表现，要衡量全部样本的表现需要用到成本函数J=1/m*∑L=-1/m∑-(ylogyhat+(1-y)log(1-yhat))，即通过J的值判断找到的w,b是否合适。J是衡量算法好坏的依据</p>
+<p>综上，logistic模型公式为</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200417225111.png" alt></p>
+<p>注：选择该成本函数的原因</p>
+<p>由上面两个公式，约定yhat=p(y=1|x),即给定训练样本x,y取1的概率</p>
+<p>当y=0时，p(y|x)=1-yhat；当y=1时，p(y|x)=yhat，则可以将该表达式进行合并为p(y|x)=yhat^(y)+(1-yhat)^(1-y)，根据极大似然函数取对数得到第三个式子，为了进行缩放加上了1/m，最终得出了成本函数</p>
+<h3 id="正向传播和反向传播"><a href="#正向传播和反向传播" class="headerlink" title="正向传播和反向传播"></a>正向传播和反向传播</h3><p>logistic算法采用梯度下降算法：每次都朝着下降的快的反向移动，因此需要计算梯度，沿着梯度放下修正w和b的值</p>
+<p>正向传播中，根据输入的x1,x2…,w,b的值，计算z，由z再计算出a，根据a的值得出损失函数L</p>
+<p>反向传播中</p>
+<p>根据得出的L的值，反向得出各个梯度值，最终得出dw,db，即需要沿着这个梯度变化。首先从损失函数L得出a的梯度da=-y/a+(1-y)/(1-a)，再由a得到dz，dz=dL/dz=dL/da * da/dz（链式法则）=a-y，同理得出dw=x * dz，db=dz。</p>
+<p>根据梯度下降公式w:=w-alpha * dw   b:=b-alpha * db每次来修改w和b的值</p>
+<p>反向传播过程图</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200417231506.png" alt></p>
+<h3 id="提升算法性能"><a href="#提升算法性能" class="headerlink" title="提升算法性能"></a>提升算法性能</h3><p>（1）不使用显示的for循环改用向量化</p>
+<p>根据上述公式，为了求出z，需要对每个x(i)，求出z(i)，再依次得出yhat(i),L(i)，当有m个样本时，就需要循环m次，数据集很大的情况下效率很低，因此将该for循环实现的功能向量化，只需要把x用向量表示，即将每个样本纵向排列得到一个m * nx的矩阵，这样直接通过dot(w.T,X)，即可以计算出z的值，省去了遍历数据集的循环</p>
+<p>（2）利用numpy中的库函数的广播功能</p>
+<p>当m * n的矩阵和1 * n的矩阵相加时，后面的矩阵自动扩展成m * n进行计算，如上述式子中的常数b，在计算过程中会自动扩展</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>利用logistic回归搭建一个可以识别猫的神经网络</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="处理数据"><a href="#处理数据" class="headerlink" title="处理数据"></a>处理数据</h3><p>这里猫的图片数据保存在h5文件中，以64*64的三通道数据保存</p>
+<p>（1）首先，从h5文件中读入训练数据和测试数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.处理数据</span></span><br><span class="line">train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes=load_dataset()</span><br></pre></td></tr></table></figure>
+
+<p>以训练数据位列，查看数据纬度，发现纬度为（290，64，64，3）代表有290个图像，每个图像都是64 * 64的，里面包含了红绿蓝三个通道数字，因此需要将单个图片中红绿蓝矩阵合并为一个列向量，即</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200417232700.png" alt></p>
+<p>（2）因此，第二步需要进行数据降维</p>
+<p>需要将每个图片数据变为64 * 64 * 3=12288维的列向量，或者也可以不指定列数，直接给个-1，让程序自己计算</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">train_set_x=train_set_x_orig.reshape(train_set_x_orig.shape[<span class="number">0</span>],<span class="number">-1</span>).T <span class="comment">#将每个图片竖着排放</span></span><br><span class="line">test_set_x=test_set_x_orig.reshape(test_set_x_orig.shape[<span class="number">0</span>],<span class="number">-1</span>).T</span><br></pre></td></tr></table></figure>
+
+<p>（3）数据标准化</p>
+<p>图像中的像素点事0~255之间，只需要把输入的数据除以255即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">train_set_x=train_set_x/<span class="number">255</span></span><br><span class="line">test_set_x=test_set_x/<span class="number">255</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="搭建神经网络"><a href="#搭建神经网络" class="headerlink" title="搭建神经网络"></a>搭建神经网络</h3><p>（0）确定分类函数</p>
+<p>因为logistic是二值分类器，这里选择sigmoid函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span><span class="params">(z)</span>:</span></span><br><span class="line">	sig=<span class="number">1</span>/(<span class="number">1</span>+exp(-z))</span><br><span class="line">	<span class="keyword">return</span> sig</span><br></pre></td></tr></table></figure>
+
+<p>（1）初始化w,b</p>
+<p>根据输入数据的特征纬度，建立w矩阵</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">inital_wPara_bPara</span><span class="params">(dim)</span>:</span></span><br><span class="line">	w=zeros((dim,<span class="number">1</span>))<span class="comment">#初始化为列向量</span></span><br><span class="line">	b=<span class="number">0</span></span><br><span class="line">	<span class="keyword">return</span> w,b</span><br></pre></td></tr></table></figure>
+
+<p>（2）搭建模型</p>
+<p>对每次循环</p>
+<p>1°正向传播</p>
+<p>根据输入的值，计算出当前的z，a，J，从而得出dw,db的梯度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">progation</span><span class="params">(w,b,x,y)</span>:</span></span><br><span class="line">	<span class="comment">#logictic公式</span></span><br><span class="line">	z=dot(w.T,x)+b</span><br><span class="line">	a=sigmoid(z)</span><br><span class="line">	m=x.shape[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">	loss=(<span class="number">-1</span>/m)*sum((y*log(a)+(<span class="number">1</span>-y)*log(<span class="number">1</span>-a)))</span><br><span class="line">	dz=a-y</span><br><span class="line">	dw=<span class="number">1</span>/m*dot(x,dz.T)</span><br><span class="line">	db=<span class="number">1</span>/m*sum(dz)</span><br><span class="line"></span><br><span class="line">	grad=&#123;<span class="string">"dw"</span>:dw,<span class="string">"db"</span>:db&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> grad,loss</span><br></pre></td></tr></table></figure>
+
+<p>2°反向传播</p>
+<p>根据dw,db的梯度，计算新的w，b的值</p>
+<p>3°记录损失和最终找出的最合适的w,b的值</p>
+<p>每次根据迭代次数记录损失</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">optimize</span><span class="params">(w,b,x,y,alpha,numIter,print_cost=False)</span>:</span></span><br><span class="line"></span><br><span class="line">	costs=[]</span><br><span class="line">	<span class="comment">#遍历numiter次</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(numIter):</span><br><span class="line">		<span class="comment">#得出每次的梯度，进行修正</span></span><br><span class="line">		grad,cost=progation(w,b,x,y)</span><br><span class="line">		dw=grad[<span class="string">'dw'</span>]</span><br><span class="line">		db=grad[<span class="string">'db'</span>]</span><br><span class="line">		w=w-alpha*dw</span><br><span class="line">		b=b-alpha*db</span><br><span class="line">		<span class="keyword">if</span>(i%<span class="number">100</span>==<span class="number">0</span>):</span><br><span class="line">			costs.append(cost)</span><br><span class="line">		<span class="keyword">if</span>(print_cost) <span class="keyword">and</span> (i%<span class="number">100</span>==<span class="number">0</span>):</span><br><span class="line">			print(<span class="string">"i:"</span>+str(i)+<span class="string">"  误差是："</span>+str(cost))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	params=&#123;<span class="string">"w"</span>:w,<span class="string">"b"</span>:b&#125;</span><br><span class="line">	grads=&#123;<span class="string">"dw"</span>:dw,<span class="string">"db"</span>:db&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> params,grads,costs</span><br></pre></td></tr></table></figure>
+
+<p>4°对模型结果进行预测</p>
+<p>根据训练得出的模型w,b,计算z=w*x+b，求出z的值，则得出a=sigmoid(z)，根据a的值记录最终的输出是1还是0（a&gt;0.5是1，反之是0）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict</span><span class="params">(w,b,x)</span>:</span></span><br><span class="line">	a=sigmoid(dot(w.T,x)+b)</span><br><span class="line">	m=a.shape[<span class="number">1</span>]</span><br><span class="line">	yPredict=zeros((<span class="number">1</span>,m))</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">		<span class="keyword">if</span>(a[:,i]&gt;<span class="number">0.5</span>):</span><br><span class="line">			yPredict[<span class="number">0</span>,i]=<span class="number">1</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			yPredict[<span class="number">0</span>,i]=<span class="number">0</span></span><br><span class="line">	<span class="keyword">return</span> yPredict</span><br></pre></td></tr></table></figure>
+
+<p>（3）最终形成模型，对训练集和测试集上的数据查看准确率</p>
+<p>对得出的预测值减去实际的输出并取绝对值，当预测相同，则对应位置为0，不同则为1，所有数相加起来除以总数，即对所有元素取平均，则是误差率，用1减去这个数，则是正确率</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">model</span><span class="params">(trainX,trainY,testX,testY,alpha=<span class="number">0.005</span>,numIter=<span class="number">2000</span>,print_cost=True)</span>:</span></span><br><span class="line">	<span class="comment">#初始化</span></span><br><span class="line">	<span class="comment">#行向量是多少数据特征，列向量是多少条数据，w的个数对应数据特征的个数</span></span><br><span class="line">	m=trainX.shape[<span class="number">0</span>]</span><br><span class="line">	w,b=inital_wPara_bPara(m)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#训练模型</span></span><br><span class="line">	params,grads,costs=optimize(w,b,trainX,trainY,alpha,numIter,print_cost)</span><br><span class="line"></span><br><span class="line">	w=params[<span class="string">"w"</span>]</span><br><span class="line">	b=params[<span class="string">"b"</span>]</span><br><span class="line">	trainPredict=predict(w,b,trainX)</span><br><span class="line">	testPredict=predict(w,b,testX)</span><br><span class="line"></span><br><span class="line">	print(<span class="string">"训练集准确率："</span>,<span class="number">100</span>-mean(abs(trainPredict-trainY))*<span class="number">100</span>)</span><br><span class="line">	print(<span class="string">"测试集准确率："</span>,<span class="number">100</span>-mean(abs(testPredict-testY))*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">	d=&#123;<span class="string">"costs"</span>:costs,<span class="string">"trainPredict:"</span>:trainPredict,<span class="string">"testPredict:"</span>:testPredict,<span class="string">"w"</span>:w,<span class="string">"b"</span>:b,<span class="string">"alpha"</span>:alpha,<span class="string">"numIter"</span>:numIter&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> d</span><br></pre></td></tr></table></figure>
+
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p>（1）固定学习率</p>
+<p>读入costs的值，进行显示，得出每一百次costs误差的变化</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">d=model(train_set_x,train_set_y_orig,test_set_x,test_set_y_orig)</span><br><span class="line">costs=d[<span class="string">"costs"</span>]</span><br><span class="line">plt.plot(costs)</span><br><span class="line">plt.xlabel(<span class="string">"iter"</span>)</span><br><span class="line">plt.ylabel(<span class="string">"costs"</span>)</span><br><span class="line">plt.title(<span class="string">"alpha="</span>+str(d[<span class="string">"alpha"</span>]))</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>在迭代次数2000，学习率为0.005下误差的变化</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200417234704.png" alt></p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200417234727.png" alt></p>
+<p>可以看出训练集准确率很高，但是测试集准确率有所降低，说明训练的模型存在过拟合的现象</p>
+<p>（2）不同学习率</p>
+<p>输入不同的学习率，查看误差的变化</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">alpha=[<span class="number">0.01</span>,<span class="number">0.001</span>,<span class="number">0.0001</span>]</span><br><span class="line">m=shape(alpha)[<span class="number">0</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">	print(<span class="string">"alpha="</span>+str(alpha[i]))</span><br><span class="line">	d=model(train_set_x,train_set_y_orig,test_set_x,test_set_y_orig,alpha[i])</span><br><span class="line">	costs=d[<span class="string">"costs"</span>]</span><br><span class="line">	plt.plot(costs,label=str(d[<span class="string">"alpha"</span>]))</span><br><span class="line">	print(<span class="string">"------------------------------------------------"</span>)</span><br><span class="line"></span><br><span class="line">plt.xlabel(<span class="string">"iter"</span>)</span><br><span class="line">plt.ylabel(<span class="string">"costs"</span>)</span><br><span class="line">legend = plt.legend(loc=<span class="string">'upper center'</span>, shadow=<span class="literal">True</span>)</span><br><span class="line">frame = legend.get_frame()</span><br><span class="line">frame.set_facecolor(<span class="string">'0.90'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>结果为</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200417235032.png" alt></p>
+<p>从结果可以看出，当学习率很小的时候，误差基本不怎么变化，即一直没到嘴有点，当学习率很大的时候，前面由于学习率大，所有误差变化快，出现陡降，当走到最优解之后，误差趋向平缓</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 神经网络</a>
+              <a href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag"><i class="fa fa-tag"></i> 回归</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/sysDesignNote/" rel="next" title="Leecode学习笔记（六）——系统设计题">
+                  <i class="fa fa-chevron-left"></i> Leecode学习笔记（六）——系统设计题
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络中的设定"><span class="nav-number">1.</span> <span class="nav-text">神经网络中的设定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#logistic原理"><span class="nav-number">2.</span> <span class="nav-text">logistic原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">2.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型公式"><span class="nav-number">2.2.</span> <span class="nav-text">模型公式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正向传播和反向传播"><span class="nav-number">2.3.</span> <span class="nav-text">正向传播和反向传播</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提升算法性能"><span class="nav-number">2.4.</span> <span class="nav-text">提升算法性能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#题目"><span class="nav-number">3.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">4.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#处理数据"><span class="nav-number">4.1.</span> <span class="nav-text">处理数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#搭建神经网络"><span class="nav-number">4.2.</span> <span class="nav-text">搭建神经网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果"><span class="nav-number">4.3.</span> <span class="nav-text">运行结果</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">70k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:03</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
