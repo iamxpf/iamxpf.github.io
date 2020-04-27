@@ -56,16 +56,29 @@
   };
 </script>
 
-  <meta name="description" content="好好学习，天天向上">
-<meta name="keywords" content="good good good">
+  <meta name="description" content="主要学习构建一个浅层神经网络logistic回归可以理解为是一个单层的网络，这里构造一个隐藏层一个输出层的网络，即两层网络（网络层数计算不加入输入层）网络结构浅层神经网络有输入层，一个隐藏层，一个输出层约定：ai代表第i层，ai[j]代表第i层第j个神经元参数初始化网络搭建的时候需要初始化权值和偏置量">
+<meta name="keywords" content="神经网络,浅层网络">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NNet3">
+<meta property="og:title" content="神经网络和深度学习——第三周编程作业">
 <meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;NNet3&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="好好学习，天天向上">
+<meta property="og:description" content="主要学习构建一个浅层神经网络logistic回归可以理解为是一个单层的网络，这里构造一个隐藏层一个输出层的网络，即两层网络（网络层数计算不加入输入层）网络结构浅层神经网络有输入层，一个隐藏层，一个输出层约定：ai代表第i层，ai[j]代表第i层第j个神经元参数初始化网络搭建的时候需要初始化权值和偏置量">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-04-26T14:07:22.621Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427142410.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427142845.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427144106.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427144504.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427142719.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427145057.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427145121.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427145525.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427145626.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427145550.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427153130.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427153234.png">
+<meta property="og:updated_time" content="2020-04-27T07:38:02.493Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200427142410.png">
 
 <link rel="canonical" href="https://www.xiapf.com/blogs/NNet3/">
 
@@ -81,7 +94,7 @@
   };
 </script>
 
-  <title>NNet3 | 八戒大强攻</title>
+  <title>神经网络和深度学习——第三周编程作业 | 八戒大强攻</title>
   
 
 
@@ -158,7 +171,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">27</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">28</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -246,7 +259,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          NNet3
+          神经网络和深度学习——第三周编程作业
         </h2>
 
         <div class="post-meta">
@@ -258,9 +271,27 @@
 
               <time title="创建时间：2020-04-26 22:07:22" itemprop="dateCreated datePublished" datetime="2020-04-26T22:07:22+08:00">2020-04-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-27 15:38:02" itemprop="dateModified" datetime="2020-04-27T15:38:02+08:00">2020-04-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">神经网络</span>
+                  </a>
+                </span>
+            </span>
 
           
-            <span id="/blogs/NNet3/" class="post-meta-item leancloud_visitors" data-flag-title="NNet3" title="阅读次数">
+            <span id="/blogs/NNet3/" class="post-meta-item leancloud_visitors" data-flag-title="神经网络和深度学习——第三周编程作业" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -286,14 +317,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>0</span>
+              <span>5.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>5 分钟</span>
             </span>
 		  
 			
@@ -307,7 +338,98 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <p>主要学习构建一个浅层神经网络</p><p>logistic回归可以理解为是一个单层的网络，这里构造一个隐藏层一个输出层的网络，即两层网络（网络层数计算不加入输入层）</p><h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p>浅层神经网络有输入层，一个隐藏层，一个输出层</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200427142410.png" alt></p><p>约定：ai代表第i层，ai[j]代表第i层第j个神经元</p><h2 id="参数初始化"><a href="#参数初始化" class="headerlink" title="参数初始化"></a>参数初始化</h2><p>网络搭建的时候需要初始化权值和偏置量</p><a id="more"></a>
+
+
+
+
+
+<p>（1）权值不能初始化全为0</p>
+<p>全都初始化为0，在第一个隐藏层每个神经元执行相同的运算，即使后面进行梯度下降操作，每个神经元都会与其他神经元的输出一样</p>
+<p>（2）初始化的数据需要是很小的数</p>
+<p>当激活函数选择sigmoid或者tanh的时候，当初始权重取值很大，那么乘上x得到的z也会很大，此时激活函数的值趋近与1或者0，这时候梯度变化很小，会导致算法学习起来很慢</p>
+<h2 id="前向传播和反向传播"><a href="#前向传播和反向传播" class="headerlink" title="前向传播和反向传播"></a>前向传播和反向传播</h2><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200427142845.png" alt></p>
+<p>其中输入x,w[1],b[1]，隐藏层计算z[1],a[1]，输出层计算z[2],a[2]（这里需要根据w[2],b[2]计算）</p>
+<p>黑色箭头代表前向传播，红色箭头代表反向传播</p>
+<p>将X样本全部都竖向排列，即每一列代表一个样本，X是（nx,m)维向量，其中nx代表输入特征的个数，m代表样本的总数量。</p>
+<p>前向传播的公式为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200427144106.png" alt></p>
+<p>反向传播的为：</p>
+<h2 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h2><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200427144504.png" alt></p>
+<p>其中dz[l]=dA[l]*g^’(dz[l])，又因为dA[l-1]=W[l]T * dz[l]，即dz[l]=W[l+1]T  dz[l+1] * g^’(dz[l])，所以得出了隐藏层中dz[1]</p>
+<h2 id="激活函数的选择"><a href="#激活函数的选择" class="headerlink" title="激活函数的选择"></a>激活函数的选择</h2><p>网络每层的激活函数可以不同，根据每层特点来选择</p>
+<h3 id="不同的激活函数"><a href="#不同的激活函数" class="headerlink" title="不同的激活函数"></a>不同的激活函数</h3><p>（1）sigmoid函数</p>
+<p>当需要输出的是二分类问题时，使用sigmoid函数，最终输出两个值0或者1，当z的值大于0.5输出1，反之输出0。</p>
+<p>一般用在最后的输出层，激活函数的导数为a（1-a）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200427142719.png" alt></p>
+<p>（2）tanh函数</p>
+<p>该函数用在隐藏层比sigmoid函数好，因为其输出的数据值平均为0。</p>
+<p>一般用在隐藏层，激活函数的导数为1-a**2</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200427145057.png" alt></p>
+<p>（3）ReLu函数</p>
+<p>斜率变化很快，算法学习速度快。</p>
+<p>激活函数的导数为，当z&lt;0，导数为0，反之为1</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200427145121.png" alt></p>
+<h3 id="为什么需要非线性激活函数"><a href="#为什么需要非线性激活函数" class="headerlink" title="为什么需要非线性激活函数"></a>为什么需要非线性激活函数</h3><p>如果用线性激活函数，相当于是把输入重新线性组合了，隐藏层根本没用</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>搭建一个浅层网络，对导入的数据进行分类</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h3><p>数据集使用planar_utils中的load_planar_dataset，将数据打印出来可知，输入的样本x是2 * 400的向量，每一列代表其坐标，标签列y是0和1</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200427145525.png" alt></p>
+<p>小技巧：将不同标签的点按照不同颜色打印出来在scatter中用cmap=plt.cm.spectral</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plt.scatter(X[<span class="number">0</span>,:],X[<span class="number">1</span>,:],c=squeeze(Y),cmap=plt.cm.Spectral)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>squeeze是将数据变为1维，scatter不能显示二维的数据</p>
+<h3 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h3><p>用sklearn自带的logistic回归测试分类效果</p>
+<p>首先得到分类器，对X,Y进行训练，打印出决策边界，根据得到的预测值和真实值相乘可以得到错误率</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#2.测试使用logistic回归的准确度，并画出决策边界</span></span><br><span class="line">clt=linear_model.LogisticRegressionCV()</span><br><span class="line">clt.fit(X.T,Y.T)</span><br><span class="line">plot_decision_boundary(<span class="keyword">lambda</span> x:clt.predict(x),X,Y)</span><br><span class="line">m=shape(Y)[<span class="number">1</span>]</span><br><span class="line">rate=(dot(Y,clt.predict(X.T))+dot((<span class="number">1</span>-Y),(<span class="number">1</span>-clt.predict(X.T))))/m</span><br><span class="line">print(<span class="string">"准确率为："</span>+str(rate))</span><br></pre></td></tr></table></figure>
+
+<p>因为是二分类问题，预测值中为1的和真实值为1的相乘，得到判断为1的数据，同理得到判断为0的数据，除以总数得到预测得准确率为47%</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200427145626.png" alt></p>
+<p>附：决策边界</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_decision_boundary</span><span class="params">(model, X, y)</span>:</span></span><br><span class="line">    <span class="comment"># Set min and max values and give it some padding</span></span><br><span class="line">    x_min, x_max = X[<span class="number">0</span>, :].min() - <span class="number">1</span>, X[<span class="number">0</span>, :].max() + <span class="number">1</span></span><br><span class="line">    y_min, y_max = X[<span class="number">1</span>, :].min() - <span class="number">1</span>, X[<span class="number">1</span>, :].max() + <span class="number">1</span></span><br><span class="line">    h = <span class="number">0.01</span></span><br><span class="line">    <span class="comment"># Generate a grid of points with distance h between them</span></span><br><span class="line">    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))</span><br><span class="line">    <span class="comment"># Predict the function value for the whole grid</span></span><br><span class="line">    Z = model(np.c_[xx.ravel(), yy.ravel()])</span><br><span class="line">    Z = Z.reshape(xx.shape)</span><br><span class="line">    <span class="comment"># Plot the contour and training examples</span></span><br><span class="line">    plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral)</span><br><span class="line">    plt.ylabel(<span class="string">'x2'</span>)</span><br><span class="line">    plt.xlabel(<span class="string">'x1'</span>)</span><br><span class="line">    plt.scatter(X[<span class="number">0</span>, :], X[<span class="number">1</span>, :], c=np.squeeze(y), cmap=plt.cm.Spectral)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>最终利用logistic得出的分类为</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200427145550.png" alt></p>
+<p>由结果可以看出，logistic分类效果不好，因为给出的数据是线性不可分的，所以分类不理想。</p>
+<p>下面使用神经网络进行分类</p>
+<h3 id="搭建网络结构"><a href="#搭建网络结构" class="headerlink" title="搭建网络结构"></a>搭建网络结构</h3><p>设定输入层，隐藏层，输出层的神经元个数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.初始化网络结构</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initial_layer_size</span><span class="params">(X,Y,n_h)</span>:</span></span><br><span class="line">	<span class="comment">#输入样本的特质数量</span></span><br><span class="line">	m=shape(X)[<span class="number">0</span>]</span><br><span class="line">	n=shape(Y)[<span class="number">0</span>]</span><br><span class="line">	n_x=m</span><br><span class="line">	n_h=n_h</span><br><span class="line">	n_y=n</span><br><span class="line">	<span class="keyword">return</span> n_x,n_h,n_y</span><br></pre></td></tr></table></figure>
+
+<h3 id="初始化参数"><a href="#初始化参数" class="headerlink" title="初始化参数"></a>初始化参数</h3><p>初始化各层的w和b的初始值，这里的w用正态分布随机数乘以一个很小的数来初始化，以此保证训练的速度（很小的数，梯度变化快），这里将每层的w,b作为parameters保存下来，便于前向传播、反向传播、更新参数中使用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#2.初始化参数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initial_parameters</span><span class="params">(n_x,n_h,n_y)</span>:</span></span><br><span class="line">	<span class="comment">#初始化w1,b1,w2,b2</span></span><br><span class="line">	<span class="comment">#初始化成一个很小的数</span></span><br><span class="line">	random.seed(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">	W1=random.randn(n_h,n_x)*<span class="number">0.01</span></span><br><span class="line">	b1=zeros((n_h,<span class="number">1</span>))</span><br><span class="line">	W2=random.randn(n_y,n_h)*<span class="number">0.01</span></span><br><span class="line">	b2=zeros((n_y,<span class="number">1</span>))</span><br><span class="line">	parameters=&#123;<span class="string">"W1"</span>:W1,<span class="string">"W2"</span>:W2,<span class="string">"b1"</span>:b1,<span class="string">"b2"</span>:b2&#125;</span><br><span class="line">	<span class="keyword">return</span> parameters</span><br></pre></td></tr></table></figure>
+
+<h3 id="前向传播"><a href="#前向传播" class="headerlink" title="前向传播"></a>前向传播</h3><p>根据公式，计算每层Z，A的值，并进行保存在cache中，便于反向传播中计算导数使用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#3.前向传播</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward_progation</span><span class="params">(X,parameters)</span>:</span></span><br><span class="line">	W1=parameters[<span class="string">"W1"</span>]</span><br><span class="line">	W2=parameters[<span class="string">"W2"</span>]</span><br><span class="line">	b1=parameters[<span class="string">"b1"</span>]</span><br><span class="line">	b2=parameters[<span class="string">"b2"</span>]</span><br><span class="line">	Z1=dot(W1,X)+b1</span><br><span class="line">	A1=tanh(Z1)</span><br><span class="line">	Z2=dot(W2,A1)+b2</span><br><span class="line">	A2=sigmoid(Z2)</span><br><span class="line">	cache=&#123;<span class="string">"Z1"</span>:Z1,<span class="string">"Z2"</span>:Z2,<span class="string">"A1"</span>:A1,<span class="string">"A2"</span>:A2&#125;</span><br><span class="line">	<span class="keyword">return</span> A2,cache</span><br></pre></td></tr></table></figure>
+
+<h3 id="计算损失"><a href="#计算损失" class="headerlink" title="计算损失"></a>计算损失</h3><p>损失函数和logistic中一样，使用交叉熵函数，这里需要用到最后一层中的输出</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#4.计算损失函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compute_cost</span><span class="params">(Y,yhat)</span>:</span></span><br><span class="line">	<span class="comment">#yhat=cache["A2"]</span></span><br><span class="line">	m=shape(Y)[<span class="number">1</span>]</span><br><span class="line">	multiplyc=multiply(Y,log(yhat))+multiply((<span class="number">1</span>-Y),log(<span class="number">1</span>-yhat))</span><br><span class="line">	cost=-sum(multiplyc)/m</span><br><span class="line">	<span class="keyword">return</span> cost</span><br></pre></td></tr></table></figure>
+
+<h3 id="反向传播-1"><a href="#反向传播-1" class="headerlink" title="反向传播"></a>反向传播</h3><p>根据公式，得到每层的dz,dw,db，并将梯度变化用grad保存下来，方便更新参数中使用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#5.计算反向传播</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">back_progation</span><span class="params">(X,Y,parameters,cache)</span>:</span></span><br><span class="line">	m=shape(X)[<span class="number">1</span>]</span><br><span class="line">	<span class="comment">#计算梯度</span></span><br><span class="line">	A2=cache[<span class="string">"A2"</span>]</span><br><span class="line">	Z2=cache[<span class="string">"Z2"</span>]</span><br><span class="line">	A1=cache[<span class="string">"A1"</span>]</span><br><span class="line">	Z1=cache[<span class="string">"Z1"</span>]</span><br><span class="line">	W1=parameters[<span class="string">"W1"</span>]</span><br><span class="line">	W2=parameters[<span class="string">"W2"</span>]</span><br><span class="line"></span><br><span class="line">	dZ2=A2-Y</span><br><span class="line">	dW2=(<span class="number">1</span>/m)*dot(dZ2,A1.T)</span><br><span class="line">	db2=(<span class="number">1</span>/m)*sum(dZ2,axis=<span class="number">1</span>,keepdims=<span class="literal">True</span>)</span><br><span class="line">	dZ1=multiply(dot(W2.T,dZ2),(<span class="number">1</span>-A1**<span class="number">2</span>))</span><br><span class="line">	dW1=(<span class="number">1</span>/m)*dot(dZ1,X.T)</span><br><span class="line">	db1=(<span class="number">1</span>/m)*sum(dZ1,axis=<span class="number">1</span>,keepdims=<span class="literal">True</span>)</span><br><span class="line">	grads=&#123;<span class="string">"dW1"</span>:dW1,<span class="string">"dW2"</span>:dW2,<span class="string">"db1"</span>:db1,<span class="string">"db2"</span>:db2&#125;</span><br></pre></td></tr></table></figure>
+
+<p>附：dot是点乘（数字相乘），最终得到是一个数字，multiply是各个位置相乘（矩阵相乘），最终得到一个矩阵</p>
+<h3 id="更新参数"><a href="#更新参数" class="headerlink" title="更新参数"></a>更新参数</h3><p>根据梯度计算每次更新的w,b，并在parameters中保存，每次根据新的w和b重新前向传播计算损失</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#6.更新参数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">update_parameters</span><span class="params">(parameters,grads,alpha)</span>:</span></span><br><span class="line">	W1=parameters[<span class="string">"W1"</span>]</span><br><span class="line">	W2=parameters[<span class="string">"W2"</span>]</span><br><span class="line">	b1=parameters[<span class="string">"b1"</span>]</span><br><span class="line">	b2=parameters[<span class="string">"b2"</span>]</span><br><span class="line"></span><br><span class="line">	dW1=grads[<span class="string">"dW1"</span>]</span><br><span class="line">	dW2=grads[<span class="string">"dW2"</span>]</span><br><span class="line">	db1=grads[<span class="string">"db1"</span>]</span><br><span class="line">	db2=grads[<span class="string">"db2"</span>]</span><br><span class="line"></span><br><span class="line">	W1=W1-alpha*dW1</span><br><span class="line">	W2=W2-alpha*dW2</span><br><span class="line">	b1=b1-alpha*db1</span><br><span class="line">	b2=b2-alpha*db2</span><br><span class="line">	parameters=&#123;<span class="string">"W1"</span>:W1,<span class="string">"W2"</span>:W2,<span class="string">"b1"</span>:b1,<span class="string">"b2"</span>:b2&#125;</span><br><span class="line">	<span class="keyword">return</span> parameters</span><br></pre></td></tr></table></figure>
+
+<h3 id="生成模型"><a href="#生成模型" class="headerlink" title="生成模型"></a>生成模型</h3><p>（1）初始化网络结构</p>
+<p>（2）初始化参数</p>
+<p>（3）每次循环中</p>
+<p>1°先正向传播，根据初始化的参数（parameters），得到cache（保存了每层的A,Z）</p>
+<p>°再根据输出层结果得出损失函数</p>
+<p>3°接着，进行反向传播，根据cache得出每层的梯度保存在grad中</p>
+<p>°最后进行参数更新，按照梯度，利用w=w-alpha * dw（b同理）得出更新的参数</p>
+<p>按照以上步骤进行循环，每1000次输出损失，最终得到训练出的模型，即parameters</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#7.模型整合 训练模型，按照次数输出损失函数的值</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">nn_model</span><span class="params">(X,Y,n_h,numIter,alpha)</span>:</span></span><br><span class="line">	random.seed(<span class="number">3</span>)</span><br><span class="line">	n_x,n_h,n_y=initial_layer_size(X,Y,n_h)</span><br><span class="line">	parameters=initial_parameters(n_x,n_h,n_y)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(numIter):</span><br><span class="line">		A2,cache=forward_progation(X,parameters)</span><br><span class="line">		cost=compute_cost(Y,A2)</span><br><span class="line">		grads=back_progation(X,Y,parameters,cache)</span><br><span class="line">		parameters=update_parameters(parameters,grads,alpha)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(i%<span class="number">1000</span>==<span class="number">0</span>):</span><br><span class="line">			print(<span class="string">"第"</span>+str(i)+<span class="string">"次,损失是："</span>+str(cost))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> parameters</span><br></pre></td></tr></table></figure>
+
+<h4 id="模型预测"><a href="#模型预测" class="headerlink" title="模型预测"></a>模型预测</h4><p>根据得到的模型，进行一次前向传播得到输出层的值，即为预测值，进行四舍五入得到模型预测值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#8.模型预测</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">nn_predict</span><span class="params">(X,parameters)</span>:</span></span><br><span class="line">	A2,cache=forward_progation(X,parameters)</span><br><span class="line">	<span class="comment"># prediction=cache["A2"]</span></span><br><span class="line">	<span class="comment"># print(prediction)</span></span><br><span class="line">	prediction=numpy.round(A2)</span><br><span class="line">	<span class="keyword">return</span> prediction</span><br></pre></td></tr></table></figure>
+
+<p>最终，先训练出模型，再对模型预测，得到最终结果，画出决策边界（决策边界中输入的参数是预测函数模型，即将预测得值输入，和真实值比较，从而画出边界）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200427153130.png" alt></p>
+<p>可以看出效果比logistic好很多，基本都分类正确。</p>
+<p>最终分类正确率为90.5%</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200427153234.png" alt></p>
+<p>注：这里的隐藏层神经元个数选择了4个，可以选择不同的神经元查看效果。</p>
+
     </div>
 
     
@@ -345,6 +467,11 @@
 
 
       <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 神经网络</a>
+              <a href="/tags/%E6%B5%85%E5%B1%82%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 浅层网络</a>
+          </div>
 
         
 
@@ -400,6 +527,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络结构"><span class="nav-number">1.</span> <span class="nav-text">网络结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数初始化"><span class="nav-number">2.</span> <span class="nav-text">参数初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前向传播和反向传播"><span class="nav-number">3.</span> <span class="nav-text">前向传播和反向传播</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反向传播"><span class="nav-number">4.</span> <span class="nav-text">反向传播</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#激活函数的选择"><span class="nav-number">5.</span> <span class="nav-text">激活函数的选择</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#不同的激活函数"><span class="nav-number">5.1.</span> <span class="nav-text">不同的激活函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么需要非线性激活函数"><span class="nav-number">5.2.</span> <span class="nav-text">为什么需要非线性激活函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#题目"><span class="nav-number">6.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">7.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据集"><span class="nav-number">7.1.</span> <span class="nav-text">数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对比"><span class="nav-number">7.2.</span> <span class="nav-text">对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#搭建网络结构"><span class="nav-number">7.3.</span> <span class="nav-text">搭建网络结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化参数"><span class="nav-number">7.4.</span> <span class="nav-text">初始化参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前向传播"><span class="nav-number">7.5.</span> <span class="nav-text">前向传播</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算损失"><span class="nav-number">7.6.</span> <span class="nav-text">计算损失</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反向传播-1"><span class="nav-number">7.7.</span> <span class="nav-text">反向传播</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更新参数"><span class="nav-number">7.8.</span> <span class="nav-text">更新参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成模型"><span class="nav-number">7.9.</span> <span class="nav-text">生成模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#模型预测"><span class="nav-number">7.9.1.</span> <span class="nav-text">模型预测</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -427,7 +555,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -494,13 +622,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">75k</span>
+    <span title="站点总字数">80k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">1:08</span>
+    <span title="站点阅读时长">1:12</span>
 </div>
   <div class="addthis_inline_share_toolbox">
     <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
