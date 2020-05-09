@@ -57,7 +57,7 @@
 </script>
 
   <meta name="description" content="实验描述训练部分：使用面向对象的方法实现两种机器学习算法BP、SVM，并将两种算法进行封装，通过接口调用两种算法，利用已知1-5月气象数据训练2个气温预测模型，并预测后续3日气温值。测试部分：利用训练好的模型，当输入最大温度，最小温度，湿度和光照时，可以得到预测得气温。通过dubbo+zookeeper实现通过接口远程调用算法模型">
-<meta name="keywords" content="good good good">
+<meta name="keywords" content="java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="react+springboot前后台分离项目">
 <meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;react-springboot&#x2F;index.html">
@@ -83,7 +83,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200507204347.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200507204339.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200507204355.png">
-<meta property="og:updated_time" content="2020-05-09T06:48:49.293Z">
+<meta property="og:updated_time" content="2020-05-09T06:59:08.836Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200507202451.png">
 
@@ -277,7 +277,18 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-05-09 14:41:07 / 修改时间：14:48:49" itemprop="dateCreated datePublished" datetime="2020-05-09T14:41:07+08:00">2020-05-09</time>
+              <time title="创建时间：2020-05-09 14:41:07 / 修改时间：14:59:08" itemprop="dateCreated datePublished" datetime="2020-05-09T14:41:07+08:00">2020-05-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
             </span>
 
           
@@ -418,7 +429,7 @@
 <p>内容1部分设置需要用到的对象，构造函数，触发的事件，与后台数据交互等内容。</p>
 <p>内容2部分是设置页面显示的部分，这里直接使用antd组件。</p>
 <p>1°内容2部分:使用antd组件创建页面内容</p>
-<p>进入antd官网<a href="https://ant.design/components/button-cn/，选择组件，以button组件为例：" target="_blank" rel="external nofollow noopener noreferrer">https://ant.design/components/button-cn/，选择组件，以button组件为例：</a></p>
+<p>进入antd官网<a href="https://ant.design/components/button-cn/" target="_blank" rel="external nofollow noopener noreferrer">https://ant.design/components/button-cn/</a> ，选择组件，以button组件为例：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200507204229.png" alt></p>
 <p>第一步，选择需要的组件button</p>
 <p>第二步，在“代码演示”部分找到自己需要的样式</p>
@@ -447,7 +458,7 @@
 <h3 id="前台和后台数据交互"><a href="#前台和后台数据交互" class="headerlink" title="前台和后台数据交互"></a>前台和后台数据交互</h3><p>后台开发使用springboot框架,开发软件为IntelliJ IDEA。</p>
 <p>（1）跨域问题</p>
 <p>跨域是指当客户端向服务器发起一个网络请求，url会有包含三个主要信息：协议（protocol），域名（host），端口号（port）。当三部分都和服务器相同的情况下，属于同源。但是只要有一个不同,就属于构成了跨域调用。会受到同源策略的限制。同源策略限制从一个源加载的文档或脚本如何与来自另一个源的资源进行交互。springboot项目默认端口是8080，react默认端口是3000,前后端端口不一样，所以有跨域问题。</p>
-<p>这里采用代理方式进行处理：（这里springboot项目的端口为9091），在react项目中的package.json中设置转发”proxy”:”<a href="http://localhost:9091&quot;,将对前端的所有请求全部转发到9091端口即后台项目的入口中，这样就解决了跨域问题。" target="_blank" rel="external nofollow noopener noreferrer">http://localhost:9091&quot;,将对前端的所有请求全部转发到9091端口即后台项目的入口中，这样就解决了跨域问题。</a></p>
+<p>这里采用代理方式进行处理：（这里springboot项目的端口为9091），在react项目中的package.json中设置转发”proxy”:”<a href="http://localhost:9091&quot;" target="_blank" rel="external nofollow noopener noreferrer">http://localhost:9091&quot;</a> ,将对前端的所有请求全部转发到9091端口即后台项目的入口中，这样就解决了跨域问题。</p>
 <p>（2）数据交互</p>
 <p>这里的项目是采用前后端分离的思想，前端从后端剥离，形成一个前端工程，前端只利用Json来和后端进行交互，后端不返回页面，只返回Json数据。前后端之间完全通过public API约定。前后端之间使用fetch进行数据交互。</p>
 <p>1°前台接收后台数据</p>
@@ -455,7 +466,7 @@
 <p>后台核心代码：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/submit"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SubmitController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> IUseModels useModels;</span><br><span class="line">    <span class="keyword">public</span> Map&lt;String,<span class="keyword">double</span>[][]&gt; mapRes;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/testbp"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">testbp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//导入数据</span></span><br><span class="line">        ..</span><br><span class="line">        <span class="comment">//训练网络</span></span><br><span class="line">        mapRes= useModels.bpTrain(inData,target,inputSize,hideSize,outputSize,iter);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//测试数据</span></span><br><span class="line">        <span class="keyword">double</span>[] x = <span class="keyword">new</span> <span class="keyword">double</span>[]&#123;<span class="number">14.7</span>,<span class="number">0</span>,<span class="number">11.7</span>,<span class="number">22.4</span>&#125;;</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">double</span> res=useModels.bpTest(x,mapRes);</span><br><span class="line">   	 <span class="comment">//设置输出精度</span></span><br><span class="line">        DecimalFormat df = <span class="keyword">new</span> DecimalFormat( <span class="string">"0.00 "</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"后三天的温度为："</span>+df.format(res)+<span class="string">" , "</span>+df.format(res2)+<span class="string">" , "</span>+df.format(res3);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>前台：前台就需要将请求转发到<a href="http://localhost:9091/submit/testbp上，因为上面设置了跨域转发，所以使用fetch(&#39;/submit/testbp&#39;)即可以将请求转发至后台，当获取到json数据后将其转换成text（then" target="_blank" rel="external nofollow noopener noreferrer">http://localhost:9091/submit/testbp上，因为上面设置了跨域转发，所以使用fetch(&#39;/submit/testbp&#39;)即可以将请求转发至后台，当获取到json数据后将其转换成text（then</a>(response =&gt; response.text())），并读取其中的message（then(message =&gt; {this.setState({message: message});});）,即后台传回的后三天的温度数据。</p>
+<p>前台：前台就需要将请求转发到<a href="http://localhost:9091/submit/testbp" target="_blank" rel="external nofollow noopener noreferrer">http://localhost:9091/submit/testbp</a> 上，因为上面设置了跨域转发，所以使用fetch(‘/submit/testbp’)即可以将请求转发至后台，当获取到json数据后将其转换成text（then(response =&gt; response.text())），并读取其中的message（then(message =&gt; {this.setState({message: message});});）,即后台传回的后三天的温度数据。</p>
 <p>项目中设置的是，当点击按钮时，向后台获取数据，因此将fetch写在事件中，当点击按钮时，触发该事件，这里使用button组件自带的onclick方法绑定事件。</p>
 <p>需要注意的是在 JavaScript 中，class 的方法默认不会绑定 this。如果忘记绑定 this.handleClick 并把它传入了 onClick，当调用这个函数的时候 this 的值为 undefined，所以需要在构造函数中绑定事件。</p>
 <p>注：如果需要进入页面就从后台获取数据，则需要在生命周期函数componentDidMount()中添加fetch</p>
@@ -525,6 +536,10 @@
 
 
       <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"><i class="fa fa-tag"></i> java</a>
+          </div>
 
         
 
