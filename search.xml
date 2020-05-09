@@ -16,7 +16,7 @@
 <p>设搭建L层网络，则输入层是第0层，隐藏层为第1层 ~ 第L-2层，输出层为第L-1层</p>
 <p>搭建多层神经网络步骤</p>
 <p>（1）初始化各层参数（W，b）</p>
-<p>需要初始化参数的层数为第第1层 ~ 第L-1层，即参数索引为1 ~ L-1</p>
+<p>需要初始化参数的层数为第1层 ~ 第L-1层，即参数索引为1 ~ L-1</p>
 <p>设有L层网络，则第l层的权重W和偏置量b的维度满足：</p>
 <p>shape(W)=(n[l],n[l-1])</p>
 <p>shpe(b)=(n[l],1)</p>
@@ -1733,8 +1733,8 @@
         <category>java</category>
       </categories>
       <tags>
-        <tag>多线程</tag>
         <tag>java</tag>
+        <tag>多线程</tag>
         <tag>future</tag>
       </tags>
   </entry>
