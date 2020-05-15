@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://www.xiapf.com/"/>
-  <updated>2020-05-15T02:29:13.466Z</updated>
+  <updated>2020-05-15T02:31:51.000Z</updated>
   <id>https://www.xiapf.com/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>windows10专业版,我们无法在此设备上激活windows因为无法连接到你的组织的激活服务器解决方法</title>
+    <title>(转载）windows10专业版,我们无法在此设备上激活windows因为无法连接到你的组织的激活服务器解决方法</title>
     <link href="https://www.xiapf.com/blogs/sovConSever/"/>
     <id>https://www.xiapf.com/blogs/sovConSever/</id>
     <published>2020-05-15T02:27:50.000Z</published>
-    <updated>2020-05-15T02:29:13.466Z</updated>
+    <updated>2020-05-15T02:31:51.000Z</updated>
     
     <content type="html"><![CDATA[<p>1.管理员运行cmd，然后输入</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slmgr /ipk W269N-WFGWX-YVC9B-4J6C9-T83GX</span><br></pre></td></tr></table></figure><p>2.再输入</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slmgr.vbs -skms zh.us.to</span><br></pre></td></tr></table></figure><p>3.再设置–更新和安全–激活中，点击更新产品密钥，输入以上密钥 W269N-WFGWX-YVC9B-4J6C9-T83GX，并点击下一步激活该密钥。</p>]]></content>
     
@@ -706,9 +706,9 @@
       <category term="java" scheme="https://www.xiapf.com/categories/java/"/>
     
     
-      <category term="多线程" scheme="https://www.xiapf.com/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
-    
       <category term="java" scheme="https://www.xiapf.com/tags/java/"/>
+    
+      <category term="多线程" scheme="https://www.xiapf.com/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
     
       <category term="future" scheme="https://www.xiapf.com/tags/future/"/>
     
