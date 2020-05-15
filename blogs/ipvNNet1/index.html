@@ -70,7 +70,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200513110235.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200513110551.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200513111546.png">
-<meta property="og:updated_time" content="2020-05-13T03:31:20.762Z">
+<meta property="og:updated_time" content="2020-05-13T03:34:44.685Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200513104721.png">
 
@@ -165,17 +165,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">30</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">31</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">8</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">9</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">28</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">29</span></a>
 
   </li>
         <li class="menu-item menu-item-sitemap">
@@ -264,7 +264,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-05-13 11:29:13 / 修改时间：11:31:20" itemprop="dateCreated datePublished" datetime="2020-05-13T11:29:13+08:00">2020-05-13</time>
+              <time title="创建时间：2020-05-13 11:29:13 / 修改时间：11:34:44" itemprop="dateCreated datePublished" datetime="2020-05-13T11:29:13+08:00">2020-05-13</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -351,7 +351,7 @@
 <p>分析</p>
 <p>可以看出使用该种初始化权重的方式，损失一开始由于权重较大，下降快，但到后半段，损失下降很慢，因为w变大，z变大，此时的梯度变化下，训练速度减慢。预测精度也不是很高：训练集Accuracy: 0.8833333333333333，测试集Accuracy：0.85。</p>
 <p>（3）采用抑制梯度爆炸和梯度消失的方式初始化</p>
-<p>当权重大于1时，梯度以指数方式增长，当权重小于1时，梯度递减，为了防止出现这种梯度爆炸和梯度消失的出现，需要将权重初始化为不比1大很多，不比1小很多的值：w=np.random.randn(shape)*sqrt(1/n[l-1])，即需要除以上一层神经元的个数，将权重w归一化。（当激活函数是tanh时，使用sqrt(2/n[l-1]效果更好)</p>
+<p>当权重大于1时，梯度以指数方式增长，当权重小于1时，梯度递减，为了防止出现这种梯度爆炸和梯度消失的出现，需要将权重初始化为不比1大很多，不比1小很多的值：w=np.random.randn(shape) * sqrt(1/n[l-1])，即需要除以上一层神经元的个数（n[l-1]代表上一层神经元个数），将权重w归一化。（当激活函数是tanh时，使用sqrt(2/n[l-1]效果更好)</p>
 <p>代码</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#3.初始化参数使用抑梯度异常方式  乘以sqrt(2/上一层神经元数量)  把参数w初始化到了1附近</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initialize_parameters_he</span><span class="params">(layer_dims)</span>:</span></span><br><span class="line">	L=len(layer_dims)</span><br><span class="line">	parameters=&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,L):</span><br><span class="line">		parameters[<span class="string">"W"</span>+str(i)]=np.random.randn(layer_dims[i],layer_dims[i<span class="number">-1</span>])*np.sqrt(<span class="number">2</span>/layer_dims[i<span class="number">-1</span>])</span><br><span class="line">		parameters[<span class="string">"b"</span>+str(i)]=np.zeros((layer_dims[i],<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> parameters</span><br></pre></td></tr></table></figure>
 
@@ -472,6 +472,9 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
+                <a href="/blogs/sovConSever/" rel="prev" title="windows10专业版,我们无法在此设备上激活windows因为无法连接到你的组织的激活服务器解决方法">
+                  windows10专业版,我们无法在此设备上激活windows因为无法连接到你的组织的激活服务器解决方法 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
       </footer>
@@ -526,20 +529,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

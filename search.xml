@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>windows10专业版,我们无法在此设备上激活windows因为无法连接到你的组织的激活服务器解决方法</title>
+    <url>/blogs/sovConSever/</url>
+    <content><![CDATA[<p>1.管理员运行cmd，然后输入</p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">slmgr /ipk W269N-WFGWX-YVC9B-4J6C9-T83GX</span><br></pre></td></tr></table></figure><p>2.再输入</p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">slmgr.vbs -skms zh.us.to</span><br></pre></td></tr></table></figure><p>3.再设置–更新和安全–激活中，点击更新产品密钥，输入以上密钥 W269N-WFGWX-YVC9B-4J6C9-T83GX，并点击下一步激活该密钥。</p>]]></content>
+      <categories>
+        <category>win10</category>
+      </categories>
+      <tags>
+        <tag>win10</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>改善深层神经网络——第一周编程作业</title>
     <url>/blogs/ipvNNet1/</url>
     <content><![CDATA[<h2 id="训练集、验证集、测试集选取"><a href="#训练集、验证集、测试集选取" class="headerlink" title="训练集、验证集、测试集选取"></a>训练集、验证集、测试集选取</h2><p>训练集用于根据算法训练不同的模型</p><p>验证集用于验证不同的算法中哪一种更有效</p><p>测试集用于评估算法的性能</p><p>对于大数据（如一万条数据以上），训练集，验证集，测试集的比列为98%，1%，1%，训练集占绝大部分。</p><h2 id="提高训练速度"><a href="#提高训练速度" class="headerlink" title="提高训练速度"></a>提高训练速度</h2><h3 id="归一化输入特征"><a href="#归一化输入特征" class="headerlink" title="归一化输入特征"></a>归一化输入特征</h3><p>未归一化的输入特征得到的损失函数是比较狭长的，而且在反向传播中使用梯度下降时，步长需要很小，否则无法找到最小值。</p><a id="more"></a>
@@ -28,7 +39,7 @@
 <p>分析</p>
 <p>可以看出使用该种初始化权重的方式，损失一开始由于权重较大，下降快，但到后半段，损失下降很慢，因为w变大，z变大，此时的梯度变化下，训练速度减慢。预测精度也不是很高：训练集Accuracy: 0.8833333333333333，测试集Accuracy：0.85。</p>
 <p>（3）采用抑制梯度爆炸和梯度消失的方式初始化</p>
-<p>当权重大于1时，梯度以指数方式增长，当权重小于1时，梯度递减，为了防止出现这种梯度爆炸和梯度消失的出现，需要将权重初始化为不比1大很多，不比1小很多的值：w=np.random.randn(shape)*sqrt(1/n[l-1])，即需要除以上一层神经元的个数，将权重w归一化。（当激活函数是tanh时，使用sqrt(2/n[l-1]效果更好)</p>
+<p>当权重大于1时，梯度以指数方式增长，当权重小于1时，梯度递减，为了防止出现这种梯度爆炸和梯度消失的出现，需要将权重初始化为不比1大很多，不比1小很多的值：w=np.random.randn(shape) * sqrt(1/n[l-1])，即需要除以上一层神经元的个数（n[l-1]代表上一层神经元个数），将权重w归一化。（当激活函数是tanh时，使用sqrt(2/n[l-1]效果更好)</p>
 <p>代码</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#3.初始化参数使用抑梯度异常方式  乘以sqrt(2/上一层神经元数量)  把参数w初始化到了1附近</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initialize_parameters_he</span><span class="params">(layer_dims)</span>:</span></span><br><span class="line">	L=len(layer_dims)</span><br><span class="line">	parameters=&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,L):</span><br><span class="line">		parameters[<span class="string">"W"</span>+str(i)]=np.random.randn(layer_dims[i],layer_dims[i<span class="number">-1</span>])*np.sqrt(<span class="number">2</span>/layer_dims[i<span class="number">-1</span>])</span><br><span class="line">		parameters[<span class="string">"b"</span>+str(i)]=np.zeros((layer_dims[i],<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> parameters</span><br></pre></td></tr></table></figure>
 
