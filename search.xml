@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>(转载）windows10专业版,我们无法在此设备上激活windows因为无法连接到你的组织的激活服务器解决方法</title>
+    <title>（转载）windows10专业版,我们无法在此设备上激活windows因为无法连接到你的组织的激活服务器解决方法</title>
     <url>/blogs/sovConSever/</url>
-    <content><![CDATA[<p>1.管理员运行cmd，然后输入</p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">slmgr /ipk W269N-WFGWX-YVC9B-4J6C9-T83GX</span><br></pre></td></tr></table></figure><p>2.再输入</p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">slmgr.vbs -skms zh.us.to</span><br></pre></td></tr></table></figure><p>3.再设置–更新和安全–激活中，点击更新产品密钥，输入以上密钥 W269N-WFGWX-YVC9B-4J6C9-T83GX，并点击下一步激活该密钥。</p>]]></content>
+    <content><![CDATA[<p>转载于<a href="https://www.jianshu.com/p/953c1517e436" target="_blank" rel="external nofollow noopener noreferrer">https://www.jianshu.com/p/953c1517e436</a> </p><p>1.管理员运行cmd，然后输入</p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">slmgr /ipk W269N-WFGWX-YVC9B-4J6C9-T83GX</span><br></pre></td></tr></table></figure><p>2.再输入</p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">slmgr.vbs -skms zh.us.to</span><br></pre></td></tr></table></figure><p>3.再设置–更新和安全–激活中，点击更新产品密钥，输入以上密钥 W269N-WFGWX-YVC9B-4J6C9-T83GX，并点击下一步激活该密钥。</p>]]></content>
       <categories>
         <category>win10</category>
       </categories>
