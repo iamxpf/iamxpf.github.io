@@ -3,11 +3,11 @@
   <entry>
     <title>改善深层神经网络——第二周编程作业</title>
     <url>/blogs/ipvNNet2/</url>
-    <content><![CDATA[<h1 id="改善深层神经网络——第二周编程作业"><a href="#改善深层神经网络——第二周编程作业" class="headerlink" title="改善深层神经网络——第二周编程作业"></a>改善深层神经网络——第二周编程作业</h1><p>可以通过优化算法提高网络训练速度</p><h2 id="Mini-batch梯度下降算法"><a href="#Mini-batch梯度下降算法" class="headerlink" title="Mini_batch梯度下降算法"></a>Mini_batch梯度下降算法</h2><p>梯度下降算法将样本全部遍历一遍后，再计算梯度，当样本很多时，训练时间太长。</p><p>这时候需要用Mini_batch梯度下降算法：</p><p>（1）将原始的样本打乱，随机分布，使用numpy库中permutation生成随机数组，打乱样本集</p><a id="more"></a>
+    <content><![CDATA[<p>可以通过优化算法提高网络训练速度</p><h2 id="Mini-batch梯度下降算法"><a href="#Mini-batch梯度下降算法" class="headerlink" title="Mini_batch梯度下降算法"></a>Mini_batch梯度下降算法</h2><p>梯度下降算法将样本全部遍历一遍后，再计算梯度，当样本很多时，训练时间太长。</p><p>这时候需要用Mini_batch梯度下降算法：</p><p>（1）将原始的样本打乱，随机分布，使用numpy库中permutation生成随机数组，打乱样本集</p><p>（2）将样本按照用户输入的大小mini_batch_size（一般是64 ~ 512，即符合计算机内存大小的2的幂次方，这样训练速度会快），将样本重新分为x{1}，x{2} …x{n}，其中划分的个数num_mini_batch=样本总个数m / mini_batch_size，则第一个mini_batch，即x{1}=train_x[:，0:mini_batch_size * 1]，第二个mini_batch，即x{2}=train_x[:，mini_batch_size * 1：mini_batch_size * 2]</p><a id="more"></a>
 
 
 
-<p>（2）将样本按照用户输入的大小mini_batch_size（一般是64 ~ 512，即符合计算机内存大小的2的幂次方，这样训练速度会快），将样本重新分为x{1}，x{2} …x{n}，其中划分的个数num_mini_batch=样本总个数m / mini_batch_size，则第一个mini_batch，即x{1}=train_x[:，0:mini_batch_size * 1]，第二个mini_batch，即x{2}=train_x[:，mini_batch_size * 1：mini_batch_size * 2]</p>
+
 <p>（3）由于划分的个数num_mini_batch可能有小数部分，第二步是处理其整数部分，当处理结束后，需要判断是否有余下部分，有余下部分需要将数据补全在最后x{n}=train_x[:，mini_batch_size * num_mini_batch：]</p>
 <p>（4）注：当用户输入的大小mini_batch_size=样本总数时，算法变为梯度下降法，即一次遍历整个样本集，当用户输入的大小mini_batch_size==1时，算法变为随机梯度下降算法，即一次遍历一个样本，此时失去了将样本向量化的加速作用。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#使用mini_batch的梯度下降（小批量梯度下降）</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">random_mini_batches</span><span class="params">(X,Y,mini_batch_size,seed)</span>:</span></span><br><span class="line">	np.random.seed(seed)</span><br><span class="line">	mini_batchs=[]</span><br><span class="line"></span><br><span class="line">	<span class="comment">#获取样本的数量</span></span><br><span class="line">	m=X.shape[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">	<span class="comment">#1.打乱训练集</span></span><br><span class="line">	<span class="comment">#返回长度为m的随机数组</span></span><br><span class="line">	permutation=list(np.random.permutation(m))</span><br><span class="line">	shuffle_X=X[:,permutation]</span><br><span class="line">	shuffle_Y=Y[:,permutation].reshape((<span class="number">1</span>,m))</span><br><span class="line"></span><br><span class="line">	num_mini_batch=math.floor(m/mini_batch_size)</span><br><span class="line">	<span class="comment">#2.按照大小切分数据</span></span><br><span class="line">	<span class="keyword">for</span> k <span class="keyword">in</span> range(num_mini_batch):</span><br><span class="line">		mini_batch_X=shuffle_X[:,mini_batch_size*k:mini_batch_size*(k+<span class="number">1</span>)]</span><br><span class="line">		mini_batch_Y=shuffle_Y[:,mini_batch_size*k:mini_batch_size*(k+<span class="number">1</span>)]</span><br><span class="line">		mini_batch=(mini_batch_X,mini_batch_Y)</span><br><span class="line"></span><br><span class="line">		mini_batchs.append(mini_batch)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">#3.处理余下部分的数据</span></span><br><span class="line">	<span class="keyword">if</span>(m%mini_batch_size!=<span class="number">0</span>):</span><br><span class="line">		mini_batch_X=shuffle_X[:,mini_batch_size*num_mini_batch:]</span><br><span class="line">		mini_batch_Y=shuffle_Y[:,mini_batch_size*num_mini_batch:]</span><br><span class="line">		mini_batch=(mini_batch_X,mini_batch_Y)</span><br><span class="line">		mini_batchs.append(mini_batch)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> mini_batchs</span><br></pre></td></tr></table></figure>
@@ -59,7 +59,7 @@
 <p>分析</p>
 <p>可以看出，adam算法基本无摆动，分类准确率也很高</p>
 <h2 id="附：学习率衰减"><a href="#附：学习率衰减" class="headerlink" title="附：学习率衰减"></a>附：学习率衰减</h2><p>在学习初期，学习率大；在收敛时，学习率小，按照以下公式设置学习率</p>
-<p>alpha=1 / （1+衰减率 * 迭代次数）</p>
+<p>alpha=(1 / （1+衰减率 * 迭代次数）) * alpha0</p>
 <p>还有其他指数衰减或者离散衰减方式</p>
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200515162005.png" alt></p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>（1）当样本集数据量很大时，使用mini_batch算法加快训练速度，每次遍历mini_batch_size大小的数据，当用户输入的大小mini_batch_size=样本总数时，算法变为梯度下降法，即一次遍历整个样本集，当用户输入的大小mini_batch_size==1时，算法变为随机梯度下降算法，即一次遍历一个样本，此时失去了将样本向量化的加速作用。</p>
@@ -1041,8 +1041,8 @@
         <category>机器学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>回归</tag>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -1123,8 +1123,8 @@
         <category>机器学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>回归</tag>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -1918,8 +1918,8 @@
         <category>java</category>
       </categories>
       <tags>
-        <tag>java</tag>
         <tag>多线程</tag>
+        <tag>java</tag>
         <tag>future</tag>
       </tags>
   </entry>

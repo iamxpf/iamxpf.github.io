@@ -255,10 +255,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-05-15 15:11:21 / 修改时间：16:21:50" itemprop="dateCreated datePublished" datetime="2020-05-15T15:11:21+08:00">2020-05-15</time>
+              <time title="创建时间：2020-05-15 15:11:21" itemprop="dateCreated datePublished" datetime="2020-05-15T15:11:21+08:00">2020-05-15</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-18 19:03:58" itemprop="dateModified" datetime="2020-05-18T19:03:58+08:00">2020-05-18</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -319,7 +325,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="改善深层神经网络——第二周编程作业"><a href="#改善深层神经网络——第二周编程作业" class="headerlink" title="改善深层神经网络——第二周编程作业"></a>改善深层神经网络——第二周编程作业</h1><p>可以通过优化算法提高网络训练速度</p><h2 id="Mini-batch梯度下降算法"><a href="#Mini-batch梯度下降算法" class="headerlink" title="Mini_batch梯度下降算法"></a>Mini_batch梯度下降算法</h2><p>梯度下降算法将样本全部遍历一遍后，再计算梯度，当样本很多时，训练时间太长。</p><p>这时候需要用Mini_batch梯度下降算法：</p><p>（1）将原始的样本打乱，随机分布，使用numpy库中permutation生成随机数组，打乱样本集</p>
+          <p>可以通过优化算法提高网络训练速度</p><h2 id="Mini-batch梯度下降算法"><a href="#Mini-batch梯度下降算法" class="headerlink" title="Mini_batch梯度下降算法"></a>Mini_batch梯度下降算法</h2><p>梯度下降算法将样本全部遍历一遍后，再计算梯度，当样本很多时，训练时间太长。</p><p>这时候需要用Mini_batch梯度下降算法：</p><p>（1）将原始的样本打乱，随机分布，使用numpy库中permutation生成随机数组，打乱样本集</p><p>（2）将样本按照用户输入的大小mini_batch_size（一般是64 ~ 512，即符合计算机内存大小的2的幂次方，这样训练速度会快），将样本重新分为x{1}，x{2} …x{n}，其中划分的个数num_mini_batch=样本总个数m / mini_batch_size，则第一个mini_batch，即x{1}=train_x[:，0:mini_batch_size * 1]，第二个mini_batch，即x{2}=train_x[:，mini_batch_size * 1：mini_batch_size * 2]</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blogs/ipvNNet2/#more" rel="contents">
