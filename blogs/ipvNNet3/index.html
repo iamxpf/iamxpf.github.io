@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="描述使用TensorFlow深度学习框架建立识别手势图片的网络算法注：（1）— （5）步骤并没有实际执行，所有训练模型过程都在会话（session）中进行，即模型训练基于会话的创建，所有输入的数据在会话中赋值，其他地方均处理的是变量。网络结构为三层网络，各层的激活函数relu，relu，softmax，即模型结构为linear-&amp;gt;relu-&amp;gt;linear-&amp;gt;relu-&amp;gt;li">
+<meta name="keywords" content="神经网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="改善神经网络——识别手势图片">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;ipvNNet3&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="描述使用TensorFlow深度学习框架建立识别手势图片的网络算法注：（1）— （5）步骤并没有实际执行，所有训练模型过程都在会话（session）中进行，即模型训练基于会话的创建，所有输入的数据在会话中赋值，其他地方均处理的是变量。网络结构为三层网络，各层的激活函数relu，relu，softmax，即模型结构为linear-&amp;gt;relu-&amp;gt;linear-&amp;gt;relu-&amp;gt;li">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200519160728.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200519205603.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200519202110.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200519203045.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200519203054.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200519203341.png">
+<meta property="og:updated_time" content="2020-05-19T12:57:58.982Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200519160728.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/ipvNNet3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>改善神经网络——识别手势图片 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">31</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">9</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/ipvNNet3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          改善神经网络——识别手势图片
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-19 20:57:17 / 修改时间：20:57:58" itemprop="dateCreated datePublished" datetime="2020-05-19T20:57:17+08:00">2020-05-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">神经网络</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/ipvNNet3/" class="post-meta-item leancloud_visitors" data-flag-title="改善神经网络——识别手势图片" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/ipvNNet3/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/ipvNNet3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>使用TensorFlow深度学习框架建立识别手势图片的网络</p><h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>注：（1）— （5）步骤并没有实际执行，所有训练模型过程都在会话（session）中进行，即模型训练基于会话的创建，<strong>所有输入的数据在会话中赋值，其他地方均处理的是变量</strong>。</p><p>网络结构为三层网络，各层的激活函数relu，relu，softmax，即模型结构为linear-&gt;relu-&gt;linear-&gt;relu-&gt;linear-&gt;softmax</p><a id="more"></a>
+
+
+<h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><p>（0）数据处理</p>
+<p>导入数据，并将数据归一化，对标签项转换为独热矩阵编码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.导入数据并归一化</span></span><br><span class="line">train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes=tu.load_dataset()</span><br><span class="line"><span class="comment">#每幅图片64*64*3，将每个样本堆叠起来</span></span><br><span class="line">train_x_flattern=train_set_x_orig.reshape(train_set_x_orig.shape[<span class="number">0</span>],<span class="number">-1</span>).T</span><br><span class="line">test_x_flattern=test_set_x_orig.reshape(test_set_x_orig.shape[<span class="number">0</span>],<span class="number">-1</span>).T</span><br><span class="line"><span class="comment">#归一化</span></span><br><span class="line">train_x=train_x_flattern/<span class="number">255</span></span><br><span class="line">test_x=test_x_flattern/<span class="number">255</span></span><br><span class="line"><span class="comment">#y全部转换为独热矩阵</span></span><br><span class="line">train_y=tu.convert_to_one_hot(train_set_y_orig,<span class="number">6</span>)</span><br><span class="line">test_y=tu.convert_to_one_hot(test_set_y_orig,<span class="number">6</span>)</span><br></pre></td></tr></table></figure>
+
+<p>注：使用np.eye(C)[Y.reshape(-1)].T，eye后面跟一维数组，数组中每个元素代表1的偏移量，由于每一列代表一个样本，所以最后需要转置</p>
+<p>（1）创建占位符用于输入训练集数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#2.构造占位符，便于输入训练集数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_placeholder</span><span class="params">(n_x,n_y)</span>:</span></span><br><span class="line">	X=tf.placeholder(tf.float32,[n_x,<span class="literal">None</span>])</span><br><span class="line">	Y=tf.placeholder(tf.float32,[n_y,<span class="literal">None</span>])</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> X,Y</span><br></pre></td></tr></table></figure>
+
+<p>（2）初始化权重等参数</p>
+<p>利用tf创建变量：tf.get_variable()</p>
+<p>权重初始化：initializer=tf.contrib.layers.xavaier_initializer</p>
+<p>偏置量初始化：initializer=tf.zeros_initializer</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#3.初始化参数</span></span><br><span class="line"><span class="comment">#构建变量</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initialize_parameters</span><span class="params">(layer_dims)</span>:</span></span><br><span class="line">	n_0,n_1,n_2,n_3=layer_dims</span><br><span class="line">	parameters=&#123;&#125;</span><br><span class="line">	tf.set_random_seed(<span class="number">1</span>)</span><br><span class="line">	W1=tf.get_variable(<span class="string">"W1"</span>,[n_1,n_0],initializer=tf.contrib.layers.xavier_initializer(seed=<span class="number">1</span>))</span><br><span class="line">	b1=tf.get_variable(<span class="string">"b1"</span>,[n_1,<span class="number">1</span>],initializer=tf.zeros_initializer())</span><br><span class="line">	W2=tf.get_variable(<span class="string">"W2"</span>,[n_2,n_1],initializer=tf.contrib.layers.xavier_initializer(seed=<span class="number">1</span>))</span><br><span class="line">	b2=tf.get_variable(<span class="string">"b2"</span>,[n_2,<span class="number">1</span>],initializer=tf.zeros_initializer())	</span><br><span class="line">	W3=tf.get_variable(<span class="string">"W3"</span>,[n_3,n_2],initializer=tf.contrib.layers.xavier_initializer(seed=<span class="number">1</span>))</span><br><span class="line">	b3=tf.get_variable(<span class="string">"b3"</span>,[n_3,<span class="number">1</span>],initializer=tf.zeros_initializer())</span><br><span class="line"></span><br><span class="line">	parameters=&#123;<span class="string">"W1"</span>:W1,<span class="string">"b1"</span>:b1,<span class="string">"W2"</span>:W2,<span class="string">"b2"</span>:b2,<span class="string">"W3"</span>:W3,<span class="string">"b3"</span>:b3&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> parameters</span><br></pre></td></tr></table></figure>
+
+
+
+<p>（3）前向传播</p>
+<p>根据传入的参数和上一层数据计算Z，A</p>
+<p>注：最后一层不用计算激活值，根据得出的Z3，利用tf.argmax得出概率最大（最大值概率最大），即为当前分类结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#4.前向传播</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward_propogation</span><span class="params">(parameters,X)</span>:</span></span><br><span class="line">	W1=parameters[<span class="string">"W1"</span>]</span><br><span class="line">	b1=parameters[<span class="string">"b1"</span>]</span><br><span class="line">	W2=parameters[<span class="string">"W2"</span>]</span><br><span class="line">	b2=parameters[<span class="string">"b2"</span>]</span><br><span class="line">	W3=parameters[<span class="string">"W3"</span>]</span><br><span class="line">	b3=parameters[<span class="string">"b3"</span>]</span><br><span class="line"></span><br><span class="line">	Z1=tf.add(tf.matmul(W1,X),b1)</span><br><span class="line">	A1=tf.nn.relu(Z1)</span><br><span class="line">	Z2=tf.add(tf.matmul(W2,A1),b2)</span><br><span class="line">	A2=tf.nn.relu(Z2)</span><br><span class="line">	<span class="comment">#Z3最大相当于概率最大</span></span><br><span class="line">	Z3=tf.add(tf.matmul(W3,A2),b3)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> Z3</span><br></pre></td></tr></table></figure>
+
+<p>（4）计算损失</p>
+<p>利用框架中softmax的损失函数：tf.softmax_cross_entropy_with_logits(logits=….，labels=…..)，该损失函数数据输入的维度是（数据集大小，分布），所以输入的堆叠数据需要转置</p>
+<p>使用reduce_mean计算均值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#5.计算损失</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compute_cost</span><span class="params">(Z3,Y)</span>:</span></span><br><span class="line">	logits=tf.transpose(Z3)</span><br><span class="line">	labels=tf.transpose(Y)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#最后一层用softmax,并求平均</span></span><br><span class="line">	<span class="comment">#参数维度[数据集大小，分布]</span></span><br><span class="line">	cost=tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits,labels=labels))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> cost</span><br></pre></td></tr></table></figure>
+
+<p>（5）反向传播</p>
+<p>tensorflow框架在前向传播时，自动计算导数，因此反向传播用一行代码即可，这里使用adam算法</p>
+<p>tf.train.AdamOptimizer(学习率)).minimize(cost)</p>
+<p>（6）创建会话执行训练模型过程</p>
+<p>1° 创建会话，并初始化所有变量</p>
+<p>2° 将训练数据输入占位符中进行模型训练</p>
+<p>利用小批量梯度下降法：</p>
+<p>a）每次获取一小批样本数据，将其输入占位符中；</p>
+<p>b）在会话中输入反向传播的算法和损失函数，得到当前总损失</p>
+<p>c）根据样本总数得到当前批量的损失，并进行记录</p>
+<p>注：</p>
+<p>模型的参数需要保存到会话中，不然parameters一直是只有物理空间，没有赋值的状态：</p>
+<p>{‘W1’: &lt;tf.Variable ‘W1:0’ shape=(25, 12288) dtype=float32_ref&gt;, ‘b1’: &lt;tf.Variable ‘b1:0’ shape=(25, 1) dtype=float32_ref&gt;, ‘W2’: &lt;tf.Variable ‘W2:0’ shape=(12, 25) dtype=float32_ref&gt;, ‘b2’: &lt;tf.Variable ‘b2:0’ shape=(12, 1) dtype=float32_ref&gt;, ‘W3’: &lt;tf.Variable ‘W3:0’ shape=(6, 12) dtype=float32_ref&gt;, ‘b3’: &lt;tf.Variable ‘b3:0’ shape=(6, 1) dtype=float32_ref&gt;}</p>
+<p>最后利用argmax得到输出最大概率对应的类别，将其和正确输出对比，即可得到准确率</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#6.构建模型</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">model</span><span class="params">(train_x,train_y,test_x,test_y,layer_dims,num_ecpho=<span class="number">100</span>,mini_batch_size=<span class="number">32</span>,learning_rate=<span class="number">0.0001</span>)</span>:</span></span><br><span class="line">	<span class="comment">#重新运行模型不覆盖tf变量</span></span><br><span class="line">	ops.reset_default_graph()</span><br><span class="line">	tf.set_random_seed(<span class="number">1</span>)</span><br><span class="line">	costs=[]</span><br><span class="line">	seed=<span class="number">3</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#1.占位符：输入训练数据</span></span><br><span class="line">	n_x,m=train_x.shape</span><br><span class="line">	n_y=train_y.shape[<span class="number">0</span>]</span><br><span class="line">	X,Y=create_placeholder(n_x,n_y)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#2.初始化参数</span></span><br><span class="line">	parameters=initialize_parameters(layer_dims)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#3.前向传播</span></span><br><span class="line">	Z3=forward_propogation(parameters,X)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#4.计算损失</span></span><br><span class="line">	cost=compute_cost(Z3,Y)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#5.反向传播</span></span><br><span class="line">	optimizer=tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)</span><br><span class="line"></span><br><span class="line">	init=tf.global_variables_initializer()</span><br><span class="line"></span><br><span class="line">	<span class="comment">#5.创建会话，训练模型</span></span><br><span class="line">	session=tf.Session()</span><br><span class="line">	session.run(init)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(num_ecpho):</span><br><span class="line">		seed=seed+<span class="number">1</span></span><br><span class="line">		mini_batchs=tu.random_mini_batches(train_x,train_y,mini_batch_size,seed)</span><br><span class="line">		<span class="comment">#每一代的成本</span></span><br><span class="line">		ecpho_cost=<span class="number">0</span></span><br><span class="line">		num_mini_batch=int(m/mini_batch_size)</span><br><span class="line">		<span class="keyword">for</span> mini_batch <span class="keyword">in</span> mini_batchs:</span><br><span class="line">			mini_batch_x,mini_batch_y=mini_batch</span><br><span class="line">			_,mini_cost=session.run([optimizer,cost],feed_dict=&#123;X:mini_batch_x,Y:mini_batch_y&#125;)</span><br><span class="line">			ecpho_cost=ecpho_cost+mini_cost/num_mini_batch</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> i%<span class="number">5</span>==<span class="number">0</span>:</span><br><span class="line">			costs.append(ecpho_cost)</span><br><span class="line">			<span class="keyword">if</span> i%<span class="number">100</span>==<span class="number">0</span>:</span><br><span class="line">				print(<span class="string">"第"</span>+str(i)+<span class="string">"次，cost:"</span>+str(ecpho_cost))</span><br><span class="line"></span><br><span class="line">	<span class="comment">#6.画图</span></span><br><span class="line">	plt.plot(costs)</span><br><span class="line">	plt.xlabel(<span class="string">"iteration"</span>)</span><br><span class="line">	plt.ylabel(<span class="string">"cost"</span>)</span><br><span class="line">	plt.title(<span class="string">"learning_rate:"</span>+str(learning_rate))</span><br><span class="line">	plt.show()</span><br><span class="line"></span><br><span class="line">	<span class="comment">#7.保存参数 ！！！！！要在session中保存，不然parameters一直是只有物理空间，没有赋值的状态</span></span><br><span class="line">	parameters=session.run(parameters)</span><br><span class="line">	print(<span class="string">"参数已保存到session"</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#8.计算准确率</span></span><br><span class="line">	predit_matrix=tf.equal(tf.argmax(Z3),tf.argmax(Y))</span><br><span class="line">	accury=tf.reduce_mean(tf.cast(predit_matrix,<span class="string">"float32"</span>))</span><br><span class="line"></span><br><span class="line">	print(<span class="string">"训练集正确率:"</span>,session.run(accury,&#123;X:train_x,Y:train_y&#125;))</span><br><span class="line">	print(<span class="string">"测试集正确率:"</span>,session.run(accury,&#123;X:test_x,Y:test_y&#125;))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> parameters</span><br></pre></td></tr></table></figure>
+
+<p>（7）输入自己数据进行测试</p>
+<p>利用matplotlib中的图片工厂读入图片，并进行大小转换，将上述得出的模型参数和当前图像输入预测函数中（预测函数是进行一次前向传播，并根据最终的输出判断类别）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> image <span class="keyword">as</span> mpimg</span><br><span class="line">my_image=<span class="string">"1.png"</span></span><br><span class="line">file_name=<span class="string">"./datasets/fingers/"</span>+my_image</span><br><span class="line">img=mpimg.imread(file_name)</span><br><span class="line">plt.imshow(img)</span><br><span class="line">plt.show()</span><br><span class="line">my_test=img.reshape(<span class="number">1</span>,<span class="number">64</span>*<span class="number">64</span>*<span class="number">3</span>).T</span><br><span class="line">predict=tu.predict(my_test,parameters)</span><br><span class="line">print(<span class="string">"预测结果为："</span>+str(predict))</span><br></pre></td></tr></table></figure>
+
+<h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><p>（1）训练结果</p>
+<p>即算法中第6步结果</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200519160728.png" alt></p>
+<p>训练集正确率: 0.9990741<br>测试集正确率: 0.71666664</p>
+<p>可见损失不断减少，训练集和测试集正确率效果可以。</p>
+<p>（2）测试结果</p>
+<p>输入新的图片</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200519205603.png" alt></p>
+<p>预测结果为</p>
+<p>CPU运行时间407.137855s.<br>预测结果为：[1]</p>
+<p>可见预测无误，训练好的网络能识别出手势。</p>
+<h2 id="附"><a href="#附" class="headerlink" title="附"></a>附</h2><h3 id="超参调试"><a href="#超参调试" class="headerlink" title="超参调试"></a>超参调试</h3><p>（1）超参调试采用随机取值方式：因为不知道哪个参数更重要</p>
+<p>（2）采取从粗糙到精细的策略：先在大范围内随机取值，在其中找到最好效果的区间，在这个区间进行精细化，即更密集的取值</p>
+<p>（3）注意标尺的选择：当小的变化对结果影响很大时，需要使用对数标尺</p>
+<p>如参数取值为0.9 ~ 0.99，则转换为1-（0.1 ~ 0.11）,最大值0.1对应10^-1，最小值0.11对应10^-2</p>
+<p>则取值范围指数r=[-2，-1]，参数取值为1-10^r</p>
+<p>附：各超参的重要性排序：</p>
+<p>学习率learning_rate &gt; momentum中的beta(常用取值0.9) = 隐藏层神经元数量 = mini_batch_size &gt; 网络层数 = 学习率衰减率</p>
+<p>最不重要Adam算法中的beta1(取0.9)，beta2(取0.99)，epsilon(取1e-8)</p>
+<h3 id="batch-norm归一化"><a href="#batch-norm归一化" class="headerlink" title="batch norm归一化"></a>batch norm归一化</h3><p>当深层网络层数很多，即网络很深时，可以使用batch norm归一化对隐藏层数据进行归一化。</p>
+<p>作用：使得每层隐藏层的输入更趋于稳定范围内，即限制了在前层网络参数变化时，会影响数值的分布，使得后层的值趋于稳定，即后面单元不过分依赖前面单元，具有一定的独立性，可单独进行学习。</p>
+<p>方法：用参数β,γ控制隐藏层的方差和均值</p>
+<p>（为了使得方差和均值不全为0，1，加入的这两个参数，当方差和均值为0，1，则激活函数只在某一段变化，不能完全学习到所有特征）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200519202110.png" alt></p>
+<p>更新参数时和更新权重一样，可以使用梯度下降或者Adam等其他算法。</p>
+<p>注：测试时没有均值和方差，则需要在训练时，根据指数加权平均方法得到训练集整体的均值和方差，作为测试的均值和方差使用</p>
+<h3 id="多分类使用softmax"><a href="#多分类使用softmax" class="headerlink" title="多分类使用softmax"></a>多分类使用softmax</h3><p>当输出层的分类不止2个时，使用softmax函数：对输出的数值进行判断，将最大概率对应的数值作为当前分类（输出层得到的最大的数即概率最大）</p>
+<p>当到最后一层时，得到线性值Z[l]，激活函数使用对幂指数取平均的方式，如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200519203045.png" alt></p>
+<p>得到最大的值作为输出值。</p>
+<p>损失函数：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200519203054.png" alt></p>
+<h3 id="其他深度学习框架"><a href="#其他深度学习框架" class="headerlink" title="其他深度学习框架"></a>其他深度学习框架</h3><p>对不同领域的不同应用有不同的深度学习框架</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200519203341.png" alt></p>
+<p>（深度学习框架学习待续…）</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 神经网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/ipvNNet2/" rel="next" title="改善深层神经网络——第二周编程作业">
+                  <i class="fa fa-chevron-left"></i> 改善深层神经网络——第二周编程作业
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#描述"><span class="nav-number">1.</span> <span class="nav-text">描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法"><span class="nav-number">2.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤"><span class="nav-number">2.1.</span> <span class="nav-text">步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结果"><span class="nav-number">2.2.</span> <span class="nav-text">结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附"><span class="nav-number">3.</span> <span class="nav-text">附</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#超参调试"><span class="nav-number">3.1.</span> <span class="nav-text">超参调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#batch-norm归一化"><span class="nav-number">3.2.</span> <span class="nav-text">batch norm归一化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多分类使用softmax"><span class="nav-number">3.3.</span> <span class="nav-text">多分类使用softmax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他深度学习框架"><span class="nav-number">3.4.</span> <span class="nav-text">其他深度学习框架</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">122k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:51</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>

@@ -1,6 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>改善神经网络——识别手势图片</title>
+    <url>/blogs/ipvNNet3/</url>
+    <content><![CDATA[<h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>使用TensorFlow深度学习框架建立识别手势图片的网络</p><h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>注：（1）— （5）步骤并没有实际执行，所有训练模型过程都在会话（session）中进行，即模型训练基于会话的创建，<strong>所有输入的数据在会话中赋值，其他地方均处理的是变量</strong>。</p><p>网络结构为三层网络，各层的激活函数relu，relu，softmax，即模型结构为linear-&gt;relu-&gt;linear-&gt;relu-&gt;linear-&gt;softmax</p><a id="more"></a>
+
+
+<h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><p>（0）数据处理</p>
+<p>导入数据，并将数据归一化，对标签项转换为独热矩阵编码</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#1.导入数据并归一化</span></span><br><span class="line">train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes=tu.load_dataset()</span><br><span class="line"><span class="comment">#每幅图片64*64*3，将每个样本堆叠起来</span></span><br><span class="line">train_x_flattern=train_set_x_orig.reshape(train_set_x_orig.shape[<span class="number">0</span>],<span class="number">-1</span>).T</span><br><span class="line">test_x_flattern=test_set_x_orig.reshape(test_set_x_orig.shape[<span class="number">0</span>],<span class="number">-1</span>).T</span><br><span class="line"><span class="comment">#归一化</span></span><br><span class="line">train_x=train_x_flattern/<span class="number">255</span></span><br><span class="line">test_x=test_x_flattern/<span class="number">255</span></span><br><span class="line"><span class="comment">#y全部转换为独热矩阵</span></span><br><span class="line">train_y=tu.convert_to_one_hot(train_set_y_orig,<span class="number">6</span>)</span><br><span class="line">test_y=tu.convert_to_one_hot(test_set_y_orig,<span class="number">6</span>)</span><br></pre></td></tr></table></figure>
+
+<p>注：使用np.eye(C)[Y.reshape(-1)].T，eye后面跟一维数组，数组中每个元素代表1的偏移量，由于每一列代表一个样本，所以最后需要转置</p>
+<p>（1）创建占位符用于输入训练集数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#2.构造占位符，便于输入训练集数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_placeholder</span><span class="params">(n_x,n_y)</span>:</span></span><br><span class="line">	X=tf.placeholder(tf.float32,[n_x,<span class="literal">None</span>])</span><br><span class="line">	Y=tf.placeholder(tf.float32,[n_y,<span class="literal">None</span>])</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> X,Y</span><br></pre></td></tr></table></figure>
+
+<p>（2）初始化权重等参数</p>
+<p>利用tf创建变量：tf.get_variable()</p>
+<p>权重初始化：initializer=tf.contrib.layers.xavaier_initializer</p>
+<p>偏置量初始化：initializer=tf.zeros_initializer</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#3.初始化参数</span></span><br><span class="line"><span class="comment">#构建变量</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initialize_parameters</span><span class="params">(layer_dims)</span>:</span></span><br><span class="line">	n_0,n_1,n_2,n_3=layer_dims</span><br><span class="line">	parameters=&#123;&#125;</span><br><span class="line">	tf.set_random_seed(<span class="number">1</span>)</span><br><span class="line">	W1=tf.get_variable(<span class="string">"W1"</span>,[n_1,n_0],initializer=tf.contrib.layers.xavier_initializer(seed=<span class="number">1</span>))</span><br><span class="line">	b1=tf.get_variable(<span class="string">"b1"</span>,[n_1,<span class="number">1</span>],initializer=tf.zeros_initializer())</span><br><span class="line">	W2=tf.get_variable(<span class="string">"W2"</span>,[n_2,n_1],initializer=tf.contrib.layers.xavier_initializer(seed=<span class="number">1</span>))</span><br><span class="line">	b2=tf.get_variable(<span class="string">"b2"</span>,[n_2,<span class="number">1</span>],initializer=tf.zeros_initializer())	</span><br><span class="line">	W3=tf.get_variable(<span class="string">"W3"</span>,[n_3,n_2],initializer=tf.contrib.layers.xavier_initializer(seed=<span class="number">1</span>))</span><br><span class="line">	b3=tf.get_variable(<span class="string">"b3"</span>,[n_3,<span class="number">1</span>],initializer=tf.zeros_initializer())</span><br><span class="line"></span><br><span class="line">	parameters=&#123;<span class="string">"W1"</span>:W1,<span class="string">"b1"</span>:b1,<span class="string">"W2"</span>:W2,<span class="string">"b2"</span>:b2,<span class="string">"W3"</span>:W3,<span class="string">"b3"</span>:b3&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> parameters</span><br></pre></td></tr></table></figure>
+
+
+
+<p>（3）前向传播</p>
+<p>根据传入的参数和上一层数据计算Z，A</p>
+<p>注：最后一层不用计算激活值，根据得出的Z3，利用tf.argmax得出概率最大（最大值概率最大），即为当前分类结果</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#4.前向传播</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward_propogation</span><span class="params">(parameters,X)</span>:</span></span><br><span class="line">	W1=parameters[<span class="string">"W1"</span>]</span><br><span class="line">	b1=parameters[<span class="string">"b1"</span>]</span><br><span class="line">	W2=parameters[<span class="string">"W2"</span>]</span><br><span class="line">	b2=parameters[<span class="string">"b2"</span>]</span><br><span class="line">	W3=parameters[<span class="string">"W3"</span>]</span><br><span class="line">	b3=parameters[<span class="string">"b3"</span>]</span><br><span class="line"></span><br><span class="line">	Z1=tf.add(tf.matmul(W1,X),b1)</span><br><span class="line">	A1=tf.nn.relu(Z1)</span><br><span class="line">	Z2=tf.add(tf.matmul(W2,A1),b2)</span><br><span class="line">	A2=tf.nn.relu(Z2)</span><br><span class="line">	<span class="comment">#Z3最大相当于概率最大</span></span><br><span class="line">	Z3=tf.add(tf.matmul(W3,A2),b3)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> Z3</span><br></pre></td></tr></table></figure>
+
+<p>（4）计算损失</p>
+<p>利用框架中softmax的损失函数：tf.softmax_cross_entropy_with_logits(logits=….，labels=…..)，该损失函数数据输入的维度是（数据集大小，分布），所以输入的堆叠数据需要转置</p>
+<p>使用reduce_mean计算均值</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#5.计算损失</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compute_cost</span><span class="params">(Z3,Y)</span>:</span></span><br><span class="line">	logits=tf.transpose(Z3)</span><br><span class="line">	labels=tf.transpose(Y)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#最后一层用softmax,并求平均</span></span><br><span class="line">	<span class="comment">#参数维度[数据集大小，分布]</span></span><br><span class="line">	cost=tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits,labels=labels))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> cost</span><br></pre></td></tr></table></figure>
+
+<p>（5）反向传播</p>
+<p>tensorflow框架在前向传播时，自动计算导数，因此反向传播用一行代码即可，这里使用adam算法</p>
+<p>tf.train.AdamOptimizer(学习率)).minimize(cost)</p>
+<p>（6）创建会话执行训练模型过程</p>
+<p>1° 创建会话，并初始化所有变量</p>
+<p>2° 将训练数据输入占位符中进行模型训练</p>
+<p>利用小批量梯度下降法：</p>
+<p>a）每次获取一小批样本数据，将其输入占位符中；</p>
+<p>b）在会话中输入反向传播的算法和损失函数，得到当前总损失</p>
+<p>c）根据样本总数得到当前批量的损失，并进行记录</p>
+<p>注：</p>
+<p>模型的参数需要保存到会话中，不然parameters一直是只有物理空间，没有赋值的状态：</p>
+<p>{‘W1’: &lt;tf.Variable ‘W1:0’ shape=(25, 12288) dtype=float32_ref&gt;, ‘b1’: &lt;tf.Variable ‘b1:0’ shape=(25, 1) dtype=float32_ref&gt;, ‘W2’: &lt;tf.Variable ‘W2:0’ shape=(12, 25) dtype=float32_ref&gt;, ‘b2’: &lt;tf.Variable ‘b2:0’ shape=(12, 1) dtype=float32_ref&gt;, ‘W3’: &lt;tf.Variable ‘W3:0’ shape=(6, 12) dtype=float32_ref&gt;, ‘b3’: &lt;tf.Variable ‘b3:0’ shape=(6, 1) dtype=float32_ref&gt;}</p>
+<p>最后利用argmax得到输出最大概率对应的类别，将其和正确输出对比，即可得到准确率</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#6.构建模型</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">model</span><span class="params">(train_x,train_y,test_x,test_y,layer_dims,num_ecpho=<span class="number">100</span>,mini_batch_size=<span class="number">32</span>,learning_rate=<span class="number">0.0001</span>)</span>:</span></span><br><span class="line">	<span class="comment">#重新运行模型不覆盖tf变量</span></span><br><span class="line">	ops.reset_default_graph()</span><br><span class="line">	tf.set_random_seed(<span class="number">1</span>)</span><br><span class="line">	costs=[]</span><br><span class="line">	seed=<span class="number">3</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#1.占位符：输入训练数据</span></span><br><span class="line">	n_x,m=train_x.shape</span><br><span class="line">	n_y=train_y.shape[<span class="number">0</span>]</span><br><span class="line">	X,Y=create_placeholder(n_x,n_y)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#2.初始化参数</span></span><br><span class="line">	parameters=initialize_parameters(layer_dims)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#3.前向传播</span></span><br><span class="line">	Z3=forward_propogation(parameters,X)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#4.计算损失</span></span><br><span class="line">	cost=compute_cost(Z3,Y)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#5.反向传播</span></span><br><span class="line">	optimizer=tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)</span><br><span class="line"></span><br><span class="line">	init=tf.global_variables_initializer()</span><br><span class="line"></span><br><span class="line">	<span class="comment">#5.创建会话，训练模型</span></span><br><span class="line">	session=tf.Session()</span><br><span class="line">	session.run(init)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(num_ecpho):</span><br><span class="line">		seed=seed+<span class="number">1</span></span><br><span class="line">		mini_batchs=tu.random_mini_batches(train_x,train_y,mini_batch_size,seed)</span><br><span class="line">		<span class="comment">#每一代的成本</span></span><br><span class="line">		ecpho_cost=<span class="number">0</span></span><br><span class="line">		num_mini_batch=int(m/mini_batch_size)</span><br><span class="line">		<span class="keyword">for</span> mini_batch <span class="keyword">in</span> mini_batchs:</span><br><span class="line">			mini_batch_x,mini_batch_y=mini_batch</span><br><span class="line">			_,mini_cost=session.run([optimizer,cost],feed_dict=&#123;X:mini_batch_x,Y:mini_batch_y&#125;)</span><br><span class="line">			ecpho_cost=ecpho_cost+mini_cost/num_mini_batch</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> i%<span class="number">5</span>==<span class="number">0</span>:</span><br><span class="line">			costs.append(ecpho_cost)</span><br><span class="line">			<span class="keyword">if</span> i%<span class="number">100</span>==<span class="number">0</span>:</span><br><span class="line">				print(<span class="string">"第"</span>+str(i)+<span class="string">"次，cost:"</span>+str(ecpho_cost))</span><br><span class="line"></span><br><span class="line">	<span class="comment">#6.画图</span></span><br><span class="line">	plt.plot(costs)</span><br><span class="line">	plt.xlabel(<span class="string">"iteration"</span>)</span><br><span class="line">	plt.ylabel(<span class="string">"cost"</span>)</span><br><span class="line">	plt.title(<span class="string">"learning_rate:"</span>+str(learning_rate))</span><br><span class="line">	plt.show()</span><br><span class="line"></span><br><span class="line">	<span class="comment">#7.保存参数 ！！！！！要在session中保存，不然parameters一直是只有物理空间，没有赋值的状态</span></span><br><span class="line">	parameters=session.run(parameters)</span><br><span class="line">	print(<span class="string">"参数已保存到session"</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#8.计算准确率</span></span><br><span class="line">	predit_matrix=tf.equal(tf.argmax(Z3),tf.argmax(Y))</span><br><span class="line">	accury=tf.reduce_mean(tf.cast(predit_matrix,<span class="string">"float32"</span>))</span><br><span class="line"></span><br><span class="line">	print(<span class="string">"训练集正确率:"</span>,session.run(accury,&#123;X:train_x,Y:train_y&#125;))</span><br><span class="line">	print(<span class="string">"测试集正确率:"</span>,session.run(accury,&#123;X:test_x,Y:test_y&#125;))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> parameters</span><br></pre></td></tr></table></figure>
+
+<p>（7）输入自己数据进行测试</p>
+<p>利用matplotlib中的图片工厂读入图片，并进行大小转换，将上述得出的模型参数和当前图像输入预测函数中（预测函数是进行一次前向传播，并根据最终的输出判断类别）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> image <span class="keyword">as</span> mpimg</span><br><span class="line">my_image=<span class="string">"1.png"</span></span><br><span class="line">file_name=<span class="string">"./datasets/fingers/"</span>+my_image</span><br><span class="line">img=mpimg.imread(file_name)</span><br><span class="line">plt.imshow(img)</span><br><span class="line">plt.show()</span><br><span class="line">my_test=img.reshape(<span class="number">1</span>,<span class="number">64</span>*<span class="number">64</span>*<span class="number">3</span>).T</span><br><span class="line">predict=tu.predict(my_test,parameters)</span><br><span class="line">print(<span class="string">"预测结果为："</span>+str(predict))</span><br></pre></td></tr></table></figure>
+
+<h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><p>（1）训练结果</p>
+<p>即算法中第6步结果</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200519160728.png" alt></p>
+<p>训练集正确率: 0.9990741<br>测试集正确率: 0.71666664</p>
+<p>可见损失不断减少，训练集和测试集正确率效果可以。</p>
+<p>（2）测试结果</p>
+<p>输入新的图片</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200519205603.png" alt></p>
+<p>预测结果为</p>
+<p>CPU运行时间407.137855s.<br>预测结果为：[1]</p>
+<p>可见预测无误，训练好的网络能识别出手势。</p>
+<h2 id="附"><a href="#附" class="headerlink" title="附"></a>附</h2><h3 id="超参调试"><a href="#超参调试" class="headerlink" title="超参调试"></a>超参调试</h3><p>（1）超参调试采用随机取值方式：因为不知道哪个参数更重要</p>
+<p>（2）采取从粗糙到精细的策略：先在大范围内随机取值，在其中找到最好效果的区间，在这个区间进行精细化，即更密集的取值</p>
+<p>（3）注意标尺的选择：当小的变化对结果影响很大时，需要使用对数标尺</p>
+<p>如参数取值为0.9 ~ 0.99，则转换为1-（0.1 ~ 0.11）,最大值0.1对应10^-1，最小值0.11对应10^-2</p>
+<p>则取值范围指数r=[-2，-1]，参数取值为1-10^r</p>
+<p>附：各超参的重要性排序：</p>
+<p>学习率learning_rate &gt; momentum中的beta(常用取值0.9) = 隐藏层神经元数量 = mini_batch_size &gt; 网络层数 = 学习率衰减率</p>
+<p>最不重要Adam算法中的beta1(取0.9)，beta2(取0.99)，epsilon(取1e-8)</p>
+<h3 id="batch-norm归一化"><a href="#batch-norm归一化" class="headerlink" title="batch norm归一化"></a>batch norm归一化</h3><p>当深层网络层数很多，即网络很深时，可以使用batch norm归一化对隐藏层数据进行归一化。</p>
+<p>作用：使得每层隐藏层的输入更趋于稳定范围内，即限制了在前层网络参数变化时，会影响数值的分布，使得后层的值趋于稳定，即后面单元不过分依赖前面单元，具有一定的独立性，可单独进行学习。</p>
+<p>方法：用参数β,γ控制隐藏层的方差和均值</p>
+<p>（为了使得方差和均值不全为0，1，加入的这两个参数，当方差和均值为0，1，则激活函数只在某一段变化，不能完全学习到所有特征）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200519202110.png" alt></p>
+<p>更新参数时和更新权重一样，可以使用梯度下降或者Adam等其他算法。</p>
+<p>注：测试时没有均值和方差，则需要在训练时，根据指数加权平均方法得到训练集整体的均值和方差，作为测试的均值和方差使用</p>
+<h3 id="多分类使用softmax"><a href="#多分类使用softmax" class="headerlink" title="多分类使用softmax"></a>多分类使用softmax</h3><p>当输出层的分类不止2个时，使用softmax函数：对输出的数值进行判断，将最大概率对应的数值作为当前分类（输出层得到的最大的数即概率最大）</p>
+<p>当到最后一层时，得到线性值Z[l]，激活函数使用对幂指数取平均的方式，如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200519203045.png" alt></p>
+<p>得到最大的值作为输出值。</p>
+<p>损失函数：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200519203054.png" alt></p>
+<h3 id="其他深度学习框架"><a href="#其他深度学习框架" class="headerlink" title="其他深度学习框架"></a>其他深度学习框架</h3><p>对不同领域的不同应用有不同的深度学习框架</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200519203341.png" alt></p>
+<p>（深度学习框架学习待续…）</p>
+]]></content>
+      <categories>
+        <category>神经网络</category>
+      </categories>
+      <tags>
+        <tag>神经网络</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>改善深层神经网络——第二周编程作业</title>
     <url>/blogs/ipvNNet2/</url>
     <content><![CDATA[<p>可以通过优化算法提高网络训练速度</p><h2 id="Mini-batch梯度下降算法"><a href="#Mini-batch梯度下降算法" class="headerlink" title="Mini_batch梯度下降算法"></a>Mini_batch梯度下降算法</h2><p>梯度下降算法将样本全部遍历一遍后，再计算梯度，当样本很多时，训练时间太长。</p><p>这时候需要用Mini_batch梯度下降算法：</p><p>（1）将原始的样本打乱，随机分布，使用numpy库中permutation生成随机数组，打乱样本集</p><p>（2）将样本按照用户输入的大小mini_batch_size（一般是64 ~ 512，即符合计算机内存大小的2的幂次方，这样训练速度会快），将样本重新分为x{1}，x{2} …x{n}，其中划分的个数num_mini_batch=样本总个数m / mini_batch_size，则第一个mini_batch，即x{1}=train_x[:，0:mini_batch_size * 1]，第二个mini_batch，即x{2}=train_x[:，mini_batch_size * 1：mini_batch_size * 2]</p><a id="more"></a>
@@ -1918,8 +2013,8 @@
         <category>java</category>
       </categories>
       <tags>
-        <tag>多线程</tag>
         <tag>java</tag>
+        <tag>多线程</tag>
         <tag>future</tag>
       </tags>
   </entry>
