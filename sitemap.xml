@@ -2,7 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.xiapf.com/blogs/struLearning/</loc>
+    <loc>https://www.xiapf.com/blogs/struLearning2/</loc>
+    
+    <lastmod>2020-05-25T03:23:51.797Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.xiapf.com/blogs/struLearning1/</loc>
     
     <lastmod>2020-05-21T08:39:20.931Z</lastmod>
     
@@ -240,13 +247,6 @@
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/blogs/docker/</loc>
-    
-    <lastmod>2019-12-13T12:52:51.111Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.xiapf.com/blogs/future-futuretask/</loc>
     
     <lastmod>2019-12-13T12:52:51.111Z</lastmod>
@@ -255,6 +255,13 @@
   
   <url>
     <loc>https://www.xiapf.com/blogs/hello-world/</loc>
+    
+    <lastmod>2019-12-13T12:52:51.111Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.xiapf.com/blogs/docker/</loc>
     
     <lastmod>2019-12-13T12:52:51.111Z</lastmod>
     

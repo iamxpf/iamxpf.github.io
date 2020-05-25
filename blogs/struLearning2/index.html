@@ -56,18 +56,21 @@
   };
 </script>
 
-  <meta name="description" content="好好学习，天天向上">
-<meta name="keywords" content="good good good">
-<meta property="og:type" content="website">
-<meta property="og:title" content="八戒大强攻">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;googleed4d545efcc47873.html">
+  <meta name="description" content="误差分析如何进误差分析当需要提高系统的正确率时，需要一一看发生错误的样本并进行记录（主要是看假阳和假阴样本），列成如下的表格，纵向代表每个出错的样本，横向代表出错的类型：最后一行记录每个错误类型的百分比，根据百分比确定不同错误类型对错误率的影响，选择影响大的作为后续系统改进的方向。注：可以将百分比理解为是确定每个错误类型的优先级顺序">
+<meta name="keywords" content="神经网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="结构化机器学习项目——第二周学习笔记">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;struLearning2&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="好好学习，天天向上">
+<meta property="og:description" content="误差分析如何进误差分析当需要提高系统的正确率时，需要一一看发生错误的样本并进行记录（主要是看假阳和假阴样本），列成如下的表格，纵向代表每个出错的样本，横向代表出错的类型：最后一行记录每个错误类型的百分比，根据百分比确定不同错误类型对错误率的影响，选择影响大的作为后续系统改进的方向。注：可以将百分比理解为是确定每个错误类型的优先级顺序">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-12-13T12:52:51.112Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200525102748.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200525111013.png">
+<meta property="og:updated_time" content="2020-05-25T03:23:51.797Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200525102748.png">
 
-<link rel="canonical" href="https://www.xiapf.com/googleed4d545efcc47873">
+<link rel="canonical" href="https://www.xiapf.com/blogs/struLearning2/">
 
 
 <script id="page-configurations">
@@ -75,14 +78,13 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: false,
-    isPage: true,
+    isPost: true,
+    isPage: false,
     isArchive: false
   };
 </script>
 
-  <title> | 八戒大强攻
-  </title>
+  <title>结构化机器学习项目——第二周学习笔记 | 八戒大强攻</title>
   
 
 
@@ -225,44 +227,254 @@
       <div class="main-inner">
         <div class="content-wrap">
           
-  
-  
 
           <div class="content">
             
 
   <div class="posts-expand">
-    
-    
-    
-    <div class="post-block" lang="zh-CN">
-      <header class="post-header">
-
-<h2 class="post-title" itemprop="name headline">
-</h2>
-
-<div class="post-meta">
+      
   
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/struLearning2/">
 
-</div>
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
 
-</header>
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          结构化机器学习项目——第二周学习笔记
+        </h2>
 
-      
-      
-      
-      <div class="post-body">
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-25 11:22:54 / 修改时间：11:23:51" itemprop="dateCreated datePublished" datetime="2020-05-25T11:22:54+08:00">2020-05-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">神经网络</span>
+                  </a>
+                </span>
+            </span>
+
           
+            <span id="/blogs/struLearning2/" class="post-meta-item leancloud_visitors" data-flag-title="结构化机器学习项目——第二周学习笔记" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/struLearning2/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/struLearning2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="误差分析"><a href="#误差分析" class="headerlink" title="误差分析"></a>误差分析</h2><h3 id="如何进误差分析"><a href="#如何进误差分析" class="headerlink" title="如何进误差分析"></a>如何进误差分析</h3><p>当需要提高系统的正确率时，需要一一看发生错误的样本并进行记录（主要是看假阳和假阴样本），列成如下的表格，纵向代表每个出错的样本，横向代表出错的类型：</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200525102748.png" alt></p><p><strong>最后一行记录每个错误类型的百分比，根据百分比确定不同错误类型对错误率的影响，选择影响大的作为后续系统改进的方向。</strong></p><p>注：可以将百分比理解为是确定每个错误类型的优先级顺序</p><a id="more"></a>
+
+
+
+<h3 id="对标记错误的例子如何处理"><a href="#对标记错误的例子如何处理" class="headerlink" title="对标记错误的例子如何处理"></a>对标记错误的例子如何处理</h3><p>在误差分析之后，有些错误样本可能是初始标记的时候发生了错误，这时候分类处理：</p>
+<p>（1）如果是训练集中原始标记错误，当训练集足够大，可以忽略错误，不进行改正</p>
+<p>（2）如果是开发集或者测试集，就需要查看原始标记错误的百分比是否很大，即是否严重影响了系统的正确率，如果是，则需要修正，反之不需要。</p>
+<h2 id="快速搭建自己的系统"><a href="#快速搭建自己的系统" class="headerlink" title="快速搭建自己的系统"></a>快速搭建自己的系统</h2><h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><p>（1）确定<strong>目标</strong>（后续出现问题也可修改）：确定开发集、测试集和衡量算法的单一实数指标</p>
+<p>（2）搭建一个机器学习系统<strong>原型</strong>：在训练集上进行训练看效果，在开发集、测试集上测试看表现</p>
+<p>（3）用<strong>偏差</strong>和<strong>方差</strong>分析，确定下一步做什么，进行<strong>误差分析</strong>，了解大部分出错的样本是什么，提高系统正确率</p>
+<h3 id="数据不够如何处理"><a href="#数据不够如何处理" class="headerlink" title="数据不够如何处理"></a>数据不够如何处理</h3><p>当真正关心的数据比较少，假设只有10000条，非真正关心的数据有500000条，如何分配训练集、开发集、测试集：</p>
+<p>根据“<u>瞄准需要处理的目标即真正关系的数据”的原则划分数据集，保证开发集和测试集数据来自同分布</u></p>
+<p>（1）选择1：500000条作为训练集，真正关系的数据中5000条作为开发集，5000条作为测试集</p>
+<p>（2）选择2：500000条+真正关心数据中5000条=505000条作为训练集，真正关心的数据中2500条作为开发集，2500条作为测试集</p>
+<h3 id="数据不匹配如何处理"><a href="#数据不匹配如何处理" class="headerlink" title="数据不匹配如何处理"></a>数据不匹配如何处理</h3><p>当按照数据不够的处理原则处理后即数据不匹配的系统的方差偏差分析：</p>
+<p>由于训练集和开发集数据不同分布，为了了解训练集上的模型的推广程度（即方差），从原始数据中取一部分作物训练—开发集，来衡量方差的值。（设定500000条作为训练集，真正关系的数据中5000条作为开发集，5000条作为测试集）</p>
+<table>
+<thead>
+<tr>
+<th>误差类型</th>
+<th>误差</th>
+<th>数据量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>人类表现（即贝叶斯误差）</td>
+<td>/</td>
+</tr>
+<tr>
+<td>2</td>
+<td>训练集误差</td>
+<td>495000（在该数据上进行训练）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>训练—开发集误差</td>
+<td>5000（该数据上不进行训练）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>开发集误差</td>
+<td>5000</td>
+</tr>
+<tr>
+<td>5</td>
+<td>训练集误差</td>
+<td>5000</td>
+</tr>
+</tbody></table>
+<p>（1）1，2之间是可避免误差，措施：训练更大的网络或者训练时间更长</p>
+<p>（2）2，3之间是方差，措施：正则化或者获取更多的训练集数据</p>
+<p>（3）3，4之间是数据不匹配，措施：人工合成数据</p>
+<p>快速制造更多训练数据，例如语音识别，用大量清晰数据+噪音数据制造出关心的数据：在噪音下说话的声音。</p>
+<p>缺点：当噪音数据过小，容易对当前噪音数据过拟合。</p>
+<p>（4）4，5之间是对开发集过拟合程度，措施：需要更大的开发集或者开发集数据更多些</p>
+<h2 id="迁移学习和多任务学习"><a href="#迁移学习和多任务学习" class="headerlink" title="迁移学习和多任务学习"></a>迁移学习和多任务学习</h2><h3 id="迁移学习——串行"><a href="#迁移学习——串行" class="headerlink" title="迁移学习——串行"></a>迁移学习——串行</h3><p>神经网络从一个任务中学习到知识，并将这些知识应用到其他任务中叫做迁移学习。</p>
+<p>应用场景：A-&gt;B（将A任务中知识迁移到B任务中）</p>
+<p>（1）A的数据量比B多很多</p>
+<p>（2）A，B有相同的输入</p>
+<p>（3）A任务中低层次特征的学习能够帮助B任务</p>
+<p>注：当A的数据量比B小，迁移学习效果不太好</p>
+<p>example：将对猫的识别迁移到对x射线图像的识别中去</p>
+<p>A:对猫的识别</p>
+<p>B:对x射线图像的识别</p>
+<p>两者都是输入图像，满足条件（2），同时A任务中能够学习图像的轮廓等能保住B任务，满足条件（3），任务A的数据量很大。</p>
+<p>方法：</p>
+<p>（1）方法1（x射线图像的识别数据量小）：将对猫识别网络最后一层去掉，初始化最后一层的权重等参数（随机权重），使用原始前n-1层参数进行训练</p>
+<p>（2）方法2（x射线图像的识别数据量大）：将对猫识别网络最后一层去掉，初始化所有层的权重等参数进行训练</p>
+<p>注：去掉最后一层之后，可以加几层隐藏层再接输出</p>
+<h3 id="多任务学习——并行"><a href="#多任务学习——并行" class="headerlink" title="多任务学习——并行"></a>多任务学习——并行</h3><p>同时开始学习，神经网络每次学习几件事，并希望每个任务都能帮助其他任务称为多任务学习</p>
+<p>应用场景</p>
+<p>（1）训练的一组任务，可以共用低层次特征（例如自动车驾驶，需要训练对物体的识别，识别行人，标志，斑马线等，此时可以共用低层次特征）</p>
+<p>（2）每个单独的任务数据量接近</p>
+<p>（3）建立一个大的神经网络同时训练一组任务比单独训练每个任务效率高</p>
+<p>一般网络最后输出代表是否有该组任务，即每个任务赋予一个标签。（和softmaxt层不同，softmax最后数据代表单个样本的分类情况）</p>
+<p>损失函数：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200525111013.png" alt></p>
+<p>红色框中代表对四个任务分类的求和</p>
+<h2 id="端到端的深度学习"><a href="#端到端的深度学习" class="headerlink" title="端到端的深度学习"></a>端到端的深度学习</h2><p>语音识别任务（x,y），x代表输入的音频，y代表听写文本</p>
+<p>一般深度学习：从x-&gt;提取特征-&gt;提取音位-&gt;生成词-&gt;y，中间包含很多手工生成的组件，里面包含人类对知识的分析，从而传递给网络</p>
+<p>端到端的深度学习：从x直接映射到y，完全依靠数据来学习知识，没有人类的干预即手工生成组件</p>
+<p>应用场景：从x直接映射到y有大量训练样本</p>
+<p>当从x直接映射到y没有很多样本，这时候可以换分为子任务，在子任务中进行端到端的深度学习</p>
+<p>例如：人脸识别系统（x,y），x代表输入的人像图片，y代表这个人的身份</p>
+<p>由于人脸识别任务中的输入图片有很多，各种角度和各种距离的，这样的数据集较少，因此可以将任务分为两个子任务：</p>
+<p>（1）（x1,y1），x代表输入的人脸图片，y1代表将输入的图片裁剪出人脸并居中</p>
+<p>（2）（x2,y2），x2代表输入的居中人脸图片，y2代表这个人的身份（通过x2人脸和库中人脸进行匹配训练模型）</p>
+<p>子任务（1）、（2）数据量充足，划分之后任务简单也易训练模型。</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
       </div>
       
-      
-      
-    </div>
-    
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
 
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 神经网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/struLearning1/" rel="next" title="结构化机器学习项目——第一周学习笔记">
+                  <i class="fa fa-chevron-left"></i> 结构化机器学习项目——第一周学习笔记
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
     
-    
-    
+  </article>
+  
+  
+  
+
   </div>
 
 
@@ -293,6 +505,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#误差分析"><span class="nav-number">1.</span> <span class="nav-text">误差分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何进误差分析"><span class="nav-number">1.1.</span> <span class="nav-text">如何进误差分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对标记错误的例子如何处理"><span class="nav-number">1.2.</span> <span class="nav-text">对标记错误的例子如何处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快速搭建自己的系统"><span class="nav-number">2.</span> <span class="nav-text">快速搭建自己的系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤"><span class="nav-number">2.1.</span> <span class="nav-text">步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据不够如何处理"><span class="nav-number">2.2.</span> <span class="nav-text">数据不够如何处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据不匹配如何处理"><span class="nav-number">2.3.</span> <span class="nav-text">数据不匹配如何处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迁移学习和多任务学习"><span class="nav-number">3.</span> <span class="nav-text">迁移学习和多任务学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#迁移学习——串行"><span class="nav-number">3.1.</span> <span class="nav-text">迁移学习——串行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多任务学习——并行"><span class="nav-number">3.2.</span> <span class="nav-text">多任务学习——并行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#端到端的深度学习"><span class="nav-number">4.</span> <span class="nav-text">端到端的深度学习</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
