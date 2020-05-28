@@ -21,16 +21,17 @@
 <p>分类：最大池化，取图像对应区域内的最大值；平均池化，取图像区域内的平均值</p>
 <p>接收经过卷积层的输出A，通过池化层，选择池化方式最终得到P，作为一层网络的输出。</p>
 <p>注：池化层中参数不在反向传播中更新，即池化层没有要学习的参数</p>
+<p>常用参数：f=2，s=2（长宽缩小一半）</p>
 <p>（3）全连接层</p>
 <p>作用：全连接层类似于单神经网络，假设通过两层网络（卷积+池化）得到图像将其拉伸成一维向量，其维度为n，全连接层的维度为m，则中间的权重维度为（m,n），可见卷积神经网络中参数主要集中在全连接层。</p>
 <p>经过全连接层的图像会最终输出一个一维向量作为结果，当最后接softmax函数时，则最终输出一个结果。</p>
 <h3 id="简单网络结构示意图"><a href="#简单网络结构示意图" class="headerlink" title="简单网络结构示意图"></a>简单网络结构示意图</h3><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200527180339.png" alt></p>
 <p>如图所示，是一个简单的二层卷积神经网络，输入的图像为32 * 32 * 3</p>
 <p>（1）卷积层+池化层</p>
-<p>第一层网络：卷积层设置过滤器为5 * 5，数量为6个，步长s=1，p=0，则输出28 * 28 *6的图像（套用公式即可得到输出的维度），第三个维度6代表6个过滤器</p>
-<p>池化层选择最大池化，f=2，s=2，则输出14 * 14 *6的图像</p>
+<p>第一层网络：卷积层设置过滤器为5 * 5，数量为6个，步长s=1，p=0，则输出28 * 28 * 6的图像（套用公式即可得到输出的维度），第三个维度6代表6个过滤器</p>
+<p>池化层选择最大池化，f=2，s=2（长宽缩小一半），则输出14 * 14 *6的图像</p>
 <p>第二层网络同理，最终得到5 * 5 * 16的图像，将其拉伸为400 * 1的一维向量，输入全连接层中</p>
-<p>（）全连接层</p>
+<p>（2）全连接层</p>
 <p>可以设置多个全连接层，这里设置了两层，将拉伸了的图像输入全连接层中，最终得到的数据输入softmax函数中得到最终输出，数字最大的数字代表输入图像代表的类别</p>
 <h3 id="网络中各数据的维度"><a href="#网络中各数据的维度" class="headerlink" title="网络中各数据的维度"></a>网络中各数据的维度</h3><p>填充：p</p>
 <p>步长：s</p>
@@ -68,7 +69,8 @@
 
 <h2 id="应用实例——使用tensorflow框架"><a href="#应用实例——使用tensorflow框架" class="headerlink" title="应用实例——使用tensorflow框架"></a>应用实例——使用tensorflow框架</h2><p>（0）导入数据</p>
 <p>导入h5文件下的数据集，并进行归一化</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#将输入的标签转换为独热矩阵</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_one_hot</span><span class="params">(Y,C)</span>:</span></span><br><span class="line">	<span class="comment">#Y.reshape(-1)转成一维的</span></span><br><span class="line">	one_hot=np.eye(C)[Y.reshape(<span class="number">-1</span>)].T</span><br><span class="line">	<span class="keyword">return</span> one_hot</span><br><span class="line">train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes=cu.load_dataset()</span><br><span class="line">train_x_flatten=train_set_x_orig.reshape(train_set_x_orig.shape[<span class="number">0</span>],<span class="number">-1</span>).T</span><br><span class="line">test_x_flatten=test_set_x_orig.reshape(test_set_x_orig.shape[<span class="number">0</span>],<span class="number">-1</span>).T</span><br><span class="line">print(train_x_flatten.shape,train_set_x_orig.shape)</span><br><span class="line">train_x=train_set_x_orig/<span class="number">255</span></span><br><span class="line">test_x=test_set_x_orig/<span class="number">255</span></span><br></pre></td></tr></table></figure>
+<p>这里输入数据的格式是（m,n_h,n_w,n_c），所以不需要修正大小</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#将输入的标签转换为独热矩阵</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_one_hot</span><span class="params">(Y,C)</span>:</span></span><br><span class="line">	<span class="comment">#Y.reshape(-1)转成一维的</span></span><br><span class="line">	one_hot=np.eye(C)[Y.reshape(<span class="number">-1</span>)].T</span><br><span class="line">	<span class="keyword">return</span> one_hot</span><br><span class="line">train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes=cu.load_dataset()</span><br><span class="line">train_x=train_set_x_orig/<span class="number">255</span></span><br><span class="line">test_x=test_set_x_orig/<span class="number">255</span></span><br></pre></td></tr></table></figure>
 
 <p>（1）建立占位符，初始化参数</p>
 <p>因为不确定输入图片的个数，第一位设置为none</p>
@@ -1430,8 +1432,8 @@
         <category>机器学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>回归</tag>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -1512,8 +1514,8 @@
         <category>机器学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>回归</tag>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -2307,8 +2309,8 @@
         <category>java</category>
       </categories>
       <tags>
-        <tag>java</tag>
         <tag>多线程</tag>
+        <tag>java</tag>
         <tag>future</tag>
       </tags>
   </entry>
