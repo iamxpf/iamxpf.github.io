@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="算法简介背景使用普通的神经网络时，当输入的图片维度大，假设为1000 * 1000 * 3，第一层的神经元为1000个，则权重参数达到三亿个（1000 * 1000 * 3 * 1000），这时候网络会变得很大，有巨大的参数，因此需要使用卷积神经网络。卷积神经网络通过参数共享和稀疏连接的方式使得参数变得很少，可以用很少的训练集训练，避免网络过拟合。">
+<meta name="keywords" content="神经网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="卷积神经网络——识别手势图片">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;convNet1&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="算法简介背景使用普通的神经网络时，当输入的图片维度大，假设为1000 * 1000 * 3，第一层的神经元为1000个，则权重参数达到三亿个（1000 * 1000 * 3 * 1000），这时候网络会变得很大，有巨大的参数，因此需要使用卷积神经网络。卷积神经网络通过参数共享和稀疏连接的方式使得参数变得很少，可以用很少的训练集训练，避免网络过拟合。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200528143258.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200527180339.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200527180726.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200527180218.jpg">
+<meta property="og:updated_time" content="2020-05-28T07:49:03.560Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200528143258.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/convNet1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>卷积神经网络——识别手势图片 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">31</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">9</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">35</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/convNet1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          卷积神经网络——识别手势图片
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-28 15:47:32 / 修改时间：15:49:03" itemprop="dateCreated datePublished" datetime="2020-05-28T15:47:32+08:00">2020-05-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">神经网络</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/convNet1/" class="post-meta-item leancloud_visitors" data-flag-title="卷积神经网络——识别手势图片" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/convNet1/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/convNet1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="算法简介"><a href="#算法简介" class="headerlink" title="算法简介"></a>算法简介</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>使用普通的神经网络时，当输入的图片维度大，假设为1000 * 1000 * 3，第一层的神经元为1000个，则权重参数达到三亿个（1000 * 1000 * 3 * 1000），这时候网络会变得很大，有巨大的参数，因此需要使用卷积神经网络。</p><p>卷积神经网络通过参数共享和稀疏连接的方式使得参数变得很少，可以用很少的训练集训练，避免网络过拟合。</p><a id="more"></a>
+
+<p>参数共享：图片的不同区域都可以用相同的过滤器计算</p>
+<p>稀疏连接：每个输出的像素仅和部分输入像素相关，其他像素不影响相应输出</p>
+<p>假设为1000 * 1000 * 3，过滤器为4 * 4 * 3，加上偏置项，共10个过滤器，则需要的参数为（4 * 4 * 3 +1） * 10=490个，原小于原使用普通的神经网络</p>
+<h3 id="网络构成"><a href="#网络构成" class="headerlink" title="网络构成"></a>网络构成</h3><p>卷积神经网络通常有三层（也有只有卷积层的网络，具体网络的配置，如层数，超参设置可以参照文献中其他人的方法），这里将卷积层+池化层作为神经网络的一层。</p>
+<p>（1）卷积层</p>
+<p>作用：使用过滤器对输入的图像进行卷积操作（按照步长，在图像相应区域做乘积并求和），功能类似于求Z=W * X +b</p>
+<p>经过卷积层的图像使用非线性函数进行计算得到A=relu(Z)</p>
+<p>padding的作用：由于卷积之后图像会变小，可以通过事先在输入图像外部进行填充0。有两种填充方式：valid padding即p=0，不填充；same padding，即填充完成后，输入输出的维度相同，即n+2p-f+1=n，由此德驰p=(f-1)/2</p>
+<p>附（公式）：</p>
+<p>当输入的维度为n * n * n_c，过滤器为f * f，步长为s，填充为p，则输出的数据维度为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200528143258.png" alt></p>
+<p>（2）池化层</p>
+<p>作用：缩小模型，加快计算速度</p>
+<p>分类：最大池化，取图像对应区域内的最大值；平均池化，取图像区域内的平均值</p>
+<p>接收经过卷积层的输出A，通过池化层，选择池化方式最终得到P，作为一层网络的输出。</p>
+<p>注：池化层中参数不在反向传播中更新，即池化层没有要学习的参数</p>
+<p>（3）全连接层</p>
+<p>作用：全连接层类似于单神经网络，假设通过两层网络（卷积+池化）得到图像将其拉伸成一维向量，其维度为n，全连接层的维度为m，则中间的权重维度为（m,n），可见卷积神经网络中参数主要集中在全连接层。</p>
+<p>经过全连接层的图像会最终输出一个一维向量作为结果，当最后接softmax函数时，则最终输出一个结果。</p>
+<h3 id="简单网络结构示意图"><a href="#简单网络结构示意图" class="headerlink" title="简单网络结构示意图"></a>简单网络结构示意图</h3><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200527180339.png" alt></p>
+<p>如图所示，是一个简单的二层卷积神经网络，输入的图像为32 * 32 * 3</p>
+<p>（1）卷积层+池化层</p>
+<p>第一层网络：卷积层设置过滤器为5 * 5，数量为6个，步长s=1，p=0，则输出28 * 28 *6的图像（套用公式即可得到输出的维度），第三个维度6代表6个过滤器</p>
+<p>池化层选择最大池化，f=2，s=2，则输出14 * 14 *6的图像</p>
+<p>第二层网络同理，最终得到5 * 5 * 16的图像，将其拉伸为400 * 1的一维向量，输入全连接层中</p>
+<p>（）全连接层</p>
+<p>可以设置多个全连接层，这里设置了两层，将拉伸了的图像输入全连接层中，最终得到的数据输入softmax函数中得到最终输出，数字最大的数字代表输入图像代表的类别</p>
+<h3 id="网络中各数据的维度"><a href="#网络中各数据的维度" class="headerlink" title="网络中各数据的维度"></a>网络中各数据的维度</h3><p>填充：p</p>
+<p>步长：s</p>
+<p>每个过滤器：f * f * n_c_pre （这里的n_c_pre是指过滤器维度需要和输入，即上一层的输入保持一致）</p>
+<p>本层过滤器数量：n_c</p>
+<p>权重W：f * f *n_c_pre * n_c （n_c是指本层过滤器数量，权重的维度等于每个过滤器维度 * 过滤器数量）</p>
+<p>偏置量b：1 * 1 * 1 * n_c</p>
+<p>激活值a：n_h * n_w * n_c（本层的输出）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200527180726.png" alt></p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>（1）padding 填充数据</p>
+<p>使用numpy中的pad，填充过滤器的长宽，填充大小为pad，当不指定constant_value时，自动填充0</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.将输入的图像，按照指定的padding进行填充</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">zero_pad</span><span class="params">(X,pad)</span>:</span></span><br><span class="line">  X=np.pad(X,((<span class="number">0</span>,<span class="number">0</span>),(pad,pad),(pad,pad),(<span class="number">0</span>,<span class="number">0</span>)),<span class="string">'constant'</span>) <span class="comment">#不指定constant_value,默认填充0</span></span><br><span class="line">  <span class="keyword">return</span> X</span><br></pre></td></tr></table></figure>
+
+<p>（2）前向传播</p>
+<p>1.卷积层</p>
+<p>1° 计算需要输出的图像Z的维度，并填充输入的图像</p>
+<p>2° 对每个输入的图像，计算需要卷积的区域：</p>
+<p>h_start=h * stride<br>h_end=h_start+f_h<br>w_start=w * stride<br>w_end=w_start+f_w</p>
+<p>按照卷积的区域计算每个样本的卷积值</p>
+<p>3° 保存卷积层的上一层输入，当前层的权重和超参（包含s和pad），保存为cache</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#卷积层的前向传播</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">conv_forward</span><span class="params">(A_pre,W,b,hparameters)</span>:</span></span><br><span class="line">  pad=hparameters[<span class="string">'pad'</span>]</span><br><span class="line">  stride=hparameters[<span class="string">'stride'</span>]</span><br><span class="line">  m,n_h_pre,n_w_pre,n_c_pre=A_pre.shape</span><br><span class="line">  f_h,f_w,n_c_pre,n_c=W.shape</span><br><span class="line"></span><br><span class="line">  <span class="comment">#将每个输入样本进行填充</span></span><br><span class="line">  A_pre_single=zero_pad(A_pre,pad)</span><br><span class="line"></span><br><span class="line">  <span class="comment">#计算输出的维度</span></span><br><span class="line">  n_h=int(((n_h_pre+<span class="number">2</span>*pad-f_h)/stride)+<span class="number">1</span>)</span><br><span class="line">  n_w=int(((n_w_pre+<span class="number">2</span>*pad-f_w)/stride)+<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">  Z=np.zeros((m,n_h,n_w,n_c))</span><br><span class="line"></span><br><span class="line">  <span class="comment">#对填充的样本一一用过滤器处理得到结果</span></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">    a_pre_single=A_pre_single[i]</span><br><span class="line">    <span class="keyword">for</span> h <span class="keyword">in</span> range(n_h):</span><br><span class="line">      <span class="keyword">for</span> w <span class="keyword">in</span> range(n_w):</span><br><span class="line">        <span class="keyword">for</span> c <span class="keyword">in</span> range(n_c):</span><br><span class="line">          h_start=h*stride</span><br><span class="line">          h_end=h_start+f_h</span><br><span class="line">          w_start=w*stride</span><br><span class="line">          w_end=w_start+f_w</span><br><span class="line">          <span class="comment">#将对应通道的矩阵进行一次卷积</span></span><br><span class="line">          	Z[i,h,w,c]=conv_single_step(a_pre_single[h_start:h_end,w_start:w_end,:],W[:,:,:,c],b[<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,c])</span><br><span class="line">          <span class="comment">#激活值可以在这里计算</span></span><br><span class="line">          <span class="comment">#....</span></span><br><span class="line"></span><br><span class="line">    cache=(A_pre,W,b,hparameters)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> Z,cache</span><br></pre></td></tr></table></figure>
+
+<p>2.池化层</p>
+<p>接收卷积层的输入，按照卷积方式，在指定区域进行取最大值或者取平均值，最终得到P输出</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#池化层前向传播 A_pre是卷积之后的值</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pool_forward</span><span class="params">(A_pre,hparameters,pool=<span class="string">'max'</span>,pad=<span class="number">0</span>)</span>:</span></span><br><span class="line">  m,n_h_pre,n_w_pre,n_c_pre=A_pre.shape</span><br><span class="line"></span><br><span class="line">  f=hparameters[<span class="string">'f'</span>]</span><br><span class="line">  stride=hparameters[<span class="string">'stride'</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment">#计算输出的维度</span></span><br><span class="line">  n_h=int(((n_h_pre+<span class="number">2</span>*pad-f)/stride)+<span class="number">1</span>)</span><br><span class="line">  n_w=int(((n_w_pre+<span class="number">2</span>*pad-f)/stride)+<span class="number">1</span>)</span><br><span class="line">  n_c=n_c_pre</span><br><span class="line"></span><br><span class="line">  Z_pool=np.zeros((m,n_h,n_w,n_c))</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">    <span class="keyword">for</span> h <span class="keyword">in</span> range(n_h):</span><br><span class="line">      <span class="keyword">for</span> w <span class="keyword">in</span> range(n_w):</span><br><span class="line">        <span class="keyword">for</span> c <span class="keyword">in</span> range(n_c):</span><br><span class="line">          h_start=h*stride</span><br><span class="line">          h_end=h_start+f</span><br><span class="line">          w_start=w*stride</span><br><span class="line">          w_end=w_start+f</span><br><span class="line">            <span class="comment">#指定第i个样本和其维度</span></span><br><span class="line">          a_single=A_pre[i,h_start:h_end,w_start:w_end,c]</span><br><span class="line"></span><br><span class="line">          <span class="keyword">if</span>(pool==<span class="string">"max"</span>):</span><br><span class="line">            Z_pool[i,h,w,c]=np.max(a_single)</span><br><span class="line">          <span class="keyword">elif</span>(pool==<span class="string">"average"</span>):</span><br><span class="line">            Z_pool[i,h,w,c]=np.mean(a_single)</span><br><span class="line">  cache=(A_pre,hparameters)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> Z_pool,cache</span><br></pre></td></tr></table></figure>
+
+<p>（3）反向传播（了解）</p>
+<p>1.卷积层</p>
+<p>利用公式dA=W * DZ，dW= 1/m *(A_pre * dZ)，db=dZ</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#卷积层反向传播</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">conv_backward</span><span class="params">(dZ,cache)</span>:</span></span><br><span class="line">  m,n_h,n_w,n_c=dZ.shape</span><br><span class="line">  A_pre,W,b,hparameters=cache</span><br><span class="line">  m,n_h_pre,n_w_pre,n_c_pre=A_pre.shape</span><br><span class="line">  f,f,n_c_pre,n_c=W.shape</span><br><span class="line"></span><br><span class="line">  pad=hparameters[<span class="string">'pad'</span>]</span><br><span class="line">  stride=hparameters[<span class="string">'stride'</span>]</span><br><span class="line"></span><br><span class="line">  dA_pre=np.zeros((m,n_h_pre,n_w_pre,n_c_pre))</span><br><span class="line">  dW=np.zeros((f,f,n_c_pre,n_c))</span><br><span class="line">  db=np.zeros((<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,n_c))</span><br><span class="line"></span><br><span class="line">  <span class="comment">#填充A</span></span><br><span class="line">  A_pre_pad=zero_pad(A_pre,pad)</span><br><span class="line">  dA_pre_pad=zero_pad(dA_pre,pad)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">    a_pre_single=A_pre_pad[i]</span><br><span class="line">    da_pre_single=dA_pre_pad[i]</span><br><span class="line">    <span class="keyword">for</span> h <span class="keyword">in</span> range(n_h):</span><br><span class="line">      <span class="keyword">for</span> w <span class="keyword">in</span> range(n_w):</span><br><span class="line">        <span class="keyword">for</span> c <span class="keyword">in</span> range(n_c):</span><br><span class="line">          h_start=h*stride</span><br><span class="line">          h_end=h_start+f</span><br><span class="line">          w_start=w*stride</span><br><span class="line">          w_end=w_start+f</span><br><span class="line"></span><br><span class="line">          a_single=a_pre_single[h_start:h_end,w_start:w_end,:]</span><br><span class="line"></span><br><span class="line">          da_pre_single[h_start:h_end,w_start:w_end,:]+=W[:,:,:,c]*dZ[i,h,w,c]</span><br><span class="line"></span><br><span class="line">          dW[:,:,:,c]+=a_single*dZ[i,h,w,c]</span><br><span class="line">          db[:,:,:,c]+=dZ[i,h,w,c]</span><br><span class="line">    dA_pre[i,:,:,:]=da_pre_single[pad:-pad,pad:-pad,:]</span><br><span class="line">  grads=(dA_pre,dW,db)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> grads</span><br></pre></td></tr></table></figure>
+
+<p>2.池化层</p>
+<p>最大池化使用掩码矩阵标记最大值，得到在最大值作用下的梯度，平均池化是根据图像维度计算出平均值，得到在平均值作用下的梯度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#池化层反向传播</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#最大池化</span></span><br><span class="line"><span class="comment">#创建矩阵保存最大值所在的位置，即创建掩码矩阵</span></span><br><span class="line"><span class="comment">#为了反向传播的时候，用值定位到卷积层中的位置</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_mask_from_window</span><span class="params">(x)</span>:</span></span><br><span class="line">  mask=(x==np.max(x))</span><br><span class="line">  <span class="keyword">return</span> mask</span><br><span class="line"></span><br><span class="line"><span class="comment">#平均池化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">distribute_value</span><span class="params">(dz,shape)</span>:</span></span><br><span class="line">  n_h,n_w=shape</span><br><span class="line">  average=dz/(n_h*n_w)</span><br><span class="line">  a=np.ones((shape))*average</span><br><span class="line">  <span class="keyword">return</span> a</span><br><span class="line"></span><br><span class="line"><span class="comment">#反向传播</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pool_backward</span><span class="params">(dA,cache,pool=<span class="string">"max"</span>)</span>:</span></span><br><span class="line">  A_pre,hparameters=cache</span><br><span class="line">  m,n_h,n_w,n_c=dA.shape</span><br><span class="line"></span><br><span class="line">  dA_pre=np.zeros_like(A_pre)</span><br><span class="line"></span><br><span class="line">  f=hparameters[<span class="string">'f'</span>]</span><br><span class="line">  stride=hparameters[<span class="string">'stride'</span>]</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">    <span class="keyword">for</span> h <span class="keyword">in</span> range(n_h):</span><br><span class="line">      <span class="keyword">for</span> w <span class="keyword">in</span> range(n_w):</span><br><span class="line">        <span class="keyword">for</span> c <span class="keyword">in</span> range(n_c):</span><br><span class="line">          h_start=h*stride</span><br><span class="line">          h_end=h_start+f</span><br><span class="line">          w_start=w*stride</span><br><span class="line">          w_end=w_start+f</span><br><span class="line">          <span class="comment">#指定第i个样本和其维度</span></span><br><span class="line">          a_single=A_pre[i,h_start:h_end,w_start:w_end,c]</span><br><span class="line"></span><br><span class="line">          <span class="keyword">if</span>(pool==<span class="string">"max"</span>):</span><br><span class="line">            mask=create_mask_from_window(a_single)</span><br><span class="line">            dA_pre[i,h_start:h_end,w_start:w_end,c]+=np.multiply(mask,dA[i,h,w,c])</span><br><span class="line">            </span><br><span class="line">          <span class="keyword">elif</span>(pool==<span class="string">"average"</span>):</span><br><span class="line">            shape=(f,f)</span><br><span class="line">            dA_pre[i,h_start:h_end,w_start:w_end,c]+=distribute_value(dA[i,h,w,c],shape)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> dA_pre</span><br></pre></td></tr></table></figure>
+
+<h2 id="应用实例——使用tensorflow框架"><a href="#应用实例——使用tensorflow框架" class="headerlink" title="应用实例——使用tensorflow框架"></a>应用实例——使用tensorflow框架</h2><p>（0）导入数据</p>
+<p>导入h5文件下的数据集，并进行归一化</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#将输入的标签转换为独热矩阵</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_one_hot</span><span class="params">(Y,C)</span>:</span></span><br><span class="line">	<span class="comment">#Y.reshape(-1)转成一维的</span></span><br><span class="line">	one_hot=np.eye(C)[Y.reshape(<span class="number">-1</span>)].T</span><br><span class="line">	<span class="keyword">return</span> one_hot</span><br><span class="line">train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes=cu.load_dataset()</span><br><span class="line">train_x_flatten=train_set_x_orig.reshape(train_set_x_orig.shape[<span class="number">0</span>],<span class="number">-1</span>).T</span><br><span class="line">test_x_flatten=test_set_x_orig.reshape(test_set_x_orig.shape[<span class="number">0</span>],<span class="number">-1</span>).T</span><br><span class="line">print(train_x_flatten.shape,train_set_x_orig.shape)</span><br><span class="line">train_x=train_set_x_orig/<span class="number">255</span></span><br><span class="line">test_x=test_set_x_orig/<span class="number">255</span></span><br></pre></td></tr></table></figure>
+
+<p>（1）建立占位符，初始化参数</p>
+<p>因为不确定输入图片的个数，第一位设置为none</p>
+<p>使用tf下的get_variable初始化权重</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.创建占位符</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_placeholders</span><span class="params">(n_h,n_w,n_c,n_y)</span>:</span></span><br><span class="line">  <span class="comment">#m不确定</span></span><br><span class="line">  X=tf.placeholder(tf.float32,[<span class="literal">None</span>,n_h,n_w,n_c])</span><br><span class="line">  Y=tf.placeholder(tf.float32,[<span class="literal">None</span>,n_y])</span><br><span class="line">  <span class="keyword">return</span> X,Y</span><br><span class="line"></span><br><span class="line"><span class="comment">#2.初始化权重</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initialize_parameters</span><span class="params">()</span>:</span></span><br><span class="line">  n_h1,n_w1,n_c_pre1,n_c1=[<span class="number">4</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">8</span>] <span class="comment">#f*f*n_c_pre*n_c</span></span><br><span class="line">  n_h2,n_w2,n_c_pre2,n_c2=[<span class="number">2</span>,<span class="number">2</span>,<span class="number">8</span>,<span class="number">16</span>]</span><br><span class="line">  tf.set_random_seed(<span class="number">1</span>)</span><br><span class="line">  W1=tf.get_variable(<span class="string">"W1"</span>,[n_h1,n_w1,n_c_pre1,n_c1],initializer=tf.contrib.layers.xavier_initializer(seed=<span class="number">0</span>))</span><br><span class="line">  W2=tf.get_variable(<span class="string">"W2"</span>,[n_h2,n_w2,n_c_pre2,n_c2],initializer=tf.contrib.layers.xavier_initializer(seed=<span class="number">0</span>))</span><br><span class="line"></span><br><span class="line">  parameters=&#123;<span class="string">"W1"</span>:W1,<span class="string">"W2"</span>:W2&#125;</span><br><span class="line">  <span class="keyword">return</span> parameters</span><br></pre></td></tr></table></figure>
+
+<p>（2）前向传播</p>
+<p>使用tf.nn下的conv2d、relu、max_pool实现卷积和池化，其中步长[1,s,s,1]是指指对于输入 (m, n_H_prev, n_W_prev, n_C_prev)而言，每次滑动的步伐，即长宽滑动s步，同理池化中的ksize的窗口大小也是值长宽滑动的大小。</p>
+<p>最终得到结果使用tf.contrib.layer下的flatten进行拉伸，最后调用fully_connected输出全连接层的值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#3.前向传播</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward_propagation</span><span class="params">(X,parameters)</span>:</span></span><br><span class="line">  W1=parameters[<span class="string">"W1"</span>]</span><br><span class="line">  W2=parameters[<span class="string">'W2'</span>]</span><br><span class="line">  <span class="comment">#1.1卷积</span></span><br><span class="line">  <span class="comment">#[1,s,s,1]是指对于输入 (m, n_H_prev, n_W_prev, n_C_prev)而言，每次滑动的步伐</span></span><br><span class="line">  <span class="comment">#步长1，指定填充方式</span></span><br><span class="line">  Z1=tf.nn.conv2d(X,W1,strides=[<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],padding=<span class="string">"SAME"</span>)</span><br><span class="line">  A1=tf.nn.relu(Z1)</span><br><span class="line">  <span class="comment">#1.2池化</span></span><br><span class="line">  <span class="comment">#窗口大小8*8，步长8</span></span><br><span class="line">  P1=tf.nn.max_pool(A1,ksize=[<span class="number">1</span>,<span class="number">8</span>,<span class="number">8</span>,<span class="number">1</span>],strides=[<span class="number">1</span>,<span class="number">8</span>,<span class="number">8</span>,<span class="number">1</span>],padding=<span class="string">"SAME"</span>)</span><br><span class="line"></span><br><span class="line">  Z2=tf.nn.conv2d(P1,W2,strides=[<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],padding=<span class="string">"SAME"</span>)</span><br><span class="line">  A2=tf.nn.relu(Z2)</span><br><span class="line">  P2=tf.nn.max_pool(A2,ksize=[<span class="number">1</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">1</span>],strides=[<span class="number">1</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">1</span>],padding=<span class="string">"SAME"</span>)</span><br><span class="line"></span><br><span class="line">  P3=tf.contrib.layers.flatten(P2)</span><br><span class="line">  <span class="comment">#6是输出的维度</span></span><br><span class="line">  Z3=tf.contrib.layers.fully_connected(P3,<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> Z3</span><br></pre></td></tr></table></figure>
+
+<p>（3）计算损失</p>
+<p>调用tf.nn下计算softmax的交叉熵模型，输入的数据维度是（数据集大小，分布）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#4.计算成本</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compute_cost</span><span class="params">(Z3,Y)</span>:</span></span><br><span class="line">  <span class="comment">#参数维度[数据集大小，分布]-&gt;logits,labels</span></span><br><span class="line">  cost=tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=Z3,labels=Y))</span><br><span class="line">  <span class="keyword">return</span> cost</span><br></pre></td></tr></table></figure>
+
+<p>（4）反向传播</p>
+<p>使用tf。train下的adam函数</p>
+<p>optimizer=tf.train.AdamOptimizer(learning_rate).minimize(cost)</p>
+<p>（5）建立会话，导入数据</p>
+<p>1° 重现建立模型而不覆盖tf变量：ops.reset_default_graph()</p>
+<p>2° 构建占位符，初始化参数，前向传播，计算成本，反向传播</p>
+<p>3° 创建会话，对每个批量计算其损失</p>
+<p>4° 保存模型的参数，将得到的结果使用tf下的argmax得到最大值和真实值比较，并计算其准确度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#5.构建模型</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">model</span><span class="params">(X_train,Y_train,X_test,Y_test,num_ecpom=<span class="number">50</span>,learning_rate=<span class="number">0.001</span>,mini_batches_size=<span class="number">64</span>)</span>:</span></span><br><span class="line">  <span class="comment">#重新运行模型不覆盖tf变量</span></span><br><span class="line">  ops.reset_default_graph()</span><br><span class="line">  tf.set_random_seed(<span class="number">1</span>)</span><br><span class="line">  seed=<span class="number">3</span></span><br><span class="line">  costs=[]</span><br><span class="line">  m,n_h,n_w,n_c=X_train.shape</span><br><span class="line">  m,n_y=Y_train.shape</span><br><span class="line"></span><br><span class="line">  X,Y=create_placeholders(n_h,n_w,n_c,n_y)</span><br><span class="line"></span><br><span class="line">  parameters=initialize_parameters()</span><br><span class="line"></span><br><span class="line">  Z3=forward_propagation(X,parameters)</span><br><span class="line"></span><br><span class="line">  cost=compute_cost(Z3,Y)</span><br><span class="line"></span><br><span class="line">  optimizer=tf.train.AdamOptimizer(learning_rate).minimize(cost)</span><br><span class="line"></span><br><span class="line">  <span class="comment">#创建会话，导入训练集数据</span></span><br><span class="line">  init=tf.global_variables_initializer()</span><br><span class="line">  session=tf.Session()</span><br><span class="line">  session.run(init)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> range(num_ecpom):</span><br><span class="line">    <span class="comment">#按照小批量梯度下降</span></span><br><span class="line">    mini_batches=cu.random_mini_batches(X_train,Y_train,mini_batches_size,seed)</span><br><span class="line">    <span class="comment">#每个数据块的大小-&gt;得到在该数据块上的错误率</span></span><br><span class="line">    num_mini_batch=int(m/mini_batches_size)</span><br><span class="line">    mini_batch_cost=<span class="number">0</span></span><br><span class="line">    seed=seed+<span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> mini_batch <span class="keyword">in</span> mini_batches:</span><br><span class="line">      mini_batch_x,mini_batch_y=mini_batch</span><br><span class="line">      _,ecpom_cost=session.run([optimizer,cost],feed_dict=&#123;X:X_train,Y:Y_train&#125;)</span><br><span class="line">      mini_batch_cost=mini_batch_cost+ecpom_cost/num_mini_batch</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> i%<span class="number">1</span>==<span class="number">0</span>:</span><br><span class="line">      costs.append(mini_batch_cost)</span><br><span class="line">      <span class="keyword">if</span> i%<span class="number">5</span>==<span class="number">0</span>:</span><br><span class="line">        print(<span class="string">"第"</span>+str(i)+<span class="string">"次，cost:"</span>+str(mini_batch_cost))</span><br><span class="line">  plt.plot(costs)</span><br><span class="line">  plt.title(<span class="string">"learning_rate="</span>+str(learning_rate))</span><br><span class="line">  plt.xlabel(<span class="string">"iteration"</span>)</span><br><span class="line">  plt.ylabel(<span class="string">"cost"</span>)</span><br><span class="line">  plt.show()</span><br><span class="line"></span><br><span class="line">  <span class="comment">#保存得到的参数</span></span><br><span class="line">  parameters=session.run(parameters)</span><br><span class="line">  print(<span class="string">"参数已经保存至session中"</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment">#计算准确率</span></span><br><span class="line">  <span class="comment">#取一行中最大的那个</span></span><br><span class="line">  <span class="comment">#predict=tf.argmax(Z3,1)</span></span><br><span class="line">  predict_matrix=tf.equal(tf.argmax(Z3,<span class="number">1</span>),tf.argmax(Y,<span class="number">1</span>))</span><br><span class="line">  accuary=tf.reduce_mean(tf.cast(predict_matrix,<span class="string">"float32"</span>))</span><br><span class="line"></span><br><span class="line">  print(<span class="string">"训练集准确率："</span>,session.run(accuary,&#123;X:X_train,Y:Y_train&#125;))</span><br><span class="line">  print(<span class="string">"测试集准确率："</span>,session.run(accuary,&#123;X:X_test,Y:Y_test&#125;))</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> parameters</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200527180218.jpg" alt></p>
+<p>训练集准确率： 0.8074074<br>测试集准确率： 0.7416667</p>
+<p>实验中选择迭代50次，学习率为0.001，为取得更好的结果，可以将迭代次数增加或者修改学习率</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 神经网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/imgToH5/" rel="next" title="图像数据集：将本地图片批量写入h5文件">
+                  <i class="fa fa-chevron-left"></i> 图像数据集：将本地图片批量写入h5文件
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法简介"><span class="nav-number">1.</span> <span class="nav-text">算法简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#背景"><span class="nav-number">1.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络构成"><span class="nav-number">1.2.</span> <span class="nav-text">网络构成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简单网络结构示意图"><span class="nav-number">1.3.</span> <span class="nav-text">简单网络结构示意图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络中各数据的维度"><span class="nav-number">1.4.</span> <span class="nav-text">网络中各数据的维度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用实例——使用tensorflow框架"><span class="nav-number">3.</span> <span class="nav-text">应用实例——使用tensorflow框架</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">138k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:05</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
