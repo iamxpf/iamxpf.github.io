@@ -1,6 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>卷积神经网络——构建残差网络</title>
+    <url>/blogs/convNet2/</url>
+    <content><![CDATA[<h2 id="不同数据量下的迁移学习"><a href="#不同数据量下的迁移学习" class="headerlink" title="不同数据量下的迁移学习"></a>不同数据量下的迁移学习</h2><p>可以使用开源的别人的训练好的神经网络，将其网络中学习的知识迁移到自己的网络中，通常开源的网络配置在prototxt中</p><p>（1）少量的标定数据</p><p>将softmax输出类别层之前的神经元进行冻结，即直接使用别人训练好的参数，在softmax层重新用自己的标定数据进行训练。</p><p>（2）充足的标定数据</p><a id="more"></a>
+
+
+
+<p>从softmax层向前选择一些层数进行训练，其余层进行冻结直接使用别人训练好的参数。</p>
+<p>（3）巨多的标定数据</p>
+<p>将别人的网络参数作为初始化，使用自己的标定数据重新训练网络。</p>
+<p>总结，当标定数据越多，需要冻结的网络层数越少，训练的网络层数越多。</p>
+<h2 id="数据扩充的方法"><a href="#数据扩充的方法" class="headerlink" title="数据扩充的方法"></a>数据扩充的方法</h2><p>计算机视觉需要大量数据，可以通过以下方式在原有数据基础上进行扩充</p>
+<p>（1）垂直镜像翻转</p>
+<p>将图像镜像翻转</p>
+<p>（2）随机图像修剪</p>
+<p>在原有图像中剪裁一小部分图像，但不影响数据的特征及标签情况</p>
+<p>还有旋转图像，扭曲图像等措施</p>
+<p>（3）颜色变换</p>
+<p>将图像的三通道颜色按照一定概率分布进行数值加减得到新的图像</p>
+<h2 id="Incepton-Net"><a href="#Incepton-Net" class="headerlink" title="Incepton Net"></a>Incepton Net</h2><h3 id="1x1卷积的作用"><a href="#1x1卷积的作用" class="headerlink" title="1x1卷积的作用"></a>1x1卷积的作用</h3><p>可以减少输入的通道数即nC，降低计算的成本</p>
+<p>注：池化层是减少输入的长宽，即nH,nW</p>
+<h3 id="谷歌的Incepton-Net"><a href="#谷歌的Incepton-Net" class="headerlink" title="谷歌的Incepton Net"></a>谷歌的Incepton Net</h3><p>不需要手工设置网络的结构，直接将过滤器类型或者池化层等加入到网络中，让网络自动学习，将所有的输出堆叠在一起，将所有incepetion模型连接在一起就是Incepton Net，该网络中间层也能输出图像特征和预测结果，防止了过拟合。</p>
+<p>注：如果一个模型中有一种情况输出的通道数过大，可以使用1x1卷积来减小通道数</p>
+<p>以下是一个inception模块：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200603123833.png" alt></p>
+<h2 id="构建残差块"><a href="#构建残差块" class="headerlink" title="构建残差块"></a>构建残差块</h2><h3 id="恒等块"><a href="#恒等块" class="headerlink" title="恒等块"></a>恒等块</h3><p>输入的激活值a[l]和输出的激活值a[l+1]维度相同</p>
+<p>网络结构：直接从输入点加一个shortcut捷径到输出</p>
+<p>（1）使用keras.layers自带的Conv2D,BatchNormalization,Activation,MaxPooling2D构造正常网络结果，指明过滤器个数和维度，以及参数初始化方法（均匀正态分布），并进行命名。</p>
+<p>（2）将捷径输入的x和正常网络得出的x使用Add函数进行合并，并通过激活函数得到最终输出</p>
+<p>注：BatchNormalization的作用是对隐藏层进行归一化，使得每层都能尽量单独学习，限制了前层参数变化对后层参数的数值分布程度</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#恒等块 连接前后维度相同</span></span><br><span class="line"><span class="comment">#stage - 整数，根据每层的位置来命名每一层，与block参数一起使用。</span></span><br><span class="line"><span class="comment">#block - 字符串，据每层的位置来命名每一层，与stage参数一起使用。</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">identity_block</span><span class="params">(X,filters,f,stage,block)</span>:</span></span><br><span class="line">	<span class="comment">#结构：conv-bn-relu,conv-bn-relu,conv-bn    relu</span></span><br><span class="line">	conv_name_base=<span class="string">"res"</span>+str(stage)+block+<span class="string">"_branch"</span></span><br><span class="line">	bn_name_base=<span class="string">"bn"</span>+str(stage)+block+<span class="string">"_branch"</span></span><br><span class="line"></span><br><span class="line">	F1,F2,F3=filters</span><br><span class="line">	X_input=X</span><br><span class="line">	<span class="comment">#均匀正态分布初始化</span></span><br><span class="line">	X=Conv2D(filters=F1,kernel_size=(<span class="number">1</span>,<span class="number">1</span>),strides=(<span class="number">1</span>,<span class="number">1</span>),padding=<span class="string">'valid'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'2a'</span>)(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'2a'</span>)(X)</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line"></span><br><span class="line">	X=Conv2D(filters=F2,kernel_size=(f,f),strides=(<span class="number">1</span>,<span class="number">1</span>),padding=<span class="string">'same'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'2b'</span>)(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'2b'</span>)(X)</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line"></span><br><span class="line">	X=Conv2D(filters=F3,kernel_size=(<span class="number">1</span>,<span class="number">1</span>),strides=(<span class="number">1</span>,<span class="number">1</span>),padding=<span class="string">'valid'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'2c'</span>)(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'2c'</span>)(X)</span><br><span class="line"></span><br><span class="line">	X=Add()([X_input,X])</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> X</span><br></pre></td></tr></table></figure>
+
+<h3 id="卷积块"><a href="#卷积块" class="headerlink" title="卷积块"></a>卷积块</h3><p>输入的激活值a[l]和输出的激活值a[l+1]维度不同</p>
+<p>网络结构：从输入点出发的一个shortcut捷径需要增加卷积层，如何再到输出</p>
+<p>（1）使用keras.layers自带的Conv2D,BatchNormalization,Activation,MaxPooling2D构造正常网络结果，指明过滤器个数和维度，以及参数初始化方法（均匀正态分布），并进行命名。</p>
+<p>（2）捷径输入x使用Conv2D,BatchNormalization,经过一个卷积层得到捷径的输出x</p>
+<p>（3）将捷径输出的x和正常网络得出的x使用Add函数进行合并，并通过激活函数得到最终输出</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#卷积块 连接前后维度不同,需要在捷径里加上conv层</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convolutional_block</span><span class="params">(X,filters,f,stage,block,s=<span class="number">2</span>)</span>:</span></span><br><span class="line">	<span class="comment">#结构：conv-bn-relu,conv-bn-relu,conv-bn    relu</span></span><br><span class="line">	conv_name_base=<span class="string">"res"</span>+str(stage)+block+<span class="string">"_branch"</span></span><br><span class="line">	bn_name_base=<span class="string">"bn"</span>+str(stage)+block+<span class="string">"_branch"</span></span><br><span class="line"></span><br><span class="line">	F1,F2,F3=filters</span><br><span class="line">	X_input=X</span><br><span class="line">	<span class="comment">#均匀正态分布初始化</span></span><br><span class="line">	X=Conv2D(filters=F1,kernel_size=(<span class="number">1</span>,<span class="number">1</span>),strides=(s,s),padding=<span class="string">'valid'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'2a'</span>)(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'2a'</span>)(X)</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line"></span><br><span class="line">	X=Conv2D(filters=F2,kernel_size=(f,f),strides=(<span class="number">1</span>,<span class="number">1</span>),padding=<span class="string">'same'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'2b'</span>)(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'2b'</span>)(X)</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line"></span><br><span class="line">	X=Conv2D(filters=F3,kernel_size=(<span class="number">1</span>,<span class="number">1</span>),strides=(<span class="number">1</span>,<span class="number">1</span>),padding=<span class="string">'valid'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'2c'</span>)(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'2c'</span>)(X)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#捷径</span></span><br><span class="line">	X_input=Conv2D(filters=F3,kernel_size=(<span class="number">1</span>,<span class="number">1</span>),strides=(s,s),padding=<span class="string">'valid'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'1'</span>)(X_input)</span><br><span class="line">	X_input=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'1'</span>)(X_input)</span><br><span class="line"></span><br><span class="line">	X=Add()([X_input,X])</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> X</span><br></pre></td></tr></table></figure>
+
+<h2 id="构建残差网络"><a href="#构建残差网络" class="headerlink" title="构建残差网络"></a>构建残差网络</h2><h3 id="将残差块一个个连接起来即为残差网络"><a href="#将残差块一个个连接起来即为残差网络" class="headerlink" title="将残差块一个个连接起来即为残差网络"></a>将残差块一个个连接起来即为残差网络</h3><p>按照如图的网络结构搭建残差网络</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200603120554.png" alt></p>
+<p>（1）先定义一个tensor的占位符，并根据输入图像的大小定义维度</p>
+<p>（2）使用kears.layers自带的ZeroPadding2D对图像进行填充</p>
+<p>（3）网络第一个模块结构为conv-bn-maxpoool-relu</p>
+<p>（4）后面的模块是使用卷积块和恒等块进行组合</p>
+<p>（5）最终的到的结果通过平均池化，并进行拉伸后，将图像向量传入全连接层</p>
+<p>（6）根据输入和输出，得到ResNet50的模型</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#搭建模型</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ResNet50</span><span class="params">(input_shape=<span class="params">(<span class="number">64</span>,<span class="number">64</span>,<span class="number">3</span>)</span>,classes=<span class="number">6</span>)</span>:</span></span><br><span class="line">	<span class="comment">#定义一个tensor的占位符，并制定维度</span></span><br><span class="line">	X_input=Input(input_shape)</span><br><span class="line">	X=ZeroPadding2D((<span class="number">3</span>,<span class="number">3</span>))(X_input)</span><br><span class="line"></span><br><span class="line">	X=Conv2D(<span class="number">64</span>,kernel_size=(<span class="number">7</span>,<span class="number">7</span>),strides=(<span class="number">2</span>,<span class="number">2</span>),name=<span class="string">'conv1'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>))(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=<span class="string">'bn_conv1'</span>)(X)</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line">	X=MaxPooling2D((<span class="number">3</span>,<span class="number">3</span>),strides=(<span class="number">2</span>,<span class="number">2</span>),name=<span class="string">'max_pool'</span>)(X)</span><br><span class="line"></span><br><span class="line">	filters=[<span class="number">64</span>,<span class="number">64</span>,<span class="number">256</span>]</span><br><span class="line">	f=<span class="number">3</span></span><br><span class="line">	stage=<span class="number">2</span></span><br><span class="line">	X=convolutional_block(X,filters,f,stage,block=<span class="string">'a'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'b'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'c'</span>)</span><br><span class="line"></span><br><span class="line">	filters=[<span class="number">128</span>,<span class="number">128</span>,<span class="number">512</span>]</span><br><span class="line">	f=<span class="number">3</span></span><br><span class="line">	stage=<span class="number">3</span></span><br><span class="line">	X=convolutional_block(X,filters,f,stage,block=<span class="string">'a'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'b'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'c'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'d'</span>)</span><br><span class="line"></span><br><span class="line">	filters=[<span class="number">256</span>,<span class="number">256</span>,<span class="number">1024</span>]</span><br><span class="line">	f=<span class="number">3</span></span><br><span class="line">	stage=<span class="number">4</span></span><br><span class="line">	X=convolutional_block(X,filters,f,stage,block=<span class="string">'a'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'b'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'c'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'d'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'e'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'f'</span>)</span><br><span class="line"></span><br><span class="line">	filters=[<span class="number">512</span>,<span class="number">512</span>,<span class="number">2048</span>]</span><br><span class="line">	f=<span class="number">3</span></span><br><span class="line">	stage=<span class="number">5</span></span><br><span class="line">	X=convolutional_block(X,filters,f,stage,block=<span class="string">'a'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'b'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'c'</span>)</span><br><span class="line"></span><br><span class="line">	X=AveragePooling2D((<span class="number">2</span>,<span class="number">2</span>),padding=<span class="string">'same'</span>,name=<span class="string">'avg_pool'</span>)(X)</span><br><span class="line">	X=Flatten()(X)</span><br><span class="line">	X=Dense(classes,activation=<span class="string">'softmax'</span>,name=<span class="string">'fc'</span>+str(classes),kernel_initializer=glorot_uniform(seed=<span class="number">0</span>))(X)</span><br><span class="line"></span><br><span class="line">	model=Model(inputs=X_input,outputs=X,name=<span class="string">'ResNet50'</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> model</span><br></pre></td></tr></table></figure>
+
+<h3 id="残差网络作用"><a href="#残差网络作用" class="headerlink" title="残差网络作用"></a>残差网络作用</h3><p>当网络很深时，训练集的误差反而会增大，误差先减小后增大。</p>
+<p>（1）使用残差网络能很好的学习恒等式，并不降低效率</p>
+<p>（2）能将输入的复杂的非线性函数传递到更深层，轻松学习输入输出之间的映射</p>
+<p>最终当网络很深，训练集误差随着层数增加而减少。</p>
+<p>a[l+2]=g(z[l+2]+a[l])=g(w[l+2] * a[l+1]+b[l+2]+ws * a[l])，当输入输出维度不同，可以在a[l]前面加上ws进行维度调整</p>
+<p>其中a[l]是捷径输入，z[l+2]是正常网络输出，a[l+2]是最终输出</p>
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>（1）在手势图片上使用残差网络进行模型训练</p>
+<p>输入每个图片的维度和输出标签数量，进行模型训练。</p>
+<p>选择模型中采用的算法和损失函数。</p>
+<p>最后使用fit将数据输入模型进行训练。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#编译模型</span></span><br><span class="line">mymodel=ResNet50(input_shape=(<span class="number">64</span>,<span class="number">64</span>,<span class="number">3</span>),classes=<span class="number">6</span>)</span><br><span class="line">mymodel.compile(optimizer=<span class="string">'adam'</span>,loss=<span class="string">'categorical_crossentropy'</span>,metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"><span class="comment">#标签转换为独热矩阵</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convert_one_hot</span><span class="params">(Y,C)</span>:</span></span><br><span class="line">	Y=np.eye(C)[Y.reshape(<span class="number">-1</span>).T]</span><br><span class="line">	<span class="keyword">return</span> Y</span><br><span class="line"><span class="comment">#导入数据</span></span><br><span class="line">train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes=ru.load_dataset()</span><br><span class="line"><span class="comment">#归一化</span></span><br><span class="line">train_x=train_set_x_orig/<span class="number">255</span></span><br><span class="line">test_x=test_set_x_orig/<span class="number">255</span></span><br><span class="line"></span><br><span class="line">train_y=convert_one_hot(train_set_y_orig,<span class="number">6</span>)</span><br><span class="line">test_y=convert_one_hot(test_set_y_orig,<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#输入数据，训练模型</span></span><br><span class="line">mymodel.fit(train_x,train_y,epochs=<span class="number">3</span>,batch_size=<span class="number">64</span>)</span><br></pre></td></tr></table></figure>
+
+<p>（2）保存模型</p>
+<p>使用save保存模型：将模型的结构，参数，导出的模型可以直接进行模型预测</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">mymodel.save(<span class="string">"my_resnet50.h5"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>（3）导入保存的模型，得到模型的准确率</p>
+<p>使用keras.models下的load_model方法将之前训练好的模型导入，并计算准确度</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">mymodel=load_model(<span class="string">'my_resnet50.h5'</span>)</span><br><span class="line">p=mymodel.evaluate(test_x,test_y)</span><br><span class="line">print(<span class="string">"误差率："</span>,p[<span class="number">0</span>])</span><br><span class="line">print(<span class="string">"准确率："</span>,p[<span class="number">1</span>])mymodel.save(<span class="string">"my_resnet50.h5"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>误差率： 0.7191567063331604<br>准确率： 0.7833333611488342</p>
+<p>由于原算法迭代数仅2次，所以准确率不是特别高。</p>
+<p>（4）利用已经训练好的模型测试</p>
+<p>使用keras.preprocessing下的image导入图像，将图像转换为数组，并进行归一化后输入训练好的网络，最终通过np.argmax得到分类的结果</p>
+<p>注：这里图像需要拓展维度，从(64, 64, 3)拓展为(1, 64, 64, 3)，代码为x=np.expand_dims(x,axis=0)</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#使用自己的图像测试</span></span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line">image_path=<span class="string">'./fingers/2.jpg'</span></span><br><span class="line">x=image.load_img(image_path,target_size=(<span class="number">64</span>,<span class="number">64</span>))</span><br><span class="line"></span><br><span class="line">x=image.img_to_array(x)</span><br><span class="line"><span class="comment">#拓展维度</span></span><br><span class="line">x=np.expand_dims(x,axis=<span class="number">0</span>)</span><br><span class="line"><span class="comment"># x=preprocess_input(x)</span></span><br><span class="line">x=x/<span class="number">255</span></span><br><span class="line"></span><br><span class="line">res=np.argmax(mymodel.predict(x))</span><br><span class="line">print(res)</span><br><span class="line">print(mymodel.predict(x))</span><br><span class="line"></span><br><span class="line">test_image=Image.open(image_path).convert(<span class="string">'RGB'</span>).resize((<span class="number">64</span>,<span class="number">64</span>))</span><br><span class="line">plt.imshow(test_image)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>输入图像</p>
+<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200602210826.jpg" style="zoom:25%;">
+
+<p>预测结果为：</p>
+<p>2<br>[[0.1477255  0.15454543 0.18347658 0.16707171 0.18196131 0.16521947]]</p>
+<p>输入的手势是2，预测也是2，说明预测正确</p>
+<p>说明：由于训练集中的手势图片不是自己拍摄的，所以预测的效果不一定很准确。</p>
+]]></content>
+      <categories>
+        <category>神经网络</category>
+      </categories>
+      <tags>
+        <tag>神经网络</tag>
+        <tag>卷积神经网络</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>卷积神经网络——识别手势图片</title>
     <url>/blogs/convNet1/</url>
     <content><![CDATA[<h2 id="算法简介"><a href="#算法简介" class="headerlink" title="算法简介"></a>算法简介</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>使用普通的神经网络时，当输入的图片维度大，假设为1000 * 1000 * 3，第一层的神经元为1000个，则权重参数达到三亿个（1000 * 1000 * 3 * 1000），这时候网络会变得很大，有巨大的参数，因此需要使用卷积神经网络。</p><p>卷积神经网络通过参数共享和稀疏连接的方式使得参数变得很少，可以用很少的训练集训练，避免网络过拟合。</p><a id="more"></a>
@@ -106,6 +198,7 @@
       </categories>
       <tags>
         <tag>神经网络</tag>
+        <tag>卷积神经网络</tag>
       </tags>
   </entry>
   <entry>

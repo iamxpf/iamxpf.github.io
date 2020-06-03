@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="不同数据量下的迁移学习可以使用开源的别人的训练好的神经网络，将其网络中学习的知识迁移到自己的网络中，通常开源的网络配置在prototxt中（1）少量的标定数据将softmax输出类别层之前的神经元进行冻结，即直接使用别人训练好的参数，在softmax层重新用自己的标定数据进行训练。（2）充足的标定数据">
+<meta name="keywords" content="神经网络,卷积神经网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="卷积神经网络——构建残差网络">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;convNet2&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="不同数据量下的迁移学习可以使用开源的别人的训练好的神经网络，将其网络中学习的知识迁移到自己的网络中，通常开源的网络配置在prototxt中（1）少量的标定数据将softmax输出类别层之前的神经元进行冻结，即直接使用别人训练好的参数，在softmax层重新用自己的标定数据进行训练。（2）充足的标定数据">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200603123833.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200603120554.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200602210826.jpg">
+<meta property="og:updated_time" content="2020-06-03T04:40:25.675Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200603123833.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/convNet2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>卷积神经网络——构建残差网络 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">32</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">9</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">36</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/convNet2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          卷积神经网络——构建残差网络
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-03 12:28:01 / 修改时间：12:40:25" itemprop="dateCreated datePublished" datetime="2020-06-03T12:28:01+08:00">2020-06-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">神经网络</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/convNet2/" class="post-meta-item leancloud_visitors" data-flag-title="卷积神经网络——构建残差网络" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/convNet2/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/convNet2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="不同数据量下的迁移学习"><a href="#不同数据量下的迁移学习" class="headerlink" title="不同数据量下的迁移学习"></a>不同数据量下的迁移学习</h2><p>可以使用开源的别人的训练好的神经网络，将其网络中学习的知识迁移到自己的网络中，通常开源的网络配置在prototxt中</p><p>（1）少量的标定数据</p><p>将softmax输出类别层之前的神经元进行冻结，即直接使用别人训练好的参数，在softmax层重新用自己的标定数据进行训练。</p><p>（2）充足的标定数据</p><a id="more"></a>
+
+
+
+<p>从softmax层向前选择一些层数进行训练，其余层进行冻结直接使用别人训练好的参数。</p>
+<p>（3）巨多的标定数据</p>
+<p>将别人的网络参数作为初始化，使用自己的标定数据重新训练网络。</p>
+<p>总结，当标定数据越多，需要冻结的网络层数越少，训练的网络层数越多。</p>
+<h2 id="数据扩充的方法"><a href="#数据扩充的方法" class="headerlink" title="数据扩充的方法"></a>数据扩充的方法</h2><p>计算机视觉需要大量数据，可以通过以下方式在原有数据基础上进行扩充</p>
+<p>（1）垂直镜像翻转</p>
+<p>将图像镜像翻转</p>
+<p>（2）随机图像修剪</p>
+<p>在原有图像中剪裁一小部分图像，但不影响数据的特征及标签情况</p>
+<p>还有旋转图像，扭曲图像等措施</p>
+<p>（3）颜色变换</p>
+<p>将图像的三通道颜色按照一定概率分布进行数值加减得到新的图像</p>
+<h2 id="Incepton-Net"><a href="#Incepton-Net" class="headerlink" title="Incepton Net"></a>Incepton Net</h2><h3 id="1x1卷积的作用"><a href="#1x1卷积的作用" class="headerlink" title="1x1卷积的作用"></a>1x1卷积的作用</h3><p>可以减少输入的通道数即nC，降低计算的成本</p>
+<p>注：池化层是减少输入的长宽，即nH,nW</p>
+<h3 id="谷歌的Incepton-Net"><a href="#谷歌的Incepton-Net" class="headerlink" title="谷歌的Incepton Net"></a>谷歌的Incepton Net</h3><p>不需要手工设置网络的结构，直接将过滤器类型或者池化层等加入到网络中，让网络自动学习，将所有的输出堆叠在一起，将所有incepetion模型连接在一起就是Incepton Net，该网络中间层也能输出图像特征和预测结果，防止了过拟合。</p>
+<p>注：如果一个模型中有一种情况输出的通道数过大，可以使用1x1卷积来减小通道数</p>
+<p>以下是一个inception模块：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200603123833.png" alt></p>
+<h2 id="构建残差块"><a href="#构建残差块" class="headerlink" title="构建残差块"></a>构建残差块</h2><h3 id="恒等块"><a href="#恒等块" class="headerlink" title="恒等块"></a>恒等块</h3><p>输入的激活值a[l]和输出的激活值a[l+1]维度相同</p>
+<p>网络结构：直接从输入点加一个shortcut捷径到输出</p>
+<p>（1）使用keras.layers自带的Conv2D,BatchNormalization,Activation,MaxPooling2D构造正常网络结果，指明过滤器个数和维度，以及参数初始化方法（均匀正态分布），并进行命名。</p>
+<p>（2）将捷径输入的x和正常网络得出的x使用Add函数进行合并，并通过激活函数得到最终输出</p>
+<p>注：BatchNormalization的作用是对隐藏层进行归一化，使得每层都能尽量单独学习，限制了前层参数变化对后层参数的数值分布程度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#恒等块 连接前后维度相同</span></span><br><span class="line"><span class="comment">#stage - 整数，根据每层的位置来命名每一层，与block参数一起使用。</span></span><br><span class="line"><span class="comment">#block - 字符串，据每层的位置来命名每一层，与stage参数一起使用。</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">identity_block</span><span class="params">(X,filters,f,stage,block)</span>:</span></span><br><span class="line">	<span class="comment">#结构：conv-bn-relu,conv-bn-relu,conv-bn    relu</span></span><br><span class="line">	conv_name_base=<span class="string">"res"</span>+str(stage)+block+<span class="string">"_branch"</span></span><br><span class="line">	bn_name_base=<span class="string">"bn"</span>+str(stage)+block+<span class="string">"_branch"</span></span><br><span class="line"></span><br><span class="line">	F1,F2,F3=filters</span><br><span class="line">	X_input=X</span><br><span class="line">	<span class="comment">#均匀正态分布初始化</span></span><br><span class="line">	X=Conv2D(filters=F1,kernel_size=(<span class="number">1</span>,<span class="number">1</span>),strides=(<span class="number">1</span>,<span class="number">1</span>),padding=<span class="string">'valid'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'2a'</span>)(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'2a'</span>)(X)</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line"></span><br><span class="line">	X=Conv2D(filters=F2,kernel_size=(f,f),strides=(<span class="number">1</span>,<span class="number">1</span>),padding=<span class="string">'same'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'2b'</span>)(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'2b'</span>)(X)</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line"></span><br><span class="line">	X=Conv2D(filters=F3,kernel_size=(<span class="number">1</span>,<span class="number">1</span>),strides=(<span class="number">1</span>,<span class="number">1</span>),padding=<span class="string">'valid'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'2c'</span>)(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'2c'</span>)(X)</span><br><span class="line"></span><br><span class="line">	X=Add()([X_input,X])</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> X</span><br></pre></td></tr></table></figure>
+
+<h3 id="卷积块"><a href="#卷积块" class="headerlink" title="卷积块"></a>卷积块</h3><p>输入的激活值a[l]和输出的激活值a[l+1]维度不同</p>
+<p>网络结构：从输入点出发的一个shortcut捷径需要增加卷积层，如何再到输出</p>
+<p>（1）使用keras.layers自带的Conv2D,BatchNormalization,Activation,MaxPooling2D构造正常网络结果，指明过滤器个数和维度，以及参数初始化方法（均匀正态分布），并进行命名。</p>
+<p>（2）捷径输入x使用Conv2D,BatchNormalization,经过一个卷积层得到捷径的输出x</p>
+<p>（3）将捷径输出的x和正常网络得出的x使用Add函数进行合并，并通过激活函数得到最终输出</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#卷积块 连接前后维度不同,需要在捷径里加上conv层</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convolutional_block</span><span class="params">(X,filters,f,stage,block,s=<span class="number">2</span>)</span>:</span></span><br><span class="line">	<span class="comment">#结构：conv-bn-relu,conv-bn-relu,conv-bn    relu</span></span><br><span class="line">	conv_name_base=<span class="string">"res"</span>+str(stage)+block+<span class="string">"_branch"</span></span><br><span class="line">	bn_name_base=<span class="string">"bn"</span>+str(stage)+block+<span class="string">"_branch"</span></span><br><span class="line"></span><br><span class="line">	F1,F2,F3=filters</span><br><span class="line">	X_input=X</span><br><span class="line">	<span class="comment">#均匀正态分布初始化</span></span><br><span class="line">	X=Conv2D(filters=F1,kernel_size=(<span class="number">1</span>,<span class="number">1</span>),strides=(s,s),padding=<span class="string">'valid'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'2a'</span>)(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'2a'</span>)(X)</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line"></span><br><span class="line">	X=Conv2D(filters=F2,kernel_size=(f,f),strides=(<span class="number">1</span>,<span class="number">1</span>),padding=<span class="string">'same'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'2b'</span>)(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'2b'</span>)(X)</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line"></span><br><span class="line">	X=Conv2D(filters=F3,kernel_size=(<span class="number">1</span>,<span class="number">1</span>),strides=(<span class="number">1</span>,<span class="number">1</span>),padding=<span class="string">'valid'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'2c'</span>)(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'2c'</span>)(X)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#捷径</span></span><br><span class="line">	X_input=Conv2D(filters=F3,kernel_size=(<span class="number">1</span>,<span class="number">1</span>),strides=(s,s),padding=<span class="string">'valid'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>),name=conv_name_base+<span class="string">'1'</span>)(X_input)</span><br><span class="line">	X_input=BatchNormalization(axis=<span class="number">3</span>,name=bn_name_base+<span class="string">'1'</span>)(X_input)</span><br><span class="line"></span><br><span class="line">	X=Add()([X_input,X])</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> X</span><br></pre></td></tr></table></figure>
+
+<h2 id="构建残差网络"><a href="#构建残差网络" class="headerlink" title="构建残差网络"></a>构建残差网络</h2><h3 id="将残差块一个个连接起来即为残差网络"><a href="#将残差块一个个连接起来即为残差网络" class="headerlink" title="将残差块一个个连接起来即为残差网络"></a>将残差块一个个连接起来即为残差网络</h3><p>按照如图的网络结构搭建残差网络</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200603120554.png" alt></p>
+<p>（1）先定义一个tensor的占位符，并根据输入图像的大小定义维度</p>
+<p>（2）使用kears.layers自带的ZeroPadding2D对图像进行填充</p>
+<p>（3）网络第一个模块结构为conv-bn-maxpoool-relu</p>
+<p>（4）后面的模块是使用卷积块和恒等块进行组合</p>
+<p>（5）最终的到的结果通过平均池化，并进行拉伸后，将图像向量传入全连接层</p>
+<p>（6）根据输入和输出，得到ResNet50的模型</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#搭建模型</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ResNet50</span><span class="params">(input_shape=<span class="params">(<span class="number">64</span>,<span class="number">64</span>,<span class="number">3</span>)</span>,classes=<span class="number">6</span>)</span>:</span></span><br><span class="line">	<span class="comment">#定义一个tensor的占位符，并制定维度</span></span><br><span class="line">	X_input=Input(input_shape)</span><br><span class="line">	X=ZeroPadding2D((<span class="number">3</span>,<span class="number">3</span>))(X_input)</span><br><span class="line"></span><br><span class="line">	X=Conv2D(<span class="number">64</span>,kernel_size=(<span class="number">7</span>,<span class="number">7</span>),strides=(<span class="number">2</span>,<span class="number">2</span>),name=<span class="string">'conv1'</span>,kernel_initializer=glorot_uniform(seed=<span class="number">0</span>))(X)</span><br><span class="line">	X=BatchNormalization(axis=<span class="number">3</span>,name=<span class="string">'bn_conv1'</span>)(X)</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line">	X=MaxPooling2D((<span class="number">3</span>,<span class="number">3</span>),strides=(<span class="number">2</span>,<span class="number">2</span>),name=<span class="string">'max_pool'</span>)(X)</span><br><span class="line"></span><br><span class="line">	filters=[<span class="number">64</span>,<span class="number">64</span>,<span class="number">256</span>]</span><br><span class="line">	f=<span class="number">3</span></span><br><span class="line">	stage=<span class="number">2</span></span><br><span class="line">	X=convolutional_block(X,filters,f,stage,block=<span class="string">'a'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'b'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'c'</span>)</span><br><span class="line"></span><br><span class="line">	filters=[<span class="number">128</span>,<span class="number">128</span>,<span class="number">512</span>]</span><br><span class="line">	f=<span class="number">3</span></span><br><span class="line">	stage=<span class="number">3</span></span><br><span class="line">	X=convolutional_block(X,filters,f,stage,block=<span class="string">'a'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'b'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'c'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'d'</span>)</span><br><span class="line"></span><br><span class="line">	filters=[<span class="number">256</span>,<span class="number">256</span>,<span class="number">1024</span>]</span><br><span class="line">	f=<span class="number">3</span></span><br><span class="line">	stage=<span class="number">4</span></span><br><span class="line">	X=convolutional_block(X,filters,f,stage,block=<span class="string">'a'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'b'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'c'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'d'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'e'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'f'</span>)</span><br><span class="line"></span><br><span class="line">	filters=[<span class="number">512</span>,<span class="number">512</span>,<span class="number">2048</span>]</span><br><span class="line">	f=<span class="number">3</span></span><br><span class="line">	stage=<span class="number">5</span></span><br><span class="line">	X=convolutional_block(X,filters,f,stage,block=<span class="string">'a'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'b'</span>)</span><br><span class="line">	X=identity_block(X,filters,f,stage,block=<span class="string">'c'</span>)</span><br><span class="line"></span><br><span class="line">	X=AveragePooling2D((<span class="number">2</span>,<span class="number">2</span>),padding=<span class="string">'same'</span>,name=<span class="string">'avg_pool'</span>)(X)</span><br><span class="line">	X=Flatten()(X)</span><br><span class="line">	X=Dense(classes,activation=<span class="string">'softmax'</span>,name=<span class="string">'fc'</span>+str(classes),kernel_initializer=glorot_uniform(seed=<span class="number">0</span>))(X)</span><br><span class="line"></span><br><span class="line">	model=Model(inputs=X_input,outputs=X,name=<span class="string">'ResNet50'</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> model</span><br></pre></td></tr></table></figure>
+
+<h3 id="残差网络作用"><a href="#残差网络作用" class="headerlink" title="残差网络作用"></a>残差网络作用</h3><p>当网络很深时，训练集的误差反而会增大，误差先减小后增大。</p>
+<p>（1）使用残差网络能很好的学习恒等式，并不降低效率</p>
+<p>（2）能将输入的复杂的非线性函数传递到更深层，轻松学习输入输出之间的映射</p>
+<p>最终当网络很深，训练集误差随着层数增加而减少。</p>
+<p>a[l+2]=g(z[l+2]+a[l])=g(w[l+2] * a[l+1]+b[l+2]+ws * a[l])，当输入输出维度不同，可以在a[l]前面加上ws进行维度调整</p>
+<p>其中a[l]是捷径输入，z[l+2]是正常网络输出，a[l+2]是最终输出</p>
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>（1）在手势图片上使用残差网络进行模型训练</p>
+<p>输入每个图片的维度和输出标签数量，进行模型训练。</p>
+<p>选择模型中采用的算法和损失函数。</p>
+<p>最后使用fit将数据输入模型进行训练。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编译模型</span></span><br><span class="line">mymodel=ResNet50(input_shape=(<span class="number">64</span>,<span class="number">64</span>,<span class="number">3</span>),classes=<span class="number">6</span>)</span><br><span class="line">mymodel.compile(optimizer=<span class="string">'adam'</span>,loss=<span class="string">'categorical_crossentropy'</span>,metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"><span class="comment">#标签转换为独热矩阵</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convert_one_hot</span><span class="params">(Y,C)</span>:</span></span><br><span class="line">	Y=np.eye(C)[Y.reshape(<span class="number">-1</span>).T]</span><br><span class="line">	<span class="keyword">return</span> Y</span><br><span class="line"><span class="comment">#导入数据</span></span><br><span class="line">train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes=ru.load_dataset()</span><br><span class="line"><span class="comment">#归一化</span></span><br><span class="line">train_x=train_set_x_orig/<span class="number">255</span></span><br><span class="line">test_x=test_set_x_orig/<span class="number">255</span></span><br><span class="line"></span><br><span class="line">train_y=convert_one_hot(train_set_y_orig,<span class="number">6</span>)</span><br><span class="line">test_y=convert_one_hot(test_set_y_orig,<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#输入数据，训练模型</span></span><br><span class="line">mymodel.fit(train_x,train_y,epochs=<span class="number">3</span>,batch_size=<span class="number">64</span>)</span><br></pre></td></tr></table></figure>
+
+<p>（2）保存模型</p>
+<p>使用save保存模型：将模型的结构，参数，导出的模型可以直接进行模型预测</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mymodel.save(<span class="string">"my_resnet50.h5"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>（3）导入保存的模型，得到模型的准确率</p>
+<p>使用keras.models下的load_model方法将之前训练好的模型导入，并计算准确度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mymodel=load_model(<span class="string">'my_resnet50.h5'</span>)</span><br><span class="line">p=mymodel.evaluate(test_x,test_y)</span><br><span class="line">print(<span class="string">"误差率："</span>,p[<span class="number">0</span>])</span><br><span class="line">print(<span class="string">"准确率："</span>,p[<span class="number">1</span>])mymodel.save(<span class="string">"my_resnet50.h5"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>误差率： 0.7191567063331604<br>准确率： 0.7833333611488342</p>
+<p>由于原算法迭代数仅2次，所以准确率不是特别高。</p>
+<p>（4）利用已经训练好的模型测试</p>
+<p>使用keras.preprocessing下的image导入图像，将图像转换为数组，并进行归一化后输入训练好的网络，最终通过np.argmax得到分类的结果</p>
+<p>注：这里图像需要拓展维度，从(64, 64, 3)拓展为(1, 64, 64, 3)，代码为x=np.expand_dims(x,axis=0)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用自己的图像测试</span></span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line">image_path=<span class="string">'./fingers/2.jpg'</span></span><br><span class="line">x=image.load_img(image_path,target_size=(<span class="number">64</span>,<span class="number">64</span>))</span><br><span class="line"></span><br><span class="line">x=image.img_to_array(x)</span><br><span class="line"><span class="comment">#拓展维度</span></span><br><span class="line">x=np.expand_dims(x,axis=<span class="number">0</span>)</span><br><span class="line"><span class="comment"># x=preprocess_input(x)</span></span><br><span class="line">x=x/<span class="number">255</span></span><br><span class="line"></span><br><span class="line">res=np.argmax(mymodel.predict(x))</span><br><span class="line">print(res)</span><br><span class="line">print(mymodel.predict(x))</span><br><span class="line"></span><br><span class="line">test_image=Image.open(image_path).convert(<span class="string">'RGB'</span>).resize((<span class="number">64</span>,<span class="number">64</span>))</span><br><span class="line">plt.imshow(test_image)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>输入图像</p>
+<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200602210826.jpg" style="zoom:25%;">
+
+<p>预测结果为：</p>
+<p>2<br>[[0.1477255  0.15454543 0.18347658 0.16707171 0.18196131 0.16521947]]</p>
+<p>输入的手势是2，预测也是2，说明预测正确</p>
+<p>说明：由于训练集中的手势图片不是自己拍摄的，所以预测的效果不一定很准确。</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 神经网络</a>
+              <a href="/tags/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 卷积神经网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/convNet1/" rel="next" title="卷积神经网络——识别手势图片">
+                  <i class="fa fa-chevron-left"></i> 卷积神经网络——识别手势图片
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#不同数据量下的迁移学习"><span class="nav-number">1.</span> <span class="nav-text">不同数据量下的迁移学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据扩充的方法"><span class="nav-number">2.</span> <span class="nav-text">数据扩充的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Incepton-Net"><span class="nav-number">3.</span> <span class="nav-text">Incepton Net</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1x1卷积的作用"><span class="nav-number">3.1.</span> <span class="nav-text">1x1卷积的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#谷歌的Incepton-Net"><span class="nav-number">3.2.</span> <span class="nav-text">谷歌的Incepton Net</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构建残差块"><span class="nav-number">4.</span> <span class="nav-text">构建残差块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#恒等块"><span class="nav-number">4.1.</span> <span class="nav-text">恒等块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#卷积块"><span class="nav-number">4.2.</span> <span class="nav-text">卷积块</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构建残差网络"><span class="nav-number">5.</span> <span class="nav-text">构建残差网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#将残差块一个个连接起来即为残差网络"><span class="nav-number">5.1.</span> <span class="nav-text">将残差块一个个连接起来即为残差网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#残差网络作用"><span class="nav-number">5.2.</span> <span class="nav-text">残差网络作用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用"><span class="nav-number">6.</span> <span class="nav-text">应用</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">145k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:11</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
