@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="YOLO算法原理（1）目标检测与定位目标检测：输入一个图像，经过convnet，判读图片中是否有物体（或者输出该物体是几个类别中的哪个）。方法类似于对图片的分类。目标定位：输入一个图像，经过convert，将图片中物体使用定位框将其标注出来。方法：此时的训练集中标签项需要重新设置，设置是否有物体pc，物体的位置参数（中心点bx,by，长宽bw,bh），物体属于的类别。">
+<meta name="keywords" content="神经网络,卷积神经网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="卷积神经网络——识别并定位车辆">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;convNet3&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="YOLO算法原理（1）目标检测与定位目标检测：输入一个图像，经过convnet，判读图片中是否有物体（或者输出该物体是几个类别中的哪个）。方法类似于对图片的分类。目标定位：输入一个图像，经过convert，将图片中物体使用定位框将其标注出来。方法：此时的训练集中标签项需要重新设置，设置是否有物体pc，物体的位置参数（中心点bx,by，长宽bw,bh），物体属于的类别。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200605162058.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200608105320.png">
+<meta property="og:updated_time" content="2020-06-08T03:03:48.371Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200605162058.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/convNet3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>卷积神经网络——识别并定位车辆 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">33</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">10</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">38</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/convNet3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          卷积神经网络——识别并定位车辆
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-08 11:03:00 / 修改时间：11:03:48" itemprop="dateCreated datePublished" datetime="2020-06-08T11:03:00+08:00">2020-06-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">卷积神经网络</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/convNet3/" class="post-meta-item leancloud_visitors" data-flag-title="卷积神经网络——识别并定位车辆" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/convNet3/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/convNet3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="YOLO算法"><a href="#YOLO算法" class="headerlink" title="YOLO算法"></a>YOLO算法</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>（1）目标检测与定位</p><p>目标检测：输入一个图像，经过convnet，判读图片中是否有物体（或者输出该物体是几个类别中的哪个）。方法类似于对图片的分类。</p><p>目标定位：输入一个图像，经过convert，将图片中物体使用定位框将其标注出来。方法：此时的训练集中标签项需要重新设置，设置是否有物体pc，物体的位置参数（中心点bx,by，长宽bw,bh），物体属于的类别。</p><a id="more"></a>
+
+
+<p>（2）滑动窗口一次卷积</p>
+<p>上述的目标定位适用于图片中只有一个物体，当有多个物体时，可以将图像划分成一个个网格，将每个格子输入convert，在每个格子上进行目标检测。</p>
+<p>缺点：计算成本大，耗时</p>
+<p>此时可以采用一次卷积的方法：图片按照网格划分，每个格子对应一个输出标签，将图片整体输入convert中，最终得到每个格子的结果，即每个格子输出一个定位框。这样比将每个格子输入网络中的计算成本小。</p>
+<h3 id="物体中点认定——让一个物体只被一个格子检测"><a href="#物体中点认定——让一个物体只被一个格子检测" class="headerlink" title="物体中点认定——让一个物体只被一个格子检测"></a>物体中点认定——让一个物体只被一个格子检测</h3><p>为了保证一个物体只被一个格子检测，定义物体的中点所在的格子识别出该对象，其余有该对象的格子不识别该对象。</p>
+<h3 id="anchor-box——一个格子能检测出多个物体"><a href="#anchor-box——一个格子能检测出多个物体" class="headerlink" title="anchor box——一个格子能检测出多个物体"></a>anchor box——一个格子能检测出多个物体</h3><p>当有多个物体的中点落在同一个格子时，物体识别的类别可能有多个，此时网络无法识别输出，为了能让一个格子检测出多个物体，引入anchor box，按照物体的形状设置anchor box，和设置的anchor box的Iou值高说明该物体匹配该anchor box，类别设置在该anchor box中，因此每个标签y中有多个anchor box，对应不同形状的物体，这样一个格子就能检测出多个物体。</p>
+<h3 id="非最大值抑制——只输出一个定位框"><a href="#非最大值抑制——只输出一个定位框" class="headerlink" title="非最大值抑制——只输出一个定位框"></a>非最大值抑制——只输出一个定位框</h3><p>（1）阈值过滤</p>
+<p>使用pc * 每个类别得到每个类别出现的概率，取最大的概率作为该格子识别出的类别及该格子判定的物体的概率，将该概率和过滤的阈值比较，保留大于等于该阈值的类别。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#分类阈值过滤</span></span><br><span class="line"><span class="comment">#box_confidence  （19，19，5，1）</span></span><br><span class="line"><span class="comment">#boxes  （19，19，5，4）</span></span><br><span class="line"><span class="comment">#box_classes_prob    （19，19，5，80）</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">yolo_filter_boxes</span><span class="params">(box_confidence,boxes,box_classes_prob,threshold)</span>:</span></span><br><span class="line">	<span class="comment">#得到每个概率</span></span><br><span class="line">	box_scores=box_confidence*box_classes_prob</span><br><span class="line"></span><br><span class="line">	<span class="comment">#找到最大的概率的分类和对应的pc</span></span><br><span class="line">	<span class="comment">#用最后的80个分类来比较</span></span><br><span class="line">	box_class=K.argmax(box_scores,axis=<span class="number">-1</span>)</span><br><span class="line">	box_class_scores=K.max(box_scores,axis=<span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#根据每个的pc和阈值比较</span></span><br><span class="line">	box_max=(box_class_scores&gt;=threshold)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	scores=tf.boolean_mask(box_class_scores,box_max)</span><br><span class="line">	boxes=tf.boolean_mask(boxes,box_max)</span><br><span class="line">	classes=tf.boolean_mask(box_class,box_max)</span><br><span class="line">	<span class="keyword">return</span> scores,boxes,classes</span><br></pre></td></tr></table></figure>
+
+<p>（2）Iou</p>
+<p>定义：Iou=两个目标定位框的相交的面积/两个目标定位框的总面积</p>
+<p>使用Iou去除不符合要求的定位框，一般Iou设置为0.5，当小于该值的定位框直接删除</p>
+<p>方法：输入两个定位框的左上角和右下角坐标，得到相交的面积再除以总面积。</p>
+<p>原理：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">iou</span><span class="params">(box1,box2)</span>:</span></span><br><span class="line">	<span class="comment">#box1(x1,y1,x2,y2)</span></span><br><span class="line">	<span class="comment">#box2(x3,y3,x4,y4)</span></span><br><span class="line">	<span class="comment">#左上角</span></span><br><span class="line">	xi1=np.maximum(box1[<span class="number">0</span>],box2[<span class="number">0</span>])</span><br><span class="line">	yi1=np.maximum(box1[<span class="number">1</span>],box2[<span class="number">1</span>])</span><br><span class="line">	<span class="comment">#右下角</span></span><br><span class="line">	xi2=np.minimum(box1[<span class="number">2</span>],box2[<span class="number">2</span>])</span><br><span class="line">	yi2=np.minimum(box1[<span class="number">3</span>],box2[<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line">	<span class="comment">#计算面积</span></span><br><span class="line">	box1_area=(box1[<span class="number">2</span>]-box1[<span class="number">0</span>])*(box1[<span class="number">3</span>]-box1[<span class="number">1</span>])</span><br><span class="line">	box2_area=(box2[<span class="number">2</span>]-box2[<span class="number">0</span>])*(box2[<span class="number">3</span>]-box2[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">	box_inter_area=(xi2-xi1)*(yi2-yi1)</span><br><span class="line">	box_union_area=box1_area+box2_area-box_inter_area</span><br><span class="line"></span><br><span class="line">	iou_area=box_inter_area/box_union_area</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> iou_area</span><br></pre></td></tr></table></figure>
+
+<p>yolo自带non_max_suppression方法，定义一个图像中输出的最大定位框个数和iou阈值，自动得到过滤之后的定位框</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">yolo_non_max_suppression</span><span class="params">(scores,boxes,classes,max_box=<span class="number">10</span>,iou_threshold=<span class="number">0.5</span>)</span>:</span></span><br><span class="line">	max_box_tensor=K.variable(max_box,dtype=<span class="string">"int32"</span>)</span><br><span class="line">	K.get_session().run(tf.variables_initializer([max_box_tensor]))</span><br><span class="line"></span><br><span class="line">	num_dims=tf.image.non_max_suppression(boxes,scores,max_box,iou_threshold)</span><br><span class="line"></span><br><span class="line">	scores=K.gather(scores,num_dims)</span><br><span class="line">	boxes=K.gather(boxes,num_dims)</span><br><span class="line">	classes=K.gather(classes,num_dims)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> scores,boxes,classes</span><br></pre></td></tr></table></figure>
+
+<p>（3）总结：对所有框进行过滤</p>
+<p>根据官方的yolo模型经过convnet得到的输出转换为中心点形式</p>
+<p>将其经过阈值过滤，得到定位框并将其扩展以适应新图像的大小（模型得到的定位框是680x680）</p>
+<p>经过非最大值抑制得到最终每个格子过滤之后的物体定位框</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#对所有框进行过滤</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">yolo_eval</span><span class="params">(output,image_shape=<span class="params">(<span class="number">720.</span>,<span class="number">1280.</span>)</span>,max_box=<span class="number">10</span>,scores_threshold=<span class="number">0.6</span>,iou_threshold=<span class="number">0.5</span>)</span>:</span></span><br><span class="line">	box_confidence,box_xy,boxhw,box_classes_prob=output</span><br><span class="line"></span><br><span class="line">	<span class="comment">#将中心点转换为坐标形式</span></span><br><span class="line">	boxes=yolo_boxes_to_corners(box_xy,boxhw)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#阈值过滤</span></span><br><span class="line">	scores,boxes,classes=yolo_filter_boxes(box_confidence,boxes,box_classes_prob,scores_threshold)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#缩放anchor box以适应原始图像</span></span><br><span class="line">	boxes=yu.scale_boxes(boxes,image_shape)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#nms过滤</span></span><br><span class="line">	scores,boxes,classes=yolo_non_max_suppression(scores,boxes,classes,max_box,iou_threshold)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> scores,boxes,classes</span><br></pre></td></tr></table></figure>
+
+<h3 id="训练集设置"><a href="#训练集设置" class="headerlink" title="训练集设置"></a>训练集设置</h3><p>将每个图像划分为n * n的网格，常用的网格个数n=19，每一个网格对应一对数据（x,y）</p>
+<p>x：代表每个网格中输入的图片</p>
+<p>y：代表当前格子对应物体的概率，定位框以及类别。假设类别数为80，则y的维度为pc+定位框系数（4个）+类别数（80个）=85个，当有5个anchor box时，每个anchor box中都有85个数据，填充在y中，y的维度=85 * 5=425</p>
+<h3 id="算法如何预测"><a href="#算法如何预测" class="headerlink" title="算法如何预测"></a>算法如何预测</h3><p>（1）输入图像，经过convert，得到预测的标签y：每个格子对应一个425的向量，19 * 19的格子即一张图片对应（19，19，425）维的向量，每个图片的y输出（19，19，425）维的向量，预测对应格子中物体出现的概率以及定位框</p>
+<p>（2）过滤定位框：通过计算每个格子中识别出的物体的概率，进行阈值过滤，小于阈值的定位框去除，每个类别的无图再根据非最大值抑制，删除Iou高的定位框，保证一个物体只有一个定位框。</p>
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>（1）导入模型</p>
+<p>使用官网yolo模型，导入anchor box的类型及分类的类别数量，使用keras.models中的load_model得到训练好的模型。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#加载模型</span></span><br><span class="line">sess=K.get_session()</span><br><span class="line"><span class="comment">#定义anchor box,class,输入图像大小</span></span><br><span class="line">boxes=yu.read_anchors(<span class="string">"./model_data/yolo_anchors.txt"</span>)</span><br><span class="line">classes_name=yu.read_classes(<span class="string">"./model_data/object_classes.txt"</span>)</span><br><span class="line">image_shape=(<span class="number">720.</span>,<span class="number">1280.</span>)</span><br><span class="line">car_model=load_model(<span class="string">"./model_data/yolov2.h5"</span>)</span><br><span class="line">car_model.summary()</span><br></pre></td></tr></table></figure>
+
+<p>（2）批量预测</p>
+<p>1° 输入图像，并将图像按照模型中680x680尺寸换算，并输入模型中</p>
+<p>2° 运行模型，将yolo模型的数据转换为边框坐标形式，经过阈值与非最大值抑制过滤边框，得到预测的物体即边框</p>
+<p>3° 根据得到的边框进行过滤，并且边框需要适应原始图像大小，最终得到过滤后的边框</p>
+<p>4° 根据模型类别得到颜色，并将边框在原始图像上画出来</p>
+<p>5° 使用os.path.join得出预测后图像的保存地址，进行保存 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#将模型输出转换为边框</span></span><br><span class="line">yolo_outputs=yolo_head(car_model.output,boxes,len(classes_name))</span><br><span class="line"></span><br><span class="line"><span class="comment">#调用eval进行边框过滤</span></span><br><span class="line">scores,boxes,classes=yolo_eval(yolo_outputs,image_shape)</span><br><span class="line"></span><br><span class="line"><span class="comment">#使用模型进行车辆识别</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict</span><span class="params">(sess,img_file)</span>:</span></span><br><span class="line">	<span class="comment">#图片处理（归一化和延展）</span></span><br><span class="line">	file=<span class="string">'./images/'</span></span><br><span class="line">	img_path=file+img_file</span><br><span class="line"></span><br><span class="line">	img,img_data=yu.preprocess_image(img_path,model_image_size=(<span class="number">608</span>,<span class="number">608</span>))</span><br><span class="line">	<span class="comment">#设置占位符</span></span><br><span class="line">	out_scores,out_boxes,out_classes=sess.run([scores,boxes,classes],feed_dict=&#123;car_model.input:img_data,K.learning_phase():<span class="number">0</span>&#125;)</span><br><span class="line"></span><br><span class="line">	print(img_file+<span class="string">"中找到了anchor box："</span>+str(len(out_boxes)))</span><br><span class="line"></span><br><span class="line">	<span class="comment">#设置输出的颜色</span></span><br><span class="line">	colors=yu.generate_colors(classes_name)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#画边框</span></span><br><span class="line">	yu.draw_boxes(img,out_scores,out_boxes,out_classes,classes_name,colors)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#保存画好边框的图片</span></span><br><span class="line">	img.save(os.path.join(<span class="string">'out'</span>,img_file),quatity=<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#展示图片</span></span><br><span class="line">	p_image=Image.open(os.path.join(<span class="string">'out'</span>,img_file))</span><br><span class="line">	plt.imshow(p_image)</span><br><span class="line">	plt.show()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> out_scores,out_boxes,out_classes</span><br></pre></td></tr></table></figure>
+
+<p>（3）结果</p>
+<p>zfill:字符串右对齐，不够长度的左边补0，调用predict，输入需要的图片进行物体识别定位</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>,<span class="number">18</span>):</span><br><span class="line">	img=str(i).zfill(<span class="number">4</span>)+<span class="string">".jpg"</span></span><br><span class="line">	out_scores,out_boxes,out_classes=predict(sess,img)</span><br><span class="line">print(<span class="string">"识别结束"</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200605162058.png" alt></p>
+<p>0066.jpg中找到了anchor box：2<br>traffic light 0.62 (532, 68) (564, 113)<br>car 0.77 (372, 281) (454, 333)</p>
+<p>结果输出该图像中找到的物体以及物体的坐标</p>
+<p>说明：从结果中可以看出，识别出了车辆和红灯，并用方框将其定位出来了。</p>
+<p>再测试另一个图片</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200608105320.png" alt></p>
+<p>0017.jpg中找到了anchor box：3<br>truck 0.64 (666, 274) (1063, 392)<br>car 0.79 (1103, 300) (1271, 356)<br>car 0.82 (1, 358) (183, 427)</p>
+<p>说明：此时识别出一个卡车和两个汽车，并用不同颜色框将其定位。</p>
+<h2 id="附：R-CNN带区域的卷积神经网络"><a href="#附：R-CNN带区域的卷积神经网络" class="headerlink" title="附：R-CNN带区域的卷积神经网络"></a>附：R-CNN带区域的卷积神经网络</h2><p>思想：</p>
+<p>（1）使用某种算法（1.分割算法；2.卷积神经网剧）得到图像的候选区域</p>
+<p>（2）在候选区域中运行分类器，得到每个候选其余的类别及定位框</p>
+<p>说明：因为该种目标定位与识别是分两步进行，时间效率比yolo总体要低一些。</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 神经网络</a>
+              <a href="/tags/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 卷积神经网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/tomcatNoWebXml/" rel="next" title="springBoot部署问题">
+                  <i class="fa fa-chevron-left"></i> springBoot部署问题
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#YOLO算法"><span class="nav-number">1.</span> <span class="nav-text">YOLO算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#物体中点认定——让一个物体只被一个格子检测"><span class="nav-number">1.2.</span> <span class="nav-text">物体中点认定——让一个物体只被一个格子检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#anchor-box——一个格子能检测出多个物体"><span class="nav-number">1.3.</span> <span class="nav-text">anchor box——一个格子能检测出多个物体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非最大值抑制——只输出一个定位框"><span class="nav-number">1.4.</span> <span class="nav-text">非最大值抑制——只输出一个定位框</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#训练集设置"><span class="nav-number">1.5.</span> <span class="nav-text">训练集设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法如何预测"><span class="nav-number">1.6.</span> <span class="nav-text">算法如何预测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用"><span class="nav-number">2.</span> <span class="nav-text">应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附：R-CNN带区域的卷积神经网络"><span class="nav-number">3.</span> <span class="nav-text">附：R-CNN带区域的卷积神经网络</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">154k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:20</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
