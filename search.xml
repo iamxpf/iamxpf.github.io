@@ -3,7 +3,7 @@
   <entry>
     <title>卷积神经网络——人脸识别</title>
     <url>/blogs/convNet4/</url>
-    <content><![CDATA[<h2 id="人脸识别"><a href="#人脸识别" class="headerlink" title="人脸识别"></a>人脸识别</h2><p>人脸识别系统包括人脸识别和活体检测（使用监督学习），这里着重介绍人脸识别部分算法</p><h3 id="人脸验证和人脸识别区别"><a href="#人脸验证和人脸识别区别" class="headerlink" title="人脸验证和人脸识别区别"></a>人脸验证和人脸识别区别</h3><p>（1）人脸验证</p><p>输入：图片和ID/姓名</p><p>输出：验证这个图片是否是ID/姓名代表的这个人</p><p>这是个1：1问题</p><p>（2）人脸识别</p><p>输入：图片</p><p>输出：查找输入的图片是否是k个人中的一个</p><p>这是个1:K问题</p><p>总结</p><p>人脸识别是以人脸验证作为基础模块</p><a id="more"></a>
+    <content><![CDATA[<p>人脸识别系统包括人脸识别和活体检测（使用监督学习），这里着重介绍人脸识别部分。</p><h2 id="人脸验证和人脸识别区别"><a href="#人脸验证和人脸识别区别" class="headerlink" title="人脸验证和人脸识别区别"></a>人脸验证和人脸识别区别</h2><p>（1）人脸验证</p><p>输入：图片和ID/姓名</p><p>输出：验证这个图片是否是ID/姓名代表的这个人</p><p>这是个1：1问题</p><p>（2）人脸识别</p><p>输入：图片</p><p>输出：查找输入的图片是否是k个人中的一个</p><p>这是个1:K问题</p><p>总结：人脸识别是以人脸验证作为基础模块</p><a id="more"></a>
 
 
 
@@ -13,8 +13,7 @@
 
 
 
-
-<h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>人脸识别是为了解决one shot learning问题，即一次学习就能识别出人的身份。</p>
+<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>人脸识别是为了解决one shot learning问题，即一次学习就能识别出人的身份。</p>
 <p>一次学习即使用一张图片训练出来的神经网络识别率很差，而且当有新的人图片出现还需要重新训练网络，这样很麻烦。</p>
 <p>因此，人脸识别的核心：</p>
 <p>（1）使用能够识别人脸图片的网络</p>
@@ -40,7 +39,7 @@
 <p>这里的输入是一对图片，logistic回归内的预测函数为：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200609204309.png" alt></p>
 <p>对编码后的向量每个元素取绝对值，再加上权重和偏置量，训练w,b，得到最终的预测结果。</p>
-<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><p>（）网络架构</p>
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>（）网络架构</p>
 <p>网络的架构上遵循Szegedy et al.等人的初始模型，应用该网络结构并且指明优化算法和损失函数，将模型进行编译，最后导入本地的权重，生成得出的预训练模型。</p>
 <p>这里的图片格式是通道在前，因此在最开始需要设置通道的位置：K.set_image_data_format(“channels_first”)，同时输入网络的图片长宽为96 * 96</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#1.加载模型结构</span></span><br><span class="line">FRmodel=ibv2.faceRecoModel(input_shape=(<span class="number">3</span>,<span class="number">96</span>,<span class="number">96</span>))</span><br><span class="line"><span class="comment">#编译模型，损失采用三元组损失</span></span><br><span class="line">FRmodel.compile(<span class="string">"adam"</span>,loss=triplet_loss,metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"><span class="comment">#导入权重</span></span><br><span class="line">fu.load_weights_from_FaceNet(FRmodel)</span><br></pre></td></tr></table></figure>
@@ -94,7 +93,7 @@
 <p>当使用上述camera_6系统内成员的其他图像时：</p>
 <p>验证通过，欢迎你，bajie<br>0.6963635 True</p>
 <p>说明：最终输出当前识别出的人的身份，以及门是否打开</p>
-<h3 id="附：将图像转换为想要的尺寸大小"><a href="#附：将图像转换为想要的尺寸大小" class="headerlink" title="附：将图像转换为想要的尺寸大小"></a>附：将图像转换为想要的尺寸大小</h3><p>使用PIL中Image将对应路径的图像打开，并进行尺寸调整，最终使用save对调整好的图像进行保存</p>
+<h2 id="附：将图像转换为想要的尺寸大小"><a href="#附：将图像转换为想要的尺寸大小" class="headerlink" title="附：将图像转换为想要的尺寸大小"></a>附：将图像转换为想要的尺寸大小</h2><p>使用PIL中Image将对应路径的图像打开，并进行尺寸调整，最终使用save对调整好的图像进行保存</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line">img_path=<span class="string">"./images/"</span></span><br><span class="line">file_img=img_path+<span class="string">"camera_7.jpg"</span></span><br><span class="line">img=Image.open(file_img).resize((<span class="number">96</span>,<span class="number">96</span>))</span><br><span class="line">img.save(img_path+<span class="string">"camera_7.jpg"</span>)</span><br></pre></td></tr></table></figure>
 
 <p>上述实验中使用的自己的图片需要转换为网络能识别的大小，即96 * 96</p>
@@ -1739,8 +1738,8 @@
         <category>机器学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>回归</tag>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -1821,8 +1820,8 @@
         <category>机器学习</category>
       </categories>
       <tags>
-        <tag>机器学习</tag>
         <tag>回归</tag>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
