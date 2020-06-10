@@ -1,6 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>卷积神经网络——神经风格转换</title>
+    <url>/blogs/convNet5/</url>
+    <content><![CDATA[<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>将一个图像作为内容图像，另一幅图作为风格图像，两个图像经过神经网络生辰一个新的图像，该图像既有前一个图像的内容，又有后一个图像的风格，这称为神经风格转换。</p><h2 id="损失函数的确定"><a href="#损失函数的确定" class="headerlink" title="损失函数的确定"></a>损失函数的确定</h2><p>神经网络浅层学习图片的点、线或者颜色等基础特征，深层学习图片中物体或者更具体的特征。</p><p>神经风格转换是让合成的图片中的内容更接近内容图片，风格更接近风格图片，即让合成的图片中的内容和内容图片相比损失更小，让合成的图片中的风格和风格图片相比损失更小，最终得到的总成本最小，通过成本函数调整网络的参数。</p><a id="more"></a>
+
+
+<p>因此需要定义网络中的内容损失函数，风格损失函数，总成本函数。</p>
+<h3 id="内容损失函数"><a href="#内容损失函数" class="headerlink" title="内容损失函数"></a>内容损失函数</h3><p>将每层的通道按照长宽进行展开，每个位置和内容图片的相应位置之间使用二者之差范数求内容之间的差异：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200610105338.png" alt></p>
+<p>即将两个矩阵对应元素相减再求平方</p>
+<p>说明：（1）最终内容损失函数前的系数可定义为归一化1/2，或者其他值。（因为最终成本函数会通过alpha调整系数）</p>
+<p>（2）这里需要将激活值中的通道数放在前面，因为网络中导入模型的时候是将通道放在最前面处理的</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#内容函数成本</span></span><br><span class="line"><span class="comment">#输入内容图像和合成图像的激活值</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compute_content_cost</span><span class="params">(a_C,a_G)</span>:</span></span><br><span class="line">	m,n_h,n_w,n_c=a_G.get_shape().as_list()</span><br><span class="line"></span><br><span class="line">	<span class="comment">#保证通道在前</span></span><br><span class="line">	a_C=tf.transpose(tf.reshape(a_C,(n_h*n_w,n_c)))</span><br><span class="line">	a_G=tf.transpose(tf.reshape(a_G,(n_h*n_w,n_c)))</span><br><span class="line">	C_G=tf.reduce_sum(tf.square(tf.subtract(a_C,a_G)))</span><br><span class="line"></span><br><span class="line">	content_cost=<span class="number">1</span>/(<span class="number">4</span>*n_h*n_w*n_c)*C_G</span><br><span class="line">	<span class="keyword">return</span> content_cost</span><br></pre></td></tr></table></figure>
+
+<h3 id="风格损失函数"><a href="#风格损失函数" class="headerlink" title="风格损失函数"></a>风格损失函数</h3><p>（1）求单层的风格差异</p>
+<p>得到当前图片按照通道展开的风格矩阵（使用相关系数衡量不同位置出现相应风格的概率），再按照范数定义风格之间的差异：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200610110834.png" alt></p>
+<p>1° 求风格矩阵：即将展开的当前通道的矩阵对应元素相乘</p>
+<p>2° 按照范数，将风格图片和合成图片的风格矩阵求差，取平方得到范数值，以此作为风格的损失，即风格之间的差异</p>
+<p>（2）将各层的风格差异合并</p>
+<p>多层风格合并的原因：多考虑几层的风格能使得结果更准确，选择的层数：style_layers=[(“conv1_1”,0.2),(“conv2_1”,0.2),(“conv3_1”,0.2),(“conv4_1”,0.2),(“conv5_1”,0.2)]</p>
+<p>方法：遍历每层，得到激活值输入单层风格求差异，累加每层的风格差异，并乘上每层的系数（衡量每层的风格所占的比重，这里权重定量选择0.2），最终构成总体风格损失函数</p>
+<p>注：为什么内容函数中没有使用多层合并，因为浅层网站中只学习了图形的基本样式，深层网络才学习到真正的图像内容。（个人的理解）</p>
+<p>说明：（1）最终风格损失函数前的系数可定义为归一化1/(2 * nh * nw * nc)^2，或者其他值。（因为最终成本函数会通过beta调整系数）</p>
+<p>（2）这里需要将激活值中的通道数放在前面，因为网络中导入模型的时候是将通道放在最前面处理的</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#风格函数成本</span></span><br><span class="line"><span class="comment">#矩阵内元素相乘</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gram_matrix</span><span class="params">(A)</span>:</span></span><br><span class="line">	gram=tf.matmul(A,tf.transpose(A))</span><br><span class="line">	<span class="keyword">return</span> gram</span><br><span class="line"></span><br><span class="line"><span class="comment">#某一层的风格函数成本</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compute_layer_style_cost</span><span class="params">(a_S,a_G)</span>:</span></span><br><span class="line">	m,n_h,n_w,n_c=a_G.get_shape().as_list()</span><br><span class="line"></span><br><span class="line">	a_S=tf.transpose(tf.reshape(a_S,(n_h*n_w,n_c)))</span><br><span class="line">	a_G=tf.transpose(tf.reshape(a_G,(n_h*n_w,n_c)))</span><br><span class="line"></span><br><span class="line">	a_Svalue=gram_matrix(a_S)</span><br><span class="line">	a_Gvalue=gram_matrix(a_G)</span><br><span class="line"></span><br><span class="line">	S_G=tf.reduce_sum(tf.square(tf.subtract(a_Svalue,a_Gvalue)))</span><br><span class="line"></span><br><span class="line">	style_layer_cost=<span class="number">1</span>/(<span class="number">4</span>*(n_c**<span class="number">2</span>)*((n_h*n_w))**<span class="number">2</span>)*S_G</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> style_layer_cost</span><br><span class="line"></span><br><span class="line"><span class="comment">#从不同的层得到风格函数成本进行合并，效果会更好</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compute_style_cost</span><span class="params">(model,style_layers)</span>:</span></span><br><span class="line">	style_cost=<span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> layer,coeff <span class="keyword">in</span> style_layers:</span><br><span class="line">		out=model[layer]</span><br><span class="line">		a_S=sess.run(out)</span><br><span class="line">		a_G=out</span><br><span class="line"></span><br><span class="line">		style_layer_cost=compute_layer_style_cost(a_S,a_G)</span><br><span class="line"></span><br><span class="line">		style_cost+=coeff*style_layer_cost</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> style_cost</span><br></pre></td></tr></table></figure>
+
+<h3 id="总体损失函数"><a href="#总体损失函数" class="headerlink" title="总体损失函数"></a>总体损失函数</h3><p>将内容损失和风格损失乘以相应系数得到总成本函数</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#得到总成本</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">total_cost</span><span class="params">(J_content,J_style,alpha=<span class="number">10</span>,beta=<span class="number">40</span>)</span>:</span></span><br><span class="line">	J_cost=alpha*J_content+J_style*beta</span><br><span class="line">	<span class="keyword">return</span> J_cost</span><br></pre></td></tr></table></figure>
+
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>（1）建立交互会话</p>
+<p>使用交互式对话，可以先定义会话，再定义操作，较直接会话方式使用更方便</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#0.使用交互式会话及导入模型</span></span><br><span class="line">tf.reset_default_graph()</span><br><span class="line">sess=tf.InteractiveSession()<span class="comment">#tf.session是需要将操作都建立好才能进行会话操作，使用交互式会话可以先定义一个会话，再定义操作</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）导入模型</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">model=nu.load_vgg_model(<span class="string">"./pretrained-model/imagenet-vgg-verydeep-19.mat"</span>)</span><br><span class="line">print(model)</span><br></pre></td></tr></table></figure>
+
+<p>模型采用神经风格转换提出者论文中的模型，采用VGG-19模型，本地保存了该模型网络，打印如下，可见模型存储在字典中，字典的键中保存每个变量，值保存包含该变量值的张量，当需要通过网络运行图像的时候，使用tf.assign将图像输入网络即可</p>
+<p>模型结构如下：</p>
+<blockquote>
+<p>{‘input’: &lt;tf.Variable ‘Variable:0’ shape=(1, 300, 400, 3) dtype=float32_ref&gt;, ‘conv1_1’: &lt;tf.Tensor ‘Relu:0’ shape=(1, 300, 400, 64) dtype=float32&gt;, ‘conv1_2’: &lt;tf.Tensor ‘Relu_1:0’ shape=(1, 300, 400, 64) dtype=float32&gt;, ‘avgpool1’: &lt;tf.Tensor ‘AvgPool:0’ shape=(1, 150, 200, 64) dtype=float32&gt;, ‘conv2_1’: &lt;tf.Tensor ‘Relu_2:0’ shape=(1, 150, 200, 128) dtype=float32&gt;, ‘conv2_2’: &lt;tf.Tensor ‘Relu_3:0’ shape=(1, 150, 200, 128) dtype=float32&gt;, ‘avgpool2’: &lt;tf.Tensor ‘AvgPool_1:0’ shape=(1, 75, 100, 128) dtype=float32&gt;, ‘conv3_1’: &lt;tf.Tensor ‘Relu_4:0’ shape=(1, 75, 100, 256) dtype=float32&gt;, ‘conv3_2’: &lt;tf.Tensor ‘Relu_5:0’ shape=(1, 75, 100, 256) dtype=float32&gt;, ‘conv3_3’: &lt;tf.Tensor ‘Relu_6:0’ shape=(1, 75, 100, 256) dtype=float32&gt;, ‘conv3_4’: &lt;tf.Tensor ‘Relu_7:0’ shape=(1, 75, 100, 256) dtype=float32&gt;, ‘avgpool3’: &lt;tf.Tensor ‘AvgPool_2:0’ shape=(1, 38, 50, 256) dtype=float32&gt;, ‘conv4_1’: &lt;tf.Tensor ‘Relu_8:0’ shape=(1, 38, 50, 512) dtype=float32&gt;, ‘conv4_2’: &lt;tf.Tensor ‘Relu_9:0’ shape=(1, 38, 50, 512) dtype=float32&gt;, ‘conv4_3’: &lt;tf.Tensor ‘Relu_10:0’ shape=(1, 38, 50, 512) dtype=float32&gt;, ‘conv4_4’: &lt;tf.Tensor ‘Relu_11:0’ shape=(1, 38, 50, 512) dtype=float32&gt;, ‘avgpool4’: &lt;tf.Tensor ‘AvgPool_3:0’ shape=(1, 19, 25, 512) dtype=float32&gt;, ‘conv5_1’: &lt;tf.Tensor ‘Relu_12:0’ shape=(1, 19, 25, 512) dtype=float32&gt;, ‘conv5_2’: &lt;tf.Tensor ‘Relu_13:0’ shape=(1, 19, 25, 512) dtype=float32&gt;, ‘conv5_3’: &lt;tf.Tensor ‘Relu_14:0’ shape=(1, 19, 25, 512) dtype=float32&gt;, ‘conv5_4’: &lt;tf.Tensor ‘Relu_15:0’ shape=(1, 19, 25, 512) dtype=float32&gt;, ‘avgpool5’: &lt;tf.Tensor ‘AvgPool_4:0’ shape=(1, 10, 13, 512) dtype=float32&gt;}</p>
+</blockquote>
+<p>（3）输入内容图片</p>
+<p>从网络结构中可以看出，网络输入是300 * 400大小的图像，所以要定义好图像大小</p>
+<p>使用PIL 中的open函数读取图片</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#图片大小为300*400</span></span><br><span class="line"><span class="comment">#1.导入内容图片</span></span><br><span class="line">image_path=<span class="string">"./images/"</span></span><br><span class="line">content_image=Image.open(image_path+<span class="string">"cat.jpg"</span>)</span><br><span class="line">content_image=nu.reshape_and_normalize_image(np.array(content_image))</span><br></pre></td></tr></table></figure>
+
+<p>（4）输入风格图片</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#2.导入风格图片</span></span><br><span class="line">style_image=Image.open(image_path+<span class="string">"camp-nou.jpg"</span>)</span><br><span class="line">style_image=nu.reshape_and_normalize_image(np.array(style_image))</span><br></pre></td></tr></table></figure>
+
+<p>（5）计算成本函数</p>
+<p>内容成本：1° 将内容图片通过assign方法输入到模型中，并使用会话运行网络；</p>
+<p>2° 网络一共5层，选择第四层的内容作为比对的内容，将模型运行该层得到的激活值作为a_C，即内容图片输出（需要比对的内容）</p>
+<p>3° a_G这里使用对应层数的线性值作为占位符，当运行模型的时候，更新值</p>
+<p>4° 最终输入内容损失函数中</p>
+<p>风格成本：1° 将风格图片通过assign方法输入到模型中，并使用会话运行网络；</p>
+<p>2° 网络一共5层，选择第1-5层的风格和系数作为比对的内容，将模型和需要比对的网络层输入到风格损失函数中</p>
+<p>综上，将二者成本输入到总成本中</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#4.分别计算三个成本</span></span><br><span class="line">sess.run(model[<span class="string">"input"</span>].assign(content_image))</span><br><span class="line">out=model[<span class="string">'conv4_2'</span>]</span><br><span class="line">a_C=sess.run(out)</span><br><span class="line">a_G=out</span><br><span class="line">J_content=compute_content_cost(a_C,a_G)</span><br><span class="line"></span><br><span class="line">sess.run(model[<span class="string">"input"</span>].assign(style_image))</span><br><span class="line">J_style=compute_style_cost(model,style_layers)</span><br><span class="line">J_cost=total_cost(J_content,J_style,alpha=<span class="number">10</span>,beta=<span class="number">40</span>)</span><br></pre></td></tr></table></figure>
+
+<p>（6）定义网络的优化算法</p>
+<p>选择adam优化算法和学习率，以及需要最小化的成本函数</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#5.定义优化算法</span></span><br><span class="line">optimizer=tf.train.AdamOptimizer(learning_rate=<span class="number">2</span>).minimize(J_cost)</span><br></pre></td></tr></table></figure>
+
+<p>（7）搭建网络</p>
+<p>0° 此时运行会话初始化所有变量</p>
+<p>1° 将合成图片作为网络输入，并运行会话</p>
+<p>2° 每次迭代都按照优化算法，并更新合成的图片，将每次的合成图片按照路径保存</p>
+<p>3° 迭代结束得到最终合成效果图</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#6.搭建总体模型</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">model_nn</span><span class="params">(sess,input_image,iteration=<span class="number">200</span>)</span>:</span></span><br><span class="line">	<span class="comment">#初始化所有变量</span></span><br><span class="line">	sess.run(tf.global_variables_initializer())</span><br><span class="line"></span><br><span class="line">	<span class="comment">#将输入的图片作为初始图片输入网络</span></span><br><span class="line">	generate_image=sess.run(model[<span class="string">"input"</span>].assign(input_image))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(iteration):</span><br><span class="line">		sess.run(optimizer)</span><br><span class="line"></span><br><span class="line">		<span class="comment">#每次迭代更新合成的图片</span></span><br><span class="line">		generate_image=sess.run(model[<span class="string">"input"</span>])</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> i%<span class="number">20</span>==<span class="number">0</span>:</span><br><span class="line">			Jc,Js,Jt=sess.run([J_content,J_style,J_cost])</span><br><span class="line">			print(<span class="string">"iteration:"</span>,i)</span><br><span class="line">			print(<span class="string">"内容函数损失："</span>,Jc)</span><br><span class="line">			print(<span class="string">"风格函数损失："</span>,Js)</span><br><span class="line">			print(<span class="string">"总体损失："</span>,Jt)</span><br><span class="line">			nu.save_image(<span class="string">"./out/"</span>+str(i)+<span class="string">".png"</span>,generate_image)</span><br><span class="line"></span><br><span class="line">	nu.save_image(<span class="string">"./out/generate_image.jpg"</span>,generate_image)</span><br><span class="line">	<span class="keyword">return</span> generate_image</span><br></pre></td></tr></table></figure>
+
+<p>（8）最终结果</p>
+<p>内容图片：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200610093228.png" alt></p>
+<p>风格图片：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200610093247.png" alt></p>
+<p>输入model_nn(sess,generate_image)进行测试，每次迭代得到的结果输出在out文件夹下，迭代结束后最终得到的合成结果如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200610093114.png" alt></p>
+<p>从合成图像可以看出，很好的保留了内容图像中内容，也很好的融合了风格图片中的风格。</p>
+]]></content>
+      <categories>
+        <category>神经网络</category>
+      </categories>
+      <tags>
+        <tag>神经网络</tag>
+        <tag>卷积神经网络</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>卷积神经网络——人脸识别</title>
     <url>/blogs/convNet4/</url>
     <content><![CDATA[<p>人脸识别系统包括人脸识别和活体检测（使用监督学习），这里着重介绍人脸识别部分。</p><h2 id="人脸验证和人脸识别区别"><a href="#人脸验证和人脸识别区别" class="headerlink" title="人脸验证和人脸识别区别"></a>人脸验证和人脸识别区别</h2><p>（1）人脸验证</p><p>输入：图片和ID/姓名</p><p>输出：验证这个图片是否是ID/姓名代表的这个人</p><p>这是个1：1问题</p><p>（2）人脸识别</p><p>输入：图片</p><p>输出：查找输入的图片是否是k个人中的一个</p><p>这是个1:K问题</p><p>总结：人脸识别是以人脸验证作为基础模块</p><a id="more"></a>
@@ -2615,8 +2703,8 @@
         <category>java</category>
       </categories>
       <tags>
-        <tag>多线程</tag>
         <tag>java</tag>
+        <tag>多线程</tag>
         <tag>future</tag>
       </tags>
   </entry>
