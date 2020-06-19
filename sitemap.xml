@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.xiapf.com/blogs/rnn1Music/</loc>
+    
+    <lastmod>2020-06-19T06:32:32.868Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.xiapf.com/blogs/rnn1DN/</loc>
     
-    <lastmod>2020-06-19T03:18:21.464Z</lastmod>
+    <lastmod>2020-06-19T03:40:11.133Z</lastmod>
     
   </url>
   
@@ -296,14 +303,14 @@
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/about/index.html</loc>
+    <loc>https://www.xiapf.com/categories/index.html</loc>
     
     <lastmod>2019-12-13T12:52:51.112Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/categories/index.html</loc>
+    <loc>https://www.xiapf.com/about/index.html</loc>
     
     <lastmod>2019-12-13T12:52:51.112Z</lastmod>
     

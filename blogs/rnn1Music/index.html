@@ -56,21 +56,20 @@
   };
 </script>
 
-  <meta name="description" content="问题描述 测量绿萝叶片使用kinect相机对图像做标定，将图像映射到坐标系中，使用matlab程序计算叶片整体占图像的像素从而计算面积，对绿萝每层的叶片都需要分次进行标定求解过程较为复杂，因此针对这种情况，采用bp网络来预测绿萝叶片面积。 数据采集测量9盆绿萝叶片，实测数据共557片。训练集1-7盆，共449片，测试集8-9盆，共108片。数据集中共四个属性，分别是宽度为w，长边为L1,短边为L2">
-<meta name="keywords" content="神经网络,算法">
+  <meta name="description" content="为了解决梯度消失和获得更深层的连接，采用keras.layers》recurrent中的LSTM模型构建神经单元。问题描述利用已有的音乐片段，搭建能够生成即兴音乐的模型。步骤导入数据导入本地的原始音乐，并从中提取音节和音调这里的x的维度为（m,T_x,n_values），m代表样本个数，T_x代表时间步，n_values代表字典大小，每个样本被表示成n_values大小的独热向量，这里隐藏层大小设">
+<meta name="keywords" content="神经网络,循环神经网络">
 <meta property="og:type" content="article">
-<meta property="og:title" content="用bp网络预测绿萝叶片面积">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;bp-net&#x2F;index.html">
+<meta property="og:title" content="序列模型RNN——构建即兴演奏的爵士音乐的LSTM模型">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;rnn1Music&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="问题描述 测量绿萝叶片使用kinect相机对图像做标定，将图像映射到坐标系中，使用matlab程序计算叶片整体占图像的像素从而计算面积，对绿萝每层的叶片都需要分次进行标定求解过程较为复杂，因此针对这种情况，采用bp网络来预测绿萝叶片面积。 数据采集测量9盆绿萝叶片，实测数据共557片。训练集1-7盆，共449片，测试集8-9盆，共108片。数据集中共四个属性，分别是宽度为w，长边为L1,短边为L2">
+<meta property="og:description" content="为了解决梯度消失和获得更深层的连接，采用keras.layers》recurrent中的LSTM模型构建神经单元。问题描述利用已有的音乐片段，搭建能够生成即兴音乐的模型。步骤导入数据导入本地的原始音乐，并从中提取音节和音调这里的x的维度为（m,T_x,n_values），m代表样本个数，T_x代表时间步，n_values代表字典大小，每个样本被表示成n_values大小的独热向量，这里隐藏层大小设">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;bp%E7%BD%91%E7%BB%9C%E7%A4%BA%E6%84%8F%E5%9B%BE%E5%8F%8A%E5%90%84%E5%8F%98%E9%87%8F%E5%90%AB%E4%B9%89.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;bp%E5%AD%A6%E4%B9%A0%E7%8E%87%E5%8F%98%E5%8C%96.png">
-<meta property="og:updated_time" content="2020-01-20T12:17:50.704Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200619122826.png">
+<meta property="og:updated_time" content="2020-06-19T06:32:32.868Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;bp%E7%BD%91%E7%BB%9C%E7%A4%BA%E6%84%8F%E5%9B%BE%E5%8F%8A%E5%90%84%E5%8F%98%E9%87%8F%E5%90%AB%E4%B9%89.png">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200619122826.png">
 
-<link rel="canonical" href="https://www.xiapf.com/blogs/bp-net/">
+<link rel="canonical" href="https://www.xiapf.com/blogs/rnn1Music/">
 
 
 <script id="page-configurations">
@@ -84,7 +83,7 @@
   };
 </script>
 
-  <title>用bp网络预测绿萝叶片面积 | 八戒大强攻</title>
+  <title>序列模型RNN——构建即兴演奏的爵士音乐的LSTM模型 | 八戒大强攻</title>
   
 
 
@@ -236,7 +235,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/bp-net/">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/rnn1Music/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
@@ -249,7 +248,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          用bp网络预测绿萝叶片面积
+          序列模型RNN——构建即兴演奏的爵士音乐的LSTM模型
         </h2>
 
         <div class="post-meta">
@@ -258,30 +257,24 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2019-12-11 10:46:04" itemprop="dateCreated datePublished" datetime="2019-12-11T10:46:04+08:00">2019-12-11</time>
+              <time title="创建时间：2020-06-19 14:31:48 / 修改时间：14:32:32" itemprop="dateCreated datePublished" datetime="2020-06-19T14:31:48+08:00">2020-06-19</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-20 20:17:50" itemprop="dateModified" datetime="2020-01-20T20:17:50+08:00">2020-01-20</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
+                  <a href="/categories/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">神经网络</span>
                   </a>
                 </span>
             </span>
 
           
-            <span id="/blogs/bp-net/" class="post-meta-item leancloud_visitors" data-flag-title="用bp网络预测绿萝叶片面积" title="阅读次数">
+            <span id="/blogs/rnn1Music/" class="post-meta-item leancloud_visitors" data-flag-title="序列模型RNN——构建即兴演奏的爵士音乐的LSTM模型" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -296,8 +289,8 @@
       </span>
       <span class="post-meta-item-text">评论数：</span>
     
-    <a title="valine" href="/blogs/bp-net/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/blogs/bp-net/" itemprop="commentCount"></span>
+    <a title="valine" href="/blogs/rnn1Music/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/rnn1Music/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -307,14 +300,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
+              <span>3.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>4 分钟</span>
             </span>
 		  
 			
@@ -328,118 +321,58 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><blockquote>
-<p>测量绿萝叶片使用kinect相机对图像做标定，将图像映射到坐标系中，使用matlab程序计算叶片整体占图像的像素从而计算面积，对绿萝每层的叶片都需要分次进行标定求解过程较为复杂，因此针对这种情况，采用bp网络来预测绿萝叶片面积。</p>
-</blockquote><hr><h1 id="数据采集"><a href="#数据采集" class="headerlink" title="数据采集"></a>数据采集</h1><p><em>测量9盆绿萝叶片，实测数据共557片。训练集1-7盆，共449片，测试集8-9盆，共108片。<br>数据集中共四个属性，分别是宽度为w，长边为L1,短边为L2，面积area。</em><br><strong>其中宽度，长边，短边为手动实测，面积根据叶片像素点占图片整体像素点计算得出。</strong></p><a id="more"></a>
+        <p>为了解决梯度消失和获得更深层的连接，采用keras.layers》recurrent中的LSTM模型构建神经单元。</p><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>利用已有的音乐片段，搭建能够生成即兴音乐的模型。</p><h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="导入数据"><a href="#导入数据" class="headerlink" title="导入数据"></a>导入数据</h3><p>导入本地的原始音乐，并从中提取音节和音调</p><p>这里的x的维度为（m,T_x,n_values），m代表样本个数，T_x代表时间步，n_values代表字典大小，每个样本被表示成n_values大小的独热向量，这里隐藏层大小设置为64，即n_a=64。</p><a id="more"></a>
 
 
-<ul>
-<li>计算面积的MATLAB程序<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">%% 分割</span><br><span class="line">k=graythresh(I);              %得到最优阈值</span><br><span class="line">j=im2bw(I,k);                  %转换成二值图，k为分割阈值</span><br><span class="line">%imshow(j); </span><br><span class="line">f = bwmorph(j,&apos;open&apos;);  %开运算</span><br><span class="line">figure, imshow(f)</span><br><span class="line">%% 像素点统计</span><br><span class="line">[m,n]=size(f);</span><br><span class="line">k=0;</span><br><span class="line">for i=1:1:m</span><br><span class="line">    for j=1:1:n</span><br><span class="line">        if f(i,j)==0</span><br><span class="line">            k=k+1;</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line">p=k/(m*n);</span><br><span class="line">s=21*29.7*p;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<hr>
-<h1 id="bp网络设计"><a href="#bp网络设计" class="headerlink" title="bp网络设计"></a>bp网络设计</h1><p>bp网络示意图及各变量含义<br><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/bp%E7%BD%91%E7%BB%9C%E7%A4%BA%E6%84%8F%E5%9B%BE%E5%8F%8A%E5%90%84%E5%8F%98%E9%87%8F%E5%90%AB%E4%B9%89.png" alt="bp结构图片"></p>
-<ol>
-<li><p>结构选取<br>a.隐含层数量选取：单隐层结构选择，当仅有一层隐含层时，测试数据正确率已达100%，为降低网络复杂度，所以选择单隐层结构。<br>b.隐含层神经元个数选取</p>
-<table>
-<thead>
-<tr>
-<th align="left">隐含层神经元个数</th>
-<th align="left">达到最小误差时需要迭代的次数</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">5</td>
-<td align="left">1873</td>
-</tr>
-<tr>
-<td align="left">10</td>
-<td align="left">2009</td>
-</tr>
-<tr>
-<td align="left">15</td>
-<td align="left">2259</td>
-</tr>
-</tbody></table>
-<p>根据程序运行来看，当隐藏层神经元个数选择过小（小于5）收敛速度很慢，当到达最大迭代次数时，误差仍很大，当个数选择过大（大于15），网络出现振荡，因此，考虑隐藏层神经元个数在5-15之间，因为本实验数据集属性少，因此选择隐藏层神经元个数为5个，减少复杂度。<br> c.误差函数选择均方差公式：$[    {E_{k} } =1/2*( \hat{y}-y) ]$<br> d.结束条件：<br> 训练结束条件：当误差函数值小于1e-3或者迭代次数大于50000次时结束训练<br> 测试误差判断：当测试集输出面积和实际面积误差函数值大于1e-5时，预测错误，反之预测正确。</p>
-</li>
-<li><p>初始值设置<br>a.权值矩阵的初始值<br>产生0-1之间的随机数作为权值的初始值<br>代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">srand(time(NULL));//设置随机数种子，使每次产生的随机序列不同</span><br><span class="line">for (int i = 0; i &lt; n; i++)</span><br><span class="line">    w[i] = rand() % (N + 1) / (float)(N + 1);//N为设置的精度</span><br></pre></td></tr></table></figure>
-<p>b.学习率的初始值<br>学习率控制着算法每一轮的迭代的更新步长，若太大则容易振荡，太小则收敛速度又过慢因此需要选择适合的初始值。<br><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/bp%E5%AD%A6%E4%B9%A0%E7%8E%87%E5%8F%98%E5%8C%96.png" alt="学习率变化图片"><br>由图可以看出，当学习率小于1时，网络训练次数多集中在1000以上，但当学习率大于5时，测试集数据会出现错误，因此选择训练次数少并且误差低的学习率=5.</p>
-</li>
-<li><p>数据归一化<br>前三列属性取值∈[2,9]，因此采用对数函数y=log10(x) 以10为底的对数函数转换。<br>最后一列属性取值∈[10,100]，因此采用反余弦函数y=atan(x)*2/PI，保证输入的数据在0-1之间，让网络更快的收敛。</p>
-</li>
-<li><p>前向传播和反向传播<br>a.前向传播<br>激活函数选择sigmod函数，第i个输入层神经元到第h个隐藏层神经元的权值为Vih,第h个隐藏层神经元输入为α=∑Vih<em>Xi，输出为bh;第h个输入层神经元到第j个隐藏层神经元的权值为Whj,第j个输出层神经元的输入β=∑Whj</em>bh,输出为<br>求出激活值，代入sigmod函数中，求得输出值<br>代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">for(int j=0;j&lt;hideSum;j++)</span><br><span class="line">&#123;</span><br><span class="line">   o1[j]=0.0;</span><br><span class="line">   for(int i=0;i&lt;inSum;i++)</span><br><span class="line">   //激活值</span><br><span class="line">   o1[j]=o1[j]+w[i][j]*x[i];</span><br><span class="line">   //实际输出</span><br><span class="line">   x1[j]=1.0/(1+exp(-o1[j]-b1[j])); //b1为偏置量</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>b.反向传播<br>网络在（Xk,Yk)上的均方差为，BP算法基于梯度下降的策略，以目标的负梯度方向进行调整在学习率下，采用链式法则对权值进行更新：<br>从输出层到隐藏层，有:<br>从隐藏层到输入层，有:</p>
-</li>
-</ol>
-<ul>
-<li>算法描述:<blockquote>
-<p>在（0，1）范围内初始化权值和学习率<br>REPEAT<br>FOR all（Xk,Yk)：<br>输入正向传播公式计算输出<br>计算输出层需修改的梯度项gj<br>计算隐藏层层需修改的梯度项eh<br>根据公式更新权值wjh,vij<br>END FOR<br>UNTIL 达到停止条件</p>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.导入数据</span></span><br><span class="line"><span class="comment">#x.shape: (60, 30, 78)</span></span><br><span class="line"><span class="comment">#y.shape (30, 60, 78)</span></span><br><span class="line"><span class="comment">#n_values代表字典数量，indies_values代表字典</span></span><br><span class="line">X,Y,n_values,indies_values=load_music_utils()</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_music_utils</span><span class="params">()</span>:</span></span><br><span class="line">    chords, abstract_grammars = get_musical_data(<span class="string">'data/original_metheny.mid'</span>)</span><br><span class="line">    corpus, tones, tones_indices, indices_tones = get_corpus_data(abstract_grammars)</span><br><span class="line">    N_tones = len(set(corpus))</span><br><span class="line">    X, Y, N_tones = data_processing(corpus, tones_indices, <span class="number">60</span>, <span class="number">30</span>)   </span><br><span class="line">    <span class="keyword">return</span> (X, Y, N_tones, indices_tones)</span><br></pre></td></tr></table></figure>
+
+<p>导入数据后得到总样本、实际输出、字典的个数、具体字典的内容。</p>
+<h3 id="利用keras搭建基本神经单元"><a href="#利用keras搭建基本神经单元" class="headerlink" title="利用keras搭建基本神经单元"></a>利用keras搭建基本神经单元</h3><p>（1）重构每个时间步的x</p>
+<p>（2）定义单步传播的神经单元LSTM</p>
+<p>（3）定义最终输出的预测函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#2.利用keras搭建lstm模型</span></span><br><span class="line">n_a=<span class="number">64</span></span><br><span class="line">reshapor=Reshape((<span class="number">1</span>,n_values))</span><br><span class="line">LSTM_cell=LSTM(n_a,return_state=<span class="literal">True</span>)</span><br><span class="line">densor=Dense(n_values,activation=<span class="string">'softmax'</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="搭建模型"><a href="#搭建模型" class="headerlink" title="搭建模型"></a>搭建模型</h3><p>（0）定义输入的X，当前初始的激活值的记忆细胞值</p>
+<p>（1）在每个时间步下</p>
+<p>（2）创建一个临时函数，提取出适当的独热向量作为keras.layers对象：x=Lambda(lambda x:X[:,t,])(X)</p>
+<p>（3）重构当前时间步x大小</p>
+<p>（4）调用LSTM_cell，经过一个lstm单元传播，得到激活值和记忆细胞值</p>
+<p>（5）调用densor，得到输出值out</p>
+<p>（6）将每个时间步的输出值进行保存</p>
+<p>（7）最终生成模型：model=Model(inputs=[X,a0,c0],outputs=outputs)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">djmodel</span><span class="params">(T_x,n_a,n_values)</span>:</span></span><br><span class="line">	<span class="comment">#定义输入数据的维度</span></span><br><span class="line">	X=Input((T_x,n_values))</span><br><span class="line">	a0=Input(shape=(n_a,),name=<span class="string">'a0'</span>)</span><br><span class="line">	c0=Input(shape=(n_a,),name=<span class="string">'c0'</span>)</span><br><span class="line">	a=a0</span><br><span class="line">	c=c0</span><br><span class="line"></span><br><span class="line">	outputs=[]</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> t <span class="keyword">in</span> range(T_x):</span><br><span class="line">		x=Lambda(<span class="keyword">lambda</span> x:X[:,t,])(X)</span><br><span class="line">		x=reshapor(x)</span><br><span class="line"></span><br><span class="line">		a,_,c=LSTM_cell(x,initial_state=[a,c])</span><br><span class="line"></span><br><span class="line">		out=densor(a)</span><br><span class="line"></span><br><span class="line">		outputs.append(out)</span><br><span class="line">	model=Model(inputs=[X,a0,c0],outputs=outputs)</span><br><span class="line">	<span class="keyword">return</span> model</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译并训练模型"><a href="#编译并训练模型" class="headerlink" title="编译并训练模型"></a>编译并训练模型</h3><p>（1）编译模型，指定优化算法（包含其餐宿）、损失和需要打印的准确度</p>
+<p>（2）定义初始伪激活值，伪记忆细胞（零向量）</p>
+<p>（3）将之前的数据集放入模型中训练，并使用ecophs指定迭代次数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#编译模型</span></span><br><span class="line">m,T_x,_=X.shape</span><br><span class="line">model=djmodel(T_x,n_a,n_values)</span><br><span class="line">opt=Adam(lr=<span class="number">0.01</span>,beta_1=<span class="number">0.9</span>,beta_2=<span class="number">0.99</span>,decay=<span class="number">0.01</span>)</span><br><span class="line">model.compile(optimizer=opt,loss=<span class="string">"categorical_crossentropy"</span>,metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"></span><br><span class="line">a0=np.zeros((m,n_a))</span><br><span class="line">c0=np.zeros((m,n_a))</span><br><span class="line"></span><br><span class="line"><span class="comment">#训练模型</span></span><br><span class="line">start=time.clock()</span><br><span class="line">model.fit([X,a0,c0],list(Y),epochs=<span class="number">100</span>)</span><br><span class="line">end=time.clock()</span><br><span class="line">print(<span class="string">"模型训练时间："</span>,end-start)</span><br></pre></td></tr></table></figure>
+
+<h3 id="采样和预测"><a href="#采样和预测" class="headerlink" title="采样和预测"></a>采样和预测</h3><p>采样</p>
+<p>（1）采用已经训练好的模型的lstm单元，densor输出单元</p>
+<p>（2）定义初始输入、伪激活值，伪记忆细胞（零向量）</p>
+<p>（3）lstm单元：在每个时间步，根据lstm单元得出激活值和记忆细胞值</p>
+<p>（4）densor单元：根据激活值得到输出，</p>
+<p>（5）定义一个Lambda层，将输出转换为独热向量，作为下一个时间步的输入：</p>
+<blockquote>
+<p>x=Lambda(one_hot)(out)</p>
+<p>def one_hot(x):<br>    x = K.argmax(x)<br>    x = tf.one_hot(x, 78)<br>    x = RepeatVector(1)(x)<br>    return x</p>
 </blockquote>
-</li>
-</ul>
-<p>标准BP算法：上述算法是对每个样本更新权值，属于标准BP算法，参数更新的频繁<br>累积BP算法：当读取完所有样本之后才更新参数，参数更新的频率低<br>区别：累积BP算法在误差下降到一定阶段，下降回非常缓慢，所以往往标准BP算法能更快得到较好解。<br><em>使用标准BP算法：对每个样本更新权值</em></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">//输出层</span><br><span class="line">for(int k=0;k&lt;outSum;k++)</span><br><span class="line">&#123;</span><br><span class="line">    //与实际输出的偏差</span><br><span class="line">    qq[k]=(yd[k]-x2[k])*x2[k]*(1-x2[k]);</span><br><span class="line">    for (int j = 0; j&lt; hideSum; ++j)</span><br><span class="line">        //调整隐藏层到输出层之间的连接权</span><br><span class="line">        w1[j][k]+=rate_w1*qq[k]*x1[j];</span><br><span class="line">&#125;</span><br><span class="line">//隐藏层</span><br><span class="line">for(int j=0;j&lt;hideSum;j++)</span><br><span class="line">&#123;</span><br><span class="line">    pp[j]=0;</span><br><span class="line">    //隐藏层的偏差</span><br><span class="line">    for (int k = 0; k&lt; outSum; k++)</span><br><span class="line">        pp[j]=pp[j]+qq[k]*w1[j][k];  //隐藏层的偏差和后面所有连接的对应输出层都有关系</span><br><span class="line">    pp[j]=pp[j]*x1[j]*(1-x1[j]);</span><br><span class="line">   for (int i = 0; i &lt; inSum; ++i)</span><br><span class="line">        //调整输入层到隐藏层之间的连接权</span><br><span class="line">        w[i][j]+=rate_w*pp[j]*x[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终得到采样后的模型结果，通过输入的LSTM_cell单元，densor单元，字典长度，隐藏层大小，输出值大小得到采样的结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#采样与预测</span></span><br><span class="line"><span class="comment">#采样</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">music_inference_model</span><span class="params">(LSTM_cell,densor,n_values,n_a,T_y)</span>:</span></span><br><span class="line">	<span class="comment">#T_y时间步长</span></span><br><span class="line">	x0=Input((<span class="number">1</span>,n_values))</span><br><span class="line">	a0=Input(shape=(n_a,),name=<span class="string">'a0'</span>)</span><br><span class="line">	c0=Input(shape=(n_a,),name=<span class="string">'c0'</span>)</span><br><span class="line">	a=a0</span><br><span class="line">	c=c0</span><br><span class="line">	x=x0</span><br><span class="line"></span><br><span class="line">	outputs=[]</span><br><span class="line">	<span class="keyword">for</span> t <span class="keyword">in</span> range(T_y):</span><br><span class="line">		a,_,c=LSTM_cell(x,initial_state=[a,c])</span><br><span class="line">		out=densor(a)</span><br><span class="line">		<span class="comment">#上一个输出作为下一个输出入</span></span><br><span class="line">		x=Lambda(one_hot)(out)</span><br><span class="line">		outputs.append(out)</span><br><span class="line">	inference_model=Model(inputs=[x0,a0,c0],outputs=outputs)</span><br><span class="line">	<span class="keyword">return</span> inference_model</span><br><span class="line"></span><br><span class="line">inference_model=music_inference_model(LSTM_cell,densor,n_values,n_a,T_y=<span class="number">50</span>)</span><br><span class="line">x_initializer=np.zeros((<span class="number">1</span>,<span class="number">1</span>,n_values))</span><br><span class="line">a_initializer=np.zeros((<span class="number">1</span>,n_a))</span><br><span class="line">c_initializer=np.zeros((<span class="number">1</span>,n_a))</span><br></pre></td></tr></table></figure>
 
-<p><em>使用累积BP算法：遍历完所有样本再更新权值<br>增加权值修改矩阵，将误差进行累加</em></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">//输出层</span><br><span class="line">for(int k=0;k&lt;outSum;k++)</span><br><span class="line">&#123;</span><br><span class="line">    //与实际输出的偏差</span><br><span class="line">    qq[k]=(yd[k]-x2[k])*x2[k]*(1-x2[k]);</span><br><span class="line">    for (int j = 0; j&lt; hideSum; ++j)</span><br><span class="line">    &#123;</span><br><span class="line">        //调整隐藏层到输出层之间的连接权</span><br><span class="line">        chg_w2[j][k]+=rate_w1*qq[k]*x1[j];</span><br><span class="line">        chg_b2[k]+=rate_b2*qq[k];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//隐藏层</span><br><span class="line">for(int j=0;j&lt;hideSum;j++)</span><br><span class="line">&#123;</span><br><span class="line">    pp[j]=0;</span><br><span class="line">    //隐藏层的偏差</span><br><span class="line">    for (int k = 0; k&lt; outSum; k++)</span><br><span class="line">    &#123;</span><br><span class="line">        pp[j]=pp[j]+qq[k]*w1[j][k];  //隐藏层的偏差和后面所有连接的对应输出层都有关系</span><br><span class="line">    &#125;</span><br><span class="line">    pp[j]=pp[j]*x1[j]*(1-x1[j]);</span><br><span class="line">   for (int i = 0; i &lt; inSum; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        //调整输入层到隐藏层之间的连接权</span><br><span class="line">        chg_w1[i][j]=chg_w1[i][j]+rate_w1*pp[j]*x[i];</span><br><span class="line">        chg_b1[j]+=rate_b1*pp[j];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h1 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h1><table>
-<thead>
-<tr>
-<th align="left">对比</th>
-<th align="left">标准BP算法</th>
-<th align="left">累积BP算法</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">迭代次数</td>
-<td align="left">548</td>
-<td align="left">348</td>
-</tr>
-<tr>
-<td align="left">训练平均误差</td>
-<td align="left">小于1e-5</td>
-<td align="left">小于1e-5</td>
-</tr>
-<tr>
-<td align="left">识别结果</td>
-<td align="left">100%</td>
-<td align="left">100%</td>
-</tr>
-</tbody></table>
-<p>使用标准BP算法和累积BP算法识别率都能达到100%，但是因数据量小，使用累积BP 算法训练时间更短。</p>
-<hr>
-<h1 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h1><ul>
-<li>如果将长边短边合成一条边，效果还是一样吗？<br>将数据集中长边L1和短边L2相加得到叶子的长为L，输入的属性列变为长L,宽W,面积area<br>网络结构采取上述结构，训练效果如下图：<table>
-<thead>
-<tr>
-<th align="left">对比</th>
-<th align="left">标准BP算法</th>
-<th align="left">累积BP算法</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">迭代次数</td>
-<td align="left">566</td>
-<td align="left">717</td>
-</tr>
-<tr>
-<td align="left">训练平均误差</td>
-<td align="left">小于1e-5</td>
-<td align="left">小于1e-5</td>
-</tr>
-<tr>
-<td align="left">识别结果</td>
-<td align="left">94.5%</td>
-<td align="left">97.3%</td>
-</tr>
-</tbody></table>
-</li>
-</ul>
-<p>因实验所用的叶片有破损存在，直接用长边加上短边得到的叶片长度存在一定误差，因此使用BP算法时，识别结果略有下降.<br>使用标准BP算法和累积BP算法识别率都能达到100%，但是因数据量小，使用累积BP 算法训练时间更短。</p>
+<p>预测</p>
+<p>（1）根据采样的模型，输入的样本，激活值、记忆单元</p>
+<p>（2）使用采样模型预测，得到输出值</p>
+<p>（3）使用argmax取最大的索引</p>
+<p>（4）最终将输出表示为独热向量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#预测</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict_and_sanmple</span><span class="params">(inference_model,x_initializer=x_initializer,a_initializer=a_initializer,c_initializer=c_initializer)</span>:</span></span><br><span class="line">	<span class="comment">#模型预测</span></span><br><span class="line">	pred=inference_model.predict([x_initializer,a_initializer,c_initializer])</span><br><span class="line">	<span class="comment">#取最大值</span></span><br><span class="line">	pred_value=np.argmax(pred,axis=<span class="number">-1</span>)</span><br><span class="line">	<span class="comment">#转换为独热向量</span></span><br><span class="line">	one_hot=to_categorical(pred_value,num_classes=n_values)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> one_hot,pred_value</span><br><span class="line"></span><br><span class="line">results,indices=predict_and_sanmple(inference_model,x_initializer,a_initializer,c_initializer)</span><br><span class="line">print(<span class="string">"np.argmax(results[12]) ="</span>, np.argmax(results[<span class="number">12</span>]))</span><br><span class="line">print(<span class="string">"np.argmax(results[17]) ="</span>, np.argmax(results[<span class="number">17</span>]))</span><br><span class="line">print(<span class="string">"list(indices[12:18]) ="</span>, list(indices[<span class="number">12</span>:<span class="number">18</span>]))</span><br></pre></td></tr></table></figure>
+
+<p>预测结果：</p>
+<p>np.argmax(results[12]) = 72<br>np.argmax(results[17]) = 39<br>list(indices[12:18]) = [array([72]), array([39]), array([46]), array([57]), array([72]), array([39])]</p>
+<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p><code>out_stream=generate_music(inference_model)</code>，利用已经生成的模型得到的采样结果在本地生成即兴的音乐，序列模型生成音乐值，采用额外库函数生成midi文件。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200619122826.png" alt></p>
+<p>可以利用在线midi转mp3工具：<a href="https://www.ofoct.com/audio-converter/convert-midi-to-mp3-or-wav-ogg-aac-wma.html，转换文件格式，并进行试听。" target="_blank" rel="external nofollow noopener noreferrer">https://www.ofoct.com/audio-converter/convert-midi-to-mp3-or-wav-ogg-aac-wma.html，转换文件格式，并进行试听。</a></p>
 
     </div>
 
@@ -481,21 +414,21 @@
           
           <div class="post-tags">
               <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 神经网络</a>
-              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+              <a href="/tags/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 循环神经网络</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
+                <a href="/blogs/rnn1DN/" rel="next" title="序列模型RNN——构建字符级语言模型">
+                  <i class="fa fa-chevron-left"></i> 序列模型RNN——构建字符级语言模型
+                </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/blogs/future-futuretask/" rel="prev" title="future与futuretask用法区别">
-                  future与futuretask用法区别 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -535,7 +468,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据采集"><span class="nav-number">2.</span> <span class="nav-text">数据采集</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bp网络设计"><span class="nav-number">3.</span> <span class="nav-text">bp网络设计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结果分析"><span class="nav-number">4.</span> <span class="nav-text">结果分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#思考"><span class="nav-number">5.</span> <span class="nav-text">思考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#步骤"><span class="nav-number">2.</span> <span class="nav-text">步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#导入数据"><span class="nav-number">2.1.</span> <span class="nav-text">导入数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用keras搭建基本神经单元"><span class="nav-number">2.2.</span> <span class="nav-text">利用keras搭建基本神经单元</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#搭建模型"><span class="nav-number">2.3.</span> <span class="nav-text">搭建模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译并训练模型"><span class="nav-number">2.4.</span> <span class="nav-text">编译并训练模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#采样和预测"><span class="nav-number">2.5.</span> <span class="nav-text">采样和预测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果"><span class="nav-number">3.</span> <span class="nav-text">结果</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
