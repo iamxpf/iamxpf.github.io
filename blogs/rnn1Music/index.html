@@ -56,16 +56,16 @@
   };
 </script>
 
-  <meta name="description" content="为了解决梯度消失和获得更深层的连接，采用keras.layers》recurrent中的LSTM模型构建神经单元。问题描述利用已有的音乐片段，搭建能够生成即兴音乐的模型。步骤导入数据导入本地的原始音乐，并从中提取音节和音调这里的x的维度为（m,T_x,n_values），m代表样本个数，T_x代表时间步，n_values代表字典大小，每个样本被表示成n_values大小的独热向量，这里隐藏层大小设">
+  <meta name="description" content="为了解决梯度消失和获得更深层的连接，采用keras.layers.recurrent中的LSTM模型构建神经单元。问题描述利用已有的音乐片段，搭建能够生成即兴音乐的模型。步骤导入数据导入本地的原始音乐，并从中提取音节和音调这里的x的维度为（m,T_x,n_values），m代表样本个数，T_x代表时间步，n_values代表字典大小，每个样本被表示成n_values大小的独热向量，这里隐藏层大小设">
 <meta name="keywords" content="神经网络,循环神经网络">
 <meta property="og:type" content="article">
 <meta property="og:title" content="序列模型RNN——构建即兴演奏的爵士音乐的LSTM模型">
 <meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;rnn1Music&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="为了解决梯度消失和获得更深层的连接，采用keras.layers》recurrent中的LSTM模型构建神经单元。问题描述利用已有的音乐片段，搭建能够生成即兴音乐的模型。步骤导入数据导入本地的原始音乐，并从中提取音节和音调这里的x的维度为（m,T_x,n_values），m代表样本个数，T_x代表时间步，n_values代表字典大小，每个样本被表示成n_values大小的独热向量，这里隐藏层大小设">
+<meta property="og:description" content="为了解决梯度消失和获得更深层的连接，采用keras.layers.recurrent中的LSTM模型构建神经单元。问题描述利用已有的音乐片段，搭建能够生成即兴音乐的模型。步骤导入数据导入本地的原始音乐，并从中提取音节和音调这里的x的维度为（m,T_x,n_values），m代表样本个数，T_x代表时间步，n_values代表字典大小，每个样本被表示成n_values大小的独热向量，这里隐藏层大小设">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200619122826.png">
-<meta property="og:updated_time" content="2020-06-19T06:32:32.868Z">
+<meta property="og:updated_time" content="2020-06-19T06:34:17.939Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200619122826.png">
 
@@ -170,7 +170,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">43</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">44</span></a>
 
   </li>
         <li class="menu-item menu-item-sitemap">
@@ -259,7 +259,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-06-19 14:31:48 / 修改时间：14:32:32" itemprop="dateCreated datePublished" datetime="2020-06-19T14:31:48+08:00">2020-06-19</time>
+              <time title="创建时间：2020-06-19 14:31:48 / 修改时间：14:34:17" itemprop="dateCreated datePublished" datetime="2020-06-19T14:31:48+08:00">2020-06-19</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -321,7 +321,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>为了解决梯度消失和获得更深层的连接，采用keras.layers》recurrent中的LSTM模型构建神经单元。</p><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>利用已有的音乐片段，搭建能够生成即兴音乐的模型。</p><h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="导入数据"><a href="#导入数据" class="headerlink" title="导入数据"></a>导入数据</h3><p>导入本地的原始音乐，并从中提取音节和音调</p><p>这里的x的维度为（m,T_x,n_values），m代表样本个数，T_x代表时间步，n_values代表字典大小，每个样本被表示成n_values大小的独热向量，这里隐藏层大小设置为64，即n_a=64。</p><a id="more"></a>
+        <p>为了解决梯度消失和获得更深层的连接，采用keras.layers.recurrent中的LSTM模型构建神经单元。</p><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>利用已有的音乐片段，搭建能够生成即兴音乐的模型。</p><h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="导入数据"><a href="#导入数据" class="headerlink" title="导入数据"></a>导入数据</h3><p>导入本地的原始音乐，并从中提取音节和音调</p><p>这里的x的维度为（m,T_x,n_values），m代表样本个数，T_x代表时间步，n_values代表字典大小，每个样本被表示成n_values大小的独热向量，这里隐藏层大小设置为64，即n_a=64。</p><a id="more"></a>
 
 
 
@@ -372,7 +372,7 @@
 <p>np.argmax(results[12]) = 72<br>np.argmax(results[17]) = 39<br>list(indices[12:18]) = [array([72]), array([39]), array([46]), array([57]), array([72]), array([39])]</p>
 <h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p><code>out_stream=generate_music(inference_model)</code>，利用已经生成的模型得到的采样结果在本地生成即兴的音乐，序列模型生成音乐值，采用额外库函数生成midi文件。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200619122826.png" alt></p>
-<p>可以利用在线midi转mp3工具：<a href="https://www.ofoct.com/audio-converter/convert-midi-to-mp3-or-wav-ogg-aac-wma.html，转换文件格式，并进行试听。" target="_blank" rel="external nofollow noopener noreferrer">https://www.ofoct.com/audio-converter/convert-midi-to-mp3-or-wav-ogg-aac-wma.html，转换文件格式，并进行试听。</a></p>
+<p>可以利用在线midi转mp3工具：<a href="https://www.ofoct.com/audio-converter/convert-midi-to-mp3-or-wav-ogg-aac-wma.html" target="_blank" rel="external nofollow noopener noreferrer">https://www.ofoct.com/audio-converter/convert-midi-to-mp3-or-wav-ogg-aac-wma.html</a> 转换文件格式，并进行试听。</p>
 
     </div>
 
@@ -429,6 +429,9 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
+                <a href="/blogs/rnn2/" rel="prev" title="序列模型RNN——使用词嵌入搭建NLP系统">
+                  序列模型RNN——使用词嵌入搭建NLP系统 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
       </footer>
@@ -483,7 +486,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-count">44</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -563,13 +566,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">184k</span>
+    <span title="站点总字数">193k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">2:47</span>
+    <span title="站点阅读时长">2:56</span>
 </div>
   <div class="addthis_inline_share_toolbox">
     <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
