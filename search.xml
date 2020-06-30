@@ -1,6 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>序列模型RNN——语音识别与触发字检测</title>
+    <url>/blogs/rnn3TD/</url>
+    <content><![CDATA[<h2 id="语言识别"><a href="#语言识别" class="headerlink" title="语言识别"></a>语言识别</h2><h3 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h3><p>输入一段语音，输出语音中文字。</p><p>（1）预处理：将输入的语音转换为频谱图，横轴显示时间，纵轴表示当前时间步的频率</p><p>（2）搭建模型：将预处理后的频谱图传入网络得到预测文字</p><h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><p>（1）使用注意力模型</p><p>根据上下文向量和隐藏层的值每次输出一个文本</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630152005.png" alt></p><p>（2）使用CTC损失函数</p><p>主要是使用RNN中多对多模型，Tx=Ty，允许输出空格和重复的字符，保证输入输出相同。</p><a id="more"></a>
+
+
+
+
+
+
+
+<p>对于预测的输出，可以将空格之间的字符进行折叠得到最终的结果</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630152045.png" alt></p>
+<h2 id="触发字检测"><a href="#触发字检测" class="headerlink" title="触发字检测"></a>触发字检测</h2><p>对输入的一段音频，当未出现触发字时标签为0，出现触发字时标签为1。</p>
+<p>防止训练集不平衡（防止0过多）：在出现触发字的时间t后，设置连续的一段音频标签为1。</p>
+<p>网络结构采用RNN模型</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630152559.png" alt></p>
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>当音频中出现“active”触发词时，在其后面加上一段蜂鸣声</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>（1）构建训练集（单一训练样本的构建</p>
+<p>由于语音数据较为复杂，直接获取在嘈杂背景音下的说话声音较为困难，因此选择录制没有背景音的声音（正例和反例）和背景音，再进行合成，就很容易的有了在嘈杂背景下的说话声音。所以需要随机再背景音中插入正例（说active）和反例（不说active）的声音。</p>
+<p>使用pydub合成音频大小为10000，原始音频大小为10秒，10/10000=0.001s=1ms，10秒离散成1ms，即10秒音频有10000个时间步</p>
+<p>原始音频大小44100，频谱图得到的时间步Tx=5511，每个时间步的频率为101</p>
+<p>1°随机选择插入的位置</p>
+<p>根据片段的大小，在1~10000-片段大小内随机选择位置</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#随机选取片段时间</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_random_time_segment</span><span class="params">(segment_time_ms)</span>:</span></span><br><span class="line">	segment_start=np.random.randint(low=<span class="number">0</span>,high=<span class="number">10000</span>-segment_time_ms)</span><br><span class="line">	segment_end=segment_start+segment_time_ms<span class="number">-1</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> (segment_start,segment_end)</span><br></pre></td></tr></table></figure>
+
+<p>2°判断是否和之前插入位置重叠</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#判断有无和之前时间重叠</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">is_overlapping</span><span class="params">(segment_time,previous_time)</span>:</span></span><br><span class="line">	segment_start,segment_end=segment_time</span><br><span class="line">	overlap=<span class="literal">False</span></span><br><span class="line">	<span class="keyword">for</span> previous_start,previous_end <span class="keyword">in</span> previous_time:</span><br><span class="line">		<span class="keyword">if</span> segment_start&lt;=previous_end <span class="keyword">and</span> segment_end&gt;=previous_start:</span><br><span class="line">			overlap=<span class="literal">True</span></span><br><span class="line">	<span class="keyword">return</span> overlap</span><br></pre></td></tr></table></figure>
+
+<p>3°根据选择的背景音插入正例或反例</p>
+<p>随机选择插入位置，当不重复时，将插入时间归为已插入，同时将音频按照起始位置插入到背景音乐中</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#选取片段</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">insert_audio_clip</span><span class="params">(background,audio_clip,previous_time)</span>:</span></span><br><span class="line">	<span class="comment">#随机选一个时间</span></span><br><span class="line">	segment_time_ms=len(audio_clip)</span><br><span class="line">	segment_time=get_random_time_segment(segment_time_ms)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#判断是否重叠</span></span><br><span class="line">	<span class="keyword">while</span> is_overlapping(segment_time,previous_time):</span><br><span class="line">		segment_time=get_random_time_segment(segment_time_ms)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#不重叠的时间段</span></span><br><span class="line">	previous_time.append(segment_time)</span><br><span class="line"></span><br><span class="line">	new_background=background.overlay(audio_clip,position=segment_time[<span class="number">0</span>])<span class="comment">#要插入的音频和位置</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> new_background,segment_time</span><br></pre></td></tr></table></figure>
+
+<p>4°将插入位置的标签设置为1</p>
+<p>当插入位置没有到最后时，将插入位置后面的49个位置全部设置为1（平衡训练集中的0）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#设置标签项 在t位置为1，后面49个时间步设置为1</span></span><br><span class="line"><span class="comment">#如果 “activate” 在时间 t步结束 , 则设置 y⟨t+1⟩=1以及后面额外的连续49个的值为 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#以ms为单位的段的结束时间</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">insert_ones</span><span class="params">(y,segment_time_ms)</span>:</span></span><br><span class="line">	segment_end_y=int(segment_time_ms*Ty/<span class="number">10000</span>)</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(segment_end_y+<span class="number">1</span>,segment_end_y+<span class="number">51</span>):</span><br><span class="line">		<span class="keyword">if</span> i&lt;Ty:</span><br><span class="line">			y[<span class="number">0</span>,i]=<span class="number">1</span></span><br><span class="line">	<span class="keyword">return</span> y</span><br></pre></td></tr></table></figure>
+
+<p>5°生成单个训练样本</p>
+<p>从正例或者反例中随机选择几个片段，并按照选择片段的个数，随机选择插入的片段位置。</p>
+<p>将选择的片段随机插入，并设置好标签项。</p>
+<p>最终将标准化后的音频导出，这是就构造了一个训练样本。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#生成训练集</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_training_example</span><span class="params">(background,activates,negtives)</span>:</span></span><br><span class="line">	np.random.seed(<span class="number">18</span>)</span><br><span class="line"></span><br><span class="line">	background=background<span class="number">-20</span> <span class="comment">#使噪音安静些</span></span><br><span class="line"></span><br><span class="line">	y=np.zeros((<span class="number">1</span>,Ty))</span><br><span class="line">	previous_time=[]</span><br><span class="line"></span><br><span class="line">	<span class="comment">#正例 从列表中选择0~4随机的正例</span></span><br><span class="line">	num_of_activites=np.random.randint(<span class="number">0</span>,<span class="number">5</span>)</span><br><span class="line">	print(num_of_activites)</span><br><span class="line">	random_indies=np.random.randint(len(activates),size=num_of_activites)</span><br><span class="line">	print(random_indies)</span><br><span class="line">	random_activtes=[activates[i] <span class="keyword">for</span> i <span class="keyword">in</span> random_indies]</span><br><span class="line"></span><br><span class="line">	<span class="comment">#对每个选取的正例片段插入背景中，并更新标签</span></span><br><span class="line">	<span class="keyword">for</span> random_activte <span class="keyword">in</span> random_activtes:</span><br><span class="line">		background,segment_time=insert_audio_clip(background,random_activte,previous_time)</span><br><span class="line">		segment_start,segment_end=segment_time</span><br><span class="line">		y=insert_ones(y,segment_end)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#反例</span></span><br><span class="line">	num_of_negatives=np.random.randint(<span class="number">0</span>,<span class="number">3</span>)</span><br><span class="line">	random_indies=np.random.randint(len(negatives),size=num_of_negatives)</span><br><span class="line">	random_negatives=[negatives[i] <span class="keyword">for</span> i <span class="keyword">in</span> random_indies]</span><br><span class="line"></span><br><span class="line">	<span class="comment">#对每个选取的正例片段插入背景中，并更新标签</span></span><br><span class="line">	<span class="keyword">for</span> random_negative <span class="keyword">in</span> random_negatives:</span><br><span class="line">		background,_=insert_audio_clip(background,random_negative,previous_time)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#标准化剪辑的音量</span></span><br><span class="line">	background=match_target_amplitude(background,<span class="number">-20</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#保存</span></span><br><span class="line">	file_handle=background.export(<span class="string">'train1'</span>+<span class="string">'.wav'</span>,format=<span class="string">'wav'</span>)</span><br><span class="line">	print(<span class="string">'train1.wav已保存'</span>)</span><br><span class="line">	<span class="comment"># print(file_handle)</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#声谱图</span></span><br><span class="line">	x=graph_spectrogram(<span class="string">'train1.wav'</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> x,y</span><br></pre></td></tr></table></figure>
+
+<p>（2）构建模型</p>
+<p>为节省时间，这里训练集使用已处理好的样本，开发集使用真实音频并手动标记，因为系统需要在真实音频下使用。</p>
+<p>使用np.load导入训练集和开发集</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#导入已处理好的训练集和开发集</span></span><br><span class="line">X=np.load(<span class="string">'./XY_train/X.npy'</span>)</span><br><span class="line">Y=np.load(<span class="string">'./XY_train/Y.npy'</span>)</span><br><span class="line">X_dev=np.load(<span class="string">'./XY_dev/X_dev.npy'</span>)</span><br><span class="line">Y_dev=np.load(<span class="string">'./XY_dev/Y_dev.npy'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>按照如图结构构建模型，采用GRU单元</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630155058.jpg" alt></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#使用两个GRU建立模型</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">model</span><span class="params">(input_shape)</span>:</span></span><br><span class="line">	X_input=Input(shape=input_shape)</span><br><span class="line">	X=Conv1D(<span class="number">196</span>,<span class="number">15</span>,strides=<span class="number">4</span>)(X_input)</span><br><span class="line">	X=BatchNormalization()(X)</span><br><span class="line">	X=Activation(<span class="string">'relu'</span>)(X)</span><br><span class="line">	X=Dropout(<span class="number">0.8</span>)(X)</span><br><span class="line"></span><br><span class="line">	X=GRU(<span class="number">128</span>,return_sequences=<span class="literal">True</span>)(X)</span><br><span class="line">	X=Dropout(<span class="number">0.8</span>)(X)</span><br><span class="line">	X=BatchNormalization()(X)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	X=GRU(<span class="number">128</span>,return_sequences=<span class="literal">True</span>)(X)</span><br><span class="line">	X=Dropout(<span class="number">0.8</span>)(X)</span><br><span class="line">	X=BatchNormalization()(X)</span><br><span class="line">	X=Dropout(<span class="number">0.8</span>)(X)</span><br><span class="line"></span><br><span class="line">	X=TimeDistributed(Dense(<span class="number">1</span>,activation=<span class="string">'sigmoid'</span>))(X)</span><br><span class="line"></span><br><span class="line">	model=Model(inputs=X_input,outputs=X)</span><br><span class="line">	<span class="keyword">return</span> model</span><br></pre></td></tr></table></figure>
+
+<p>（3）训练模型</p>
+<p>为了快速建立可用系统，可以先导入预训练的模型，再编译模型（可以自定义梯度下降函数及参数）、训练模型，这时仅训练一次即可</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#编译及训练模型(导入下载的模型，再编译，训练一次)</span></span><br><span class="line">input_shape=(Tx,n_freq)</span><br><span class="line">model=model(input_shape)</span><br><span class="line">model=load_model(<span class="string">'./models/tr_model.h5'</span>)</span><br><span class="line">opt=Adam(lr=<span class="number">0.0001</span>,beta_1=<span class="number">0.9</span>,beta_2=<span class="number">0.999</span>,decay=<span class="number">0.01</span>)</span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,optimizer=opt,metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line">model.fit(X,Y,epochs=<span class="number">1</span>,batch_size=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#使用开发集预测</span></span><br><span class="line">loss,acc=model.evaluate(X_dev,Y_dev)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>loss: 0.3650805354118347<br>acc: 0.9451636075973511</p>
+</blockquote>
+<p>正确率达94.5%，此时模型根据输入的音频能很好的确定active触发词的位置</p>
+<p>（4）在active触发词后加上峰鸣声</p>
+<p>1°对输入数据预测</p>
+<p>将输入的音频转换为频谱图，由于频谱图输出的是（频率，时间步），需要调换坐标轴，接着使用模型预测，得到输出值，输出值打印如图：（输出值中间代表每个时间步的输出）</p>
+<p>上面是输入音频的频谱图，下面是预测输出</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630160203.png" alt></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#进行预测</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">detect_triggerword</span><span class="params">(filename)</span>:</span></span><br><span class="line">	plt.subplot(<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">	x=graph_spectrogram(filename)</span><br><span class="line">	<span class="comment">#输出n_freq,Tx</span></span><br><span class="line"></span><br><span class="line">	x=x.swapaxes(<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">	x=np.expand_dims(x,axis=<span class="number">0</span>)</span><br><span class="line">	predictions=model.predict(x) <span class="comment">#中间对应每个时间步的输出</span></span><br><span class="line"></span><br><span class="line">	plt.subplot(<span class="number">2</span>,<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">	plt.plot(predictions[<span class="number">0</span>,:,<span class="number">0</span>])</span><br><span class="line">	plt.ylabel(<span class="string">'probability'</span>)</span><br><span class="line">	plt.show()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> predictions</span><br></pre></td></tr></table></figure>
+
+<p>2°找到大于阈值的预测值位置加入峰鸣声</p>
+<p>由于active触发词后49个位置都有1，为了不重复加入峰鸣声，设置每75步加入一次峰鸣</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 当出现一次触发词就插入峰鸣声音，为了不一直有声音，设置连续步</span></span><br><span class="line">chime_file=<span class="string">'audio_examples/chime.wav'</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">chime_on_activate</span><span class="params">(filename,predictions,thresold)</span>:</span></span><br><span class="line">	audio_clip=AudioSegment.from_wav(filename)</span><br><span class="line">	chime=AudioSegment.from_wav(chime_file)</span><br><span class="line">	Ty=predictions.shape[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">	countSteps=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(Ty):</span><br><span class="line">		countSteps=countSteps+<span class="number">1</span></span><br><span class="line">		<span class="keyword">if</span> predictions[<span class="number">0</span>,i,<span class="number">0</span>]&gt;thresold <span class="keyword">and</span> countSteps&gt;<span class="number">75</span>:</span><br><span class="line">			audio_clip=audio_clip.overlay(chime,position=((i/Ty)*audio_clip.duration_seconds)*<span class="number">1000</span>)  <span class="comment">#1000是转换为s ms-&gt;s</span></span><br><span class="line">      countSteps=<span class="number">0</span></span><br><span class="line">	audio_clip.export(<span class="string">'clime_test1.wav'</span>,format=<span class="string">'wav'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>3°预处理音频为10秒</p>
+<p>设置静音大小10000，将输入音频前10000个插入，再进行保存</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#需要修剪音频在10秒之内</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">preprocess_audio</span><span class="params">(filename)</span>:</span></span><br><span class="line">	<span class="comment">#设置静音10000</span></span><br><span class="line">	silentaudio=AudioSegment.silent(duration=<span class="number">10000</span>)</span><br><span class="line">	<span class="comment">#保留文件前10秒</span></span><br><span class="line">	preaudio=AudioSegment.from_wav(filename)[:<span class="number">10000</span>]</span><br><span class="line">	audio_clip=silentaudio.overlay(preaudio)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#设置帧速率44100</span></span><br><span class="line">	audio_clip=audio_clip.set_frame_rate(<span class="number">44100</span>)</span><br><span class="line"></span><br><span class="line">	myfile=<span class="string">'myaudio1.wav'</span></span><br><span class="line">	audio_clip.export(myfile,format=<span class="string">'wav'</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> myfile</span><br></pre></td></tr></table></figure>
+
+<p>（5）结果</p>
+<blockquote>
+<p>myfile=preprocess_audio(‘./test1.wav’)<br>thresold=0.5 #峰鸣声没有添加，可以根据输出图调整阈值<br>predictions=detect_triggerword(myfile)<br>chime_on_activate(myfile,predictions,thresold)</p>
+</blockquote>
+<p>自己录制的音频13秒：</p>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="430" height="86" src="/Users/xpf/Desktop/学习资料/深度学习/编程作业/序列模型/3/Trigger\ word\ detection/test1.wav"></iframe>
+
+<video id="video" controls preload="none">
+    <source id="wav" src="/Users/xpf/Desktop/学习资料/深度学习/编程作业/序列模型/3/Trigger\ word\ detection/test1.wav">
+</video>
+
+<p>修剪之后10秒：</p>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="430" height="86" src="/Users/xpf/Desktop/学习资料/深度学习/编程作业/序列模型/3/Trigger\ word\ detection/myaudio1.wav"></iframe>
+
+<p>加入峰鸣之后：</p>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="430" height="86" src="/Users/xpf/Desktop/学习资料/深度学习/编程作业/序列模型/3/Trigger\ word\ detection/clime_test1.wav"></iframe>]]></content>
+      <categories>
+        <category>神经网络</category>
+      </categories>
+      <tags>
+        <tag>神经网络</tag>
+        <tag>循环神经网络</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>序列模型RNN——有条件的语言模型</title>
     <url>/blogs/rnn3MT/</url>
     <content><![CDATA[<h2 id="模型简介"><a href="#模型简介" class="headerlink" title="模型简介"></a>模型简介</h2><p>（1）sequence to sequence模型：根据给定的句子得到翻译的结果</p><p>模型由编码器和解码器构成：</p><p>编码器部分读入输入的句子中每个单词，每步不输出结果，仅在最后一步输出一个编码向量。</p><p>解码器部分接受编码部分传入的编码向量，每一步输出一个翻译单词即结果。</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630110532.png" alt></p><p>（2）image sequence模型：根据给出的图片输出一个描述</p><a id="more"></a>
@@ -3248,8 +3347,8 @@
         <category>java</category>
       </categories>
       <tags>
-        <tag>java</tag>
         <tag>多线程</tag>
+        <tag>java</tag>
         <tag>future</tag>
       </tags>
   </entry>
