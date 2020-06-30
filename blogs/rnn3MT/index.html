@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="模型简介（1）sequence to sequence模型：根据给定的句子得到翻译的结果模型由编码器和解码器构成：编码器部分读入输入的句子中每个单词，每步不输出结果，仅在最后一步输出一个编码向量。解码器部分接受编码部分传入的编码向量，每一步输出一个翻译单词即结果。（2）image sequence模型：根据给出的图片输出一个描述">
+<meta name="keywords" content="神经网络,循环神经网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="序列模型RNN——有条件的语言模型">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;rnn3MT&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="模型简介（1）sequence to sequence模型：根据给定的句子得到翻译的结果模型由编码器和解码器构成：编码器部分读入输入的句子中每个单词，每步不输出结果，仅在最后一步输出一个编码向量。解码器部分接受编码部分传入的编码向量，每一步输出一个翻译单词即结果。（2）image sequence模型：根据给出的图片输出一个描述">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630110532.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630110603.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630110905.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630111740.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630111404.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630112804.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630113356.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630114422.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630114434.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630114454.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630121532.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630121517.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630121548.png">
+<meta property="og:updated_time" content="2020-06-30T07:04:12.001Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200630110532.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/rnn3MT/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>序列模型RNN——有条件的语言模型 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">34</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">10</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/rnn3MT/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          序列模型RNN——有条件的语言模型
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-30 15:03:14 / 修改时间：15:04:12" itemprop="dateCreated datePublished" datetime="2020-06-30T15:03:14+08:00">2020-06-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
+                    <span itemprop="name">循环神经网络</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/rnn3MT/" class="post-meta-item leancloud_visitors" data-flag-title="序列模型RNN——有条件的语言模型" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/rnn3MT/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/rnn3MT/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="模型简介"><a href="#模型简介" class="headerlink" title="模型简介"></a>模型简介</h2><p>（1）sequence to sequence模型：根据给定的句子得到翻译的结果</p><p>模型由编码器和解码器构成：</p><p>编码器部分读入输入的句子中每个单词，每步不输出结果，仅在最后一步输出一个编码向量。</p><p>解码器部分接受编码部分传入的编码向量，每一步输出一个翻译单词即结果。</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630110532.png" alt></p><p>（2）image sequence模型：根据给出的图片输出一个描述</p><a id="more"></a>
+
+
+
+
+
+<p>模型由卷积网络和RNN模型构成：</p>
+<p>卷积网络部分去掉最后的预测值，保留至全连接层，输入的图片经过卷积网络最终得到一个描述图片的向量。</p>
+<p>RNN模型部分仅保留解码部分，接收卷积网络传入的描述向量，每一步输出一个翻译单词即结果。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630110603.png" alt></p>
+<h2 id="有条件的语言模型——机器翻译模型"><a href="#有条件的语言模型——机器翻译模型" class="headerlink" title="有条件的语言模型——机器翻译模型"></a>有条件的语言模型——机器翻译模型</h2><h3 id="语言模型"><a href="#语言模型" class="headerlink" title="语言模型"></a>语言模型</h3><p>基本的语言模型是输入x，直接输出y，结构模型同RNN模型中国的多对多模型</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630110905.png" alt></p>
+<h3 id="机器翻译模型"><a href="#机器翻译模型" class="headerlink" title="机器翻译模型"></a>机器翻译模型</h3><p>结构同sequence to sequence模型，由编码器和解码器构成，机器翻译会得到很多可能的翻译句子，解码器每步输出的结构都是为了让p(y|x)最大，即第一步时p(y1|x)，当输入单词是的得到y1的概率最大，第二步时由于接受第一步结果的输入p(y2|x,y1)，在输入单词和第一步输出结果的情况下概率最大，…以此类推，因此是有条件的模型。</p>
+<p>为了找到最准确的翻译，因此，目标为：要找到一个翻译句子使得条件概率最大，使得p(y^1,y^2….y^ty|x)最大：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630111740.jpg" alt></p>
+<p>即<img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630111404.png" alt></p>
+<h3 id="两种达到准确翻译的方法"><a href="#两种达到准确翻译的方法" class="headerlink" title="两种达到准确翻译的方法"></a>两种达到准确翻译的方法</h3><p>（1）贪心搜索</p>
+<p>在解码器部分，每一步的输出都选择当前最大概率输出的一个单词。</p>
+<p>但是根据概率公式看，贪心搜索得到的单词仅考虑当前最佳的一个结果，可能会因为前面的最佳而达不到后面最佳的单词，因此效果不是特别好。</p>
+<p>（2）Beam Search（束搜索）</p>
+<p>思路和贪心搜索类似，但是增加了束宽b，每一步输出都选概率最大的前b个单词。</p>
+<p>每一步是复制了三个同样的网络来评估得到的单词概率，当b=1时就退化成了贪心搜索。</p>
+<p>以b=3为例，在第一步选出的三个单词的基础上选择下一个单词时，就是复制了三个同样的网络，找到三个网络得到的单词中最大概率的前三个：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630112804.png" alt></p>
+<h3 id="改进Beam-Search（束搜索）"><a href="#改进Beam-Search（束搜索）" class="headerlink" title="改进Beam Search（束搜索）"></a>改进Beam Search（束搜索）</h3><p>由于束搜索最终需要让概率最大，是将每步概率相乘得到，概率在0~1之间属于很小的数，很多很小的数相乘会出现数值下溢，同时当出现短句子的时候往往概率大，原概率容易出现翻译成短句子的现象，因此需要进行长度归一化。</p>
+<p>（1）防止数值下溢：在概率之前加上log，因为log函数单调递增，当log函数增加，原函数也增加，所以无影响</p>
+<p>（2）防止出现翻译出来大量的短句子：在最终求和的概率前面加上归一化的系数Ty^alpha，这里alpha可以进行尝试，取值为1，是进行长度归一化，取值为0，则没有归一化，这里可以取折中的0.7或者尝试其他值。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630113356.png" alt></p>
+<p>束宽的选择：b越大，结果更好，但运行慢，b越小，结果会差，但运行快。需要合理选择</p>
+<h3 id="误差分析"><a href="#误差分析" class="headerlink" title="误差分析"></a>误差分析</h3><p>如何判断机器翻译模型的好坏：由于机器翻译模型有RNN模型和束搜索模型同时作用，需要合理判别。机器翻译模型最终目标为：argmax   p（y|x），两者的作用：</p>
+<p>（1）RNN模型：主要是为了能得到概率 p（y|x）</p>
+<p>（2）束搜索模型：找到最大的概率，argmax</p>
+<p>因此，当人工翻译概率为y * ，机器翻译为y^时:（同样可以列出表格，遍历开发集找到出错的样本进行分析）</p>
+<p>当p(y *|x) &gt;p(y^|x)，说明束搜索没有找到更大的概率，需要改进束搜索，选择更大的束宽b；</p>
+<p>当p(y *|x) &lt;=p(y^|x)，说明束搜索找到了大的概率，但给予人工翻译小的概率值，说明RNN模型计算概率存在问题，需要改RNN模型，增加正则化、增加更多训练数据或者尝试不同网络模型等方法。</p>
+<h3 id="Bleu得分"><a href="#Bleu得分" class="headerlink" title="Bleu得分"></a>Bleu得分</h3><p>一个单实数评估指标，能够加速算法性能。</p>
+<p>将机器翻译中的所有单词元组出现的概率相加，归一化后乘以惩罚项（防止过短的翻译）：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630114422.png" alt></p>
+<p>（1）BP</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630114434.png" alt></p>
+<p>当机器翻译长度比参考翻译长度长，则惩罚项不起作用，若短于参考翻译，则惩罚项起作用。</p>
+<p>（2）Pn</p>
+<p>Pn表示n元组单词的概率，n元组单词表示n个相邻的单词，概率为每个元组的单词的得分上限之和 / 所有元组单词在机器翻译中出现的次数：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630114454.png" alt></p>
+<p>其中得分上限是指每个元组的单词在几个人工翻译句子中出现的最大次数</p>
+<p>（3）总结</p>
+<p>Bleu得分可以用来评价机翻的好坏，代替人工方法进行自动评估。</p>
+<h2 id="Attention模型——更符合人的思维的机翻模型"><a href="#Attention模型——更符合人的思维的机翻模型" class="headerlink" title="Attention模型——更符合人的思维的机翻模型"></a>Attention模型——更符合人的思维的机翻模型</h2><h3 id="提出背景"><a href="#提出背景" class="headerlink" title="提出背景"></a>提出背景</h3><p>上述的机翻模型是需要编码器将所有句子读入，才进行翻译，当句子过长时，需要等的时间长，会出现考虑不到后面的句子Bleu得分低的情况，而且不符合人的思维。</p>
+<p>人的思维是读入一部分句子就进行翻译，因此提出了注意力模型。</p>
+<h3 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h3><p>整体结构</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630121532.png" alt></p>
+<p>说明：为了考虑前后单词的意思影响，需要采用双向RNN</p>
+<p>1°每个节点有正向激活值和反向激活值</p>
+<p>2°当输出第一个预测单词时，每个输入按照权重和激活值得到上下文向量</p>
+<p>3°根据上下文向量和前一个隐藏层的值得到当前预测值</p>
+<p>综上，实现了输入一段文字就实时输出预测的翻译单词。</p>
+<p>（1）一个输出神经元结构</p>
+<p>以时间t输出的y^t为例：</p>
+<p>首先按照权重乘以激活值求得上下文向量context，然后利用前一层的隐藏层的值s^t-1得到预测值</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630121517.png" alt></p>
+<p>（2）权重的得出</p>
+<p>权重取值如图所示，所有节点的权重加起来需要满足为1</p>
+<p>alpha&lt;t,t^`&gt;表示预测y^t需要放在a&lt;t^&gt;上的注意力数量，即权重，当前的权重和上一层的值和当前激活值有关，因此将二者传入网络。</p>
+<p>求权重的方法：</p>
+<p>构造小型的神经元进行计算，根据权重和上一个隐藏层值经过全连接层得到e的值，再连接一个全连接层求得式子的值，最后连接一个softmax激活函数，保证权重之和为1.</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630121548.png" alt></p>
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>将人类描述的日期转换为机器能识别的日期，即YYYY-MM-DD 10位表达法</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>（1）构建一个神经元的上下文：利用全局变量</p>
+<p>1°定义重复层：由于需要根据上一层的隐藏层值和当前激活值求得权重，所以需要按照Tx个时间步复制上一层的值</p>
+<p>2°定义连接层：将上一层隐藏层值和当前激活值连接</p>
+<p>3°定义全连接层层：将连接值传入小型网络求得中间值</p>
+<p>4°定义全连接层层：将中间值传入小型网络求得结果</p>
+<p>5°定义softmax层：为了保证权重求和为1，最后输出层采用softmax，输入权重</p>
+<p>6°定义点乘层：为了得到上下文context，将得到的权重和激活值相乘得到上下文向量</p>
+<p>总结：根据前一层的隐藏层的值，重复Tx次和激活值连接，经过两个全连接层得到权重，最后和激活值相乘得到上下文向量。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#对一个神经元求出其上下文</span></span><br><span class="line"><span class="comment">#设置全局变量 </span></span><br><span class="line">repeator=RepeatVector(Tx) <span class="comment">#重复</span></span><br><span class="line">concatenator=Concatenate(axis=<span class="number">-1</span>) <span class="comment">#连接</span></span><br><span class="line">densor1=Dense(<span class="number">10</span>,activation=<span class="string">'tanh'</span>)</span><br><span class="line">densor2=Dense(<span class="number">1</span>,activation=<span class="string">'relu'</span>)</span><br><span class="line">activator=Activation(softmax,name=<span class="string">"attention_weights"</span>)</span><br><span class="line">dotor=Dot(axes=<span class="number">1</span>) <span class="comment">#进行点积的轴的个数</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#上下文用到前一个隐藏层的值和当前的激活值</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">one_step_attention</span><span class="params">(a,s_prev)</span>:</span></span><br><span class="line">	<span class="comment">#要和Tx个a值相乘，需要重复</span></span><br><span class="line">	s_prev=repeator(s_prev)</span><br><span class="line">	concat=concatenator([a,s_prev])</span><br><span class="line"></span><br><span class="line">	<span class="comment">#利用两个全连接层求出权重</span></span><br><span class="line">	e=densor1(concat)</span><br><span class="line">	energies=densor2(e)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#保证权重求和为1</span></span><br><span class="line">	alpha=activator(energies)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#权重乘以激活值得到上下文</span></span><br><span class="line">	context=dotor([alpha,a])</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> context</span><br></pre></td></tr></table></figure>
+
+<p>（2）搭建模型：利用全局变量</p>
+<p>这里使用LSTM单元</p>
+<p>1°初始化网络：定义输入的X，LSTM单元的隐藏层的值s0，记忆细胞c0</p>
+<p>2°定义双向RNN——Bidiretional：根据双向RNN网络计算出激活值</p>
+<p>3°对于每个输出的时间步Ty，计算上下文的值</p>
+<p>4°定义LSTM：将上下文向量、上一层的隐藏层值、记忆细胞传入LSTM单元中</p>
+<p>5°定义Dense：将lstm的值传入全连接层得到当前时间步的输出</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#建立模型</span></span><br><span class="line"><span class="comment">#设置全局变量</span></span><br><span class="line">n_a=<span class="number">32</span></span><br><span class="line">n_s=<span class="number">64</span></span><br><span class="line">post_activation_LSTM_cell=LSTM(n_s,return_state=<span class="literal">True</span>)</span><br><span class="line">output_layer=Dense(len(machine_vocab),activation=softmax)</span><br><span class="line"><span class="comment">#return_sequences: 布尔值。是返回输出序列中的最后一个输出，还是全部序列。</span></span><br><span class="line"><span class="comment">#return_state: 布尔值。除了输出之外是否返回最后一个状态。</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">model</span><span class="params">(Tx,Ty,n_a,n_s,human_vocab_size,machine_vocab_size)</span>:</span></span><br><span class="line">	X=Input(shape=(Tx,human_vocab_size))</span><br><span class="line">	s0=Input(shape=(n_s,),name=<span class="string">'s0'</span>)</span><br><span class="line">	c0=Input(shape=(n_s,),name=<span class="string">'c0'</span>)</span><br><span class="line">	s=s0</span><br><span class="line">	c=c0 <span class="comment">#c为记忆细胞</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#n_a为输出维度</span></span><br><span class="line">	a=Bidirectional(LSTM(n_a,return_sequences=<span class="literal">True</span>),input_shape=(m,Tx,n_a*<span class="number">2</span>))(X)<span class="comment">#双向RNN</span></span><br><span class="line">	outputs=[]</span><br><span class="line"></span><br><span class="line">	<span class="comment">#输出序列长度Ty</span></span><br><span class="line">	<span class="comment">#每一步输出一个结果</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(Ty):</span><br><span class="line">		context=one_step_attention(a,s)</span><br><span class="line"></span><br><span class="line">		<span class="comment">#initial_state = [hidden state, cell state]</span></span><br><span class="line">		s,_,c=post_activation_LSTM_cell(context,initial_state=[s,c])</span><br><span class="line">		output=output_layer(s)</span><br><span class="line">		outputs.append(output)</span><br><span class="line">	model=Model(inputs=[X,s0,c0],outputs=outputs)</span><br><span class="line">	<span class="keyword">return</span> model</span><br></pre></td></tr></table></figure>
+
+<p>（3）结果</p>
+<p>这里设定输入的日期长度为30，即Tx=30，输入日期长度固定为10，即Ty=10</p>
+<p>为了快速建立可用系统，可以先导入预训练的权重，再编译模型（可以自定义梯度下降函数及参数）、训练模型，最终根据输入的数据得出结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">model=model(Tx,Ty,n_a,n_s,len(human_vocab),len(machine_vocab))</span><br><span class="line"><span class="comment"># model.summary()</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#编译模型</span></span><br><span class="line">model.load_weights(<span class="string">'models/model.h5'</span>)</span><br><span class="line">opt=Adam(lr=<span class="number">0.005</span>,beta_1=<span class="number">0.9</span>,beta_2=<span class="number">0.999</span>,decay=<span class="number">0.01</span>)</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>,optimizer=opt,metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"><span class="comment">#输入训练集训练模型</span></span><br><span class="line">s0=np.zeros((m,n_s))</span><br><span class="line">c0=np.zeros((m,n_s))</span><br><span class="line">outputs=list(Yoh.swapaxes(<span class="number">0</span>,<span class="number">1</span>)) <span class="comment">#轴交换</span></span><br><span class="line">model.fit([Xoh,s0,c0],outputs,epochs=<span class="number">1</span>,batch_size=<span class="number">100</span>) <span class="comment">#迭代一次就能给出结果</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#输入数据进行预测</span></span><br><span class="line">Examples=[<span class="string">'3 May 1979'</span>, <span class="string">'5 April 09'</span>, <span class="string">'21th of August 2016'</span>, <span class="string">'Tue 10 Jul 2007'</span>, <span class="string">'Saturday May 9 2018'</span>, <span class="string">'March 3 2001'</span>, <span class="string">'March 3rd 2001'</span>, <span class="string">'1 March 2001'</span>]</span><br><span class="line"><span class="keyword">for</span> examples <span class="keyword">in</span> Examples:</span><br><span class="line">	source=string_to_int(examples,Tx,human_vocab)</span><br><span class="line">	source=np.array(list(map(<span class="keyword">lambda</span> x:to_categorical(x,num_classes=len(human_vocab)),source)))</span><br><span class="line">	source=np.expand_dims(source,axis=<span class="number">0</span>) <span class="comment">#增加一个维度</span></span><br><span class="line">	prediction=model.predict([source,s0,c0])</span><br><span class="line">	<span class="comment"># print(prediction)</span></span><br><span class="line">	prediction=np.argmax(prediction,axis=<span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">	predictional=[inv_machine_vocab[int(i)] <span class="keyword">for</span> i <span class="keyword">in</span> prediction]</span><br><span class="line"></span><br><span class="line">	print(<span class="string">'source:'</span>,examples)</span><br><span class="line">	print(<span class="string">'predict'</span>,<span class="string">''</span>.join(predictional))</span><br></pre></td></tr></table></figure>
+
+<p>结果为：</p>
+<blockquote>
+<p>source: 3 May 1979<br>predict 1979-05-03<br>source: 5 April 09<br>predict 2009-04-05<br>source: 21th of August 2016<br>predict 2016-08-21<br>source: Tue 10 Jul 2007<br>predict 2007-07-10<br>source: Saturday May 9 2018<br>predict 2018-05-09<br>source: March 3 2001<br>predict 2001-03-03<br>source: March 3rd 2001<br>predict 2001-03-03<br>source: 1 March 2001<br>predict 2001-03-01</p>
+</blockquote>
+<p>从结果看出模型很好的翻译了人类日期。</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 神经网络</a>
+              <a href="/tags/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 循环神经网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/rnn2/" rel="next" title="序列模型RNN——使用词嵌入搭建NLP系统">
+                  <i class="fa fa-chevron-left"></i> 序列模型RNN——使用词嵌入搭建NLP系统
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#模型简介"><span class="nav-number">1.</span> <span class="nav-text">模型简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有条件的语言模型——机器翻译模型"><span class="nav-number">2.</span> <span class="nav-text">有条件的语言模型——机器翻译模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#语言模型"><span class="nav-number">2.1.</span> <span class="nav-text">语言模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#机器翻译模型"><span class="nav-number">2.2.</span> <span class="nav-text">机器翻译模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两种达到准确翻译的方法"><span class="nav-number">2.3.</span> <span class="nav-text">两种达到准确翻译的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#改进Beam-Search（束搜索）"><span class="nav-number">2.4.</span> <span class="nav-text">改进Beam Search（束搜索）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#误差分析"><span class="nav-number">2.5.</span> <span class="nav-text">误差分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bleu得分"><span class="nav-number">2.6.</span> <span class="nav-text">Bleu得分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Attention模型——更符合人的思维的机翻模型"><span class="nav-number">3.</span> <span class="nav-text">Attention模型——更符合人的思维的机翻模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#提出背景"><span class="nav-number">3.1.</span> <span class="nav-text">提出背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型结构"><span class="nav-number">3.2.</span> <span class="nav-text">模型结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用"><span class="nav-number">4.</span> <span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-number">4.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-number">4.2.</span> <span class="nav-text">实现</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">199k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:01</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
