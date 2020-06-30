@@ -101,7 +101,7 @@
 <p>从结果看出模型很好的翻译了人类日期。</p>
 ]]></content>
       <categories>
-        <category>循环神经网络</category>
+        <category>神经网络</category>
       </categories>
       <tags>
         <tag>神经网络</tag>
@@ -3248,8 +3248,8 @@
         <category>java</category>
       </categories>
       <tags>
-        <tag>多线程</tag>
         <tag>java</tag>
+        <tag>多线程</tag>
         <tag>future</tag>
       </tags>
   </entry>
