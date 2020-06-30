@@ -18,7 +18,7 @@
 <p>网络结构采用RNN模型</p>
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200630152559.png" alt></p>
 <h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>当音频中出现“active”触发词时，在其后面加上一段蜂鸣声</p>
-<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>（1）构建训练集（单一训练样本的构建</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>（1）构建训练集（单一训练样本的构建）</p>
 <p>由于语音数据较为复杂，直接获取在嘈杂背景音下的说话声音较为困难，因此选择录制没有背景音的声音（正例和反例）和背景音，再进行合成，就很容易的有了在嘈杂背景下的说话声音。所以需要随机再背景音中插入正例（说active）和反例（不说active）的声音。</p>
 <p>使用pydub合成音频大小为10000，原始音频大小为10秒，10/10000=0.001s=1ms，10秒离散成1ms，即10秒音频有10000个时间步</p>
 <p>原始音频大小44100，频谱图得到的时间步Tx=5511，每个时间步的频率为101</p>
@@ -3341,8 +3341,8 @@
         <category>java</category>
       </categories>
       <tags>
-        <tag>多线程</tag>
         <tag>java</tag>
+        <tag>多线程</tag>
         <tag>future</tag>
       </tags>
   </entry>
