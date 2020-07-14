@@ -56,18 +56,20 @@
   };
 </script>
 
-  <meta name="description" content="缓存机制（1）LRUleast recently use:最近最少使用删除缓存依据：按照时间计算，每次删除最久未使用的数据。（2）LFUleast frequently use：最近最不常使用删除缓存依据：按照时间和使用频率计算，以使用频率为主，每次删除数据时，查看使用频率最小的数据进行删除，当使用频率相同时，根据最久未使用即时间来删除。">
-<meta name="keywords" content="算法,系统设计">
+  <meta name="description" content="描述根据生成的最佳字符型模型，使用Flask框架结合html搭建web应用显示生成的诗句。根据用户输入诗句数量，随机n句诗句；或者根据用户输入的文字，根据最佳模型采样生成对应诗句。实现前台显示1、python端使用Flask框架搭建web应用（1）导入Flask类，并创建一个app实例（2）通过路由route()装饰器告诉Flask触发函数的url">
+<meta name="keywords" content="tensorflow,NLP">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Leecode学习笔记（六）——系统设计题">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;sysDesignNote&#x2F;index.html">
+<meta property="og:title" content="使用tensorflow搭建诗句生成器（一）">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;tfPoem1&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="缓存机制（1）LRUleast recently use:最近最少使用删除缓存依据：按照时间计算，每次删除最久未使用的数据。（2）LFUleast frequently use：最近最不常使用删除缓存依据：按照时间和使用频率计算，以使用频率为主，每次删除数据时，查看使用频率最小的数据进行删除，当使用频率相同时，根据最久未使用即时间来删除。">
+<meta property="og:description" content="描述根据生成的最佳字符型模型，使用Flask框架结合html搭建web应用显示生成的诗句。根据用户输入诗句数量，随机n句诗句；或者根据用户输入的文字，根据最佳模型采样生成对应诗句。实现前台显示1、python端使用Flask框架搭建web应用（1）导入Flask类，并创建一个app实例（2）通过路由route()装饰器告诉Flask触发函数的url">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-04-13T07:38:00.472Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200623162639.png">
+<meta property="og:updated_time" content="2020-07-14T12:12:45.265Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200623162639.png">
 
-<link rel="canonical" href="https://www.xiapf.com/blogs/sysDesignNote/">
+<link rel="canonical" href="https://www.xiapf.com/blogs/tfPoem1/">
 
 
 <script id="page-configurations">
@@ -81,7 +83,7 @@
   };
 </script>
 
-  <title>Leecode学习笔记（六）——系统设计题 | 八戒大强攻</title>
+  <title>使用tensorflow搭建诗句生成器（一） | 八戒大强攻</title>
   
 
 
@@ -233,7 +235,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/sysDesignNote/">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/tfPoem1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
@@ -246,7 +248,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          Leecode学习笔记（六）——系统设计题
+          使用tensorflow搭建诗句生成器（一）
         </h2>
 
         <div class="post-meta">
@@ -257,7 +259,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-04-13 15:35:46 / 修改时间：15:38:00" itemprop="dateCreated datePublished" datetime="2020-04-13T15:35:46+08:00">2020-04-13</time>
+              <time title="创建时间：2020-07-14 20:09:54 / 修改时间：20:12:45" itemprop="dateCreated datePublished" datetime="2020-07-14T20:09:54+08:00">2020-07-14</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -265,14 +267,14 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index">
-                    <span itemprop="name">算法</span>
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
                   </a>
                 </span>
             </span>
 
           
-            <span id="/blogs/sysDesignNote/" class="post-meta-item leancloud_visitors" data-flag-title="Leecode学习笔记（六）——系统设计题" title="阅读次数">
+            <span id="/blogs/tfPoem1/" class="post-meta-item leancloud_visitors" data-flag-title="使用tensorflow搭建诗句生成器（一）" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -287,8 +289,8 @@
       </span>
       <span class="post-meta-item-text">评论数：</span>
     
-    <a title="valine" href="/blogs/sysDesignNote/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/blogs/sysDesignNote/" itemprop="commentCount"></span>
+    <a title="valine" href="/blogs/tfPoem1/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/tfPoem1/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -298,7 +300,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.8k</span>
+              <span>2.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -319,37 +321,42 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="缓存机制"><a href="#缓存机制" class="headerlink" title="缓存机制"></a>缓存机制</h2><p>（1）LRU</p><p>least recently use:最近最少使用</p><p>删除缓存依据：按照时间计算，每次删除最久未使用的数据。</p><p>（2）LFU</p><p>least frequently use：最近最不常使用</p><p>删除缓存依据：按照时间和使用频率计算，以使用频率为主，每次删除数据时，查看使用频率最小的数据进行删除，当使用频率相同时，根据最久未使用即时间来删除。</p><a id="more"></a>
+        <h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>根据生成的最佳字符型模型，使用Flask框架结合html搭建web应用显示生成的诗句。根据用户输入诗句数量，随机n句诗句；或者根据用户输入的文字，根据最佳模型采样生成对应诗句。</p><h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="前台显示"><a href="#前台显示" class="headerlink" title="前台显示"></a>前台显示</h3><p>1、python端使用Flask框架搭建web应用</p><p>（1）导入Flask类，并创建一个app实例</p><p>（2）通过路由route()装饰器告诉Flask触发函数的url</p><a id="more"></a>
 
 
 
+<p>（3）接收数据：利用html中的post方法接收参数</p>
+<p>（4）发送数据：利用render_template将模板名称，需要参数传递的变量名称传递给模板中的变量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1</span></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"><span class="comment">#2</span></span><br><span class="line"><span class="meta">@app.route('/',methods=['POST','GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_poem</span><span class="params">()</span>:</span></span><br><span class="line">  	<span class="comment">#3</span></span><br><span class="line">    startwith=request.form.get(<span class="string">'start_with'</span>)</span><br><span class="line">    text=[]</span><br><span class="line">    start_with=startwith</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> start_with:</span><br><span class="line">      <span class="comment">#调用方法生成需要回传的变量值</span></span><br><span class="line">      text=writer.cangtou(start_with)</span><br><span class="line">    <span class="comment">#4</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>,choosetext=text)</span><br></pre></td></tr></table></figure>
 
+<p>2、html中采用表单提交方式</p>
+<p>html文件需要放在template文件夹下，方便write_poem函数查找并渲染模板</p>
+<p>（1）将各个输入框绑定名称，可用request.form.get获取输入的数据</p>
+<p>（2）中用于显示传回的数据</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">""</span> <span class="attr">method</span>=<span class="string">'POST'</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>想要哪种类型的诗词<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>1:自由诗(需要输入生成几句诗句）<span class="tag">&lt;<span class="name">br</span>&gt;</span>2:藏头诗<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        请输入对应序号：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">class</span>=<span class="string">"txt_input"</span> <span class="attr">name</span>=<span class="string">"poem_style"</span>  <span class="attr">value</span>=<span class="string">''</span> <span class="attr">style</span>=<span class="string">"margin-top:10px;"</span>/&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">        如果选择1，请给出需要生成几句诗：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">class</span>=<span class="string">"txt_input"</span> <span class="attr">name</span>=<span class="string">"num_sentence"</span>  <span class="attr">value</span>=<span class="string">''</span> <span class="attr">style</span>=<span class="string">"margin-top:10px;"</span>/&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">        如果选择3，请给出若干文字用于诗句生成：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">class</span>=<span class="string">"txt_input"</span> <span class="attr">name</span>=<span class="string">"start_with"</span>  <span class="attr">value</span>=<span class="string">''</span> <span class="attr">style</span>=<span class="string">"margin-top:10px;"</span>/&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"完成"</span> <span class="attr">class</span>=<span class="string">"button-new"</span> <span class="attr">onclick</span>=<span class="string">"myFunction()"</span> <span class="attr">style</span>=<span class="string">"margin-top:15px;"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>&#123;&#123;choosetext&#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p>总体思路：</p>
-<p>缓存主要是为了获取数据和插入数据，因此需要对缓存数据进行节点设计，根据其特性设置key.value用于根据key查找值，同时需要设置使用时间time,使用频率cnt.</p>
-<p>为了方便查找可以使用hash表存储key以及node,可以方便的在hash表内通过node-&gt;key查找到node，但是哈希表无序，因此还需要存储节点的使用时间/频率，这时候有两种思路：</p>
-<p>第一种是利用set容器，c++内置的set是使用红黑树排序，即会形成平衡二叉树，使用运算符重载，将set内部根据时间和频率来进行排序，使用频率最少或者时间最少的会排在前面，以set记录时间/频率，但是搜索时间复杂度是O（logn）。</p>
-<p>第二种思路是建立双链表list存储节点，哈希表中存储key映射到list节点的迭代器，当数据使用是，将其从原来位置删除，插入最前面，当需要删除数据的时候，从末位删除，链表操作的时间复杂度是O（1）。</p>
-<p>获取数据（根据密钥获得值）：</p>
-<p>根据哈希表中的key查找节点，并进行缓存数据更新。</p>
-<p>（2）插入数据（将key,value插入）：</p>
-<p>判断key是否存储过了，当存储过之后更新数据值，反之需要插入数据，此时需要判断是否已经达到容量顶端，达到了，需要删除最不常使用的数据。，并进行缓存数据更新。</p>
-<p>注：每次操作过后都需要进行缓存数据更新，即在哈希表中更新数据节点以及set/双向链表list进行更新。</p>
-<h2 id="设计简单推特"><a href="#设计简单推特" class="headerlink" title="设计简单推特"></a>设计简单推特</h2><p>题目：355. 设计推特设计一个简化版的推特(Twitter)，可以让用户实现发送推文，关注/取消关注其他用户，能够看见关注人（包括自己）的最近十条推文。你的设计需要支持以下的几个功能：postTweet(userId, tweetId): 创建一条新的推文,getNewsFeed(userId): 检索最近的十条推文。每个推文都必须是由此用户关注的人或者是用户自己发出的。推文必须按照时间顺序由最近的开始排序。,follow(followerId, followeeId): 关注一个用户,unfollow(followerId, followeeId): 取消关注一个用户</p>
-<p>思路：</p>
-<p>（1）初始化两个hash表</p>
-<p>题目要求中功能3，4是需要能够关注和取消关注一个用户，那么就需要存储当前用户到自己关注的人之间的映射，需要用到hash表。</p>
-<p>题目要求中的功能1，2是需要对推文进行操作，需要存储当前用户在某个时刻写的推文（这里的推文用数字代替），为了方便通过id查找推文，后面的数据用pair形式存储时间和推文。这里需要一个全局变量来计算发推的时间。初始化时间为0，离现在越近，时间越大。</p>
-<p>存储当前用户到自己关注的人之间的映射 map1&lt;int,set<int>&gt;</int></p>
-<p>存储当前用户在某个时刻写的推文的映射 map2&lt;int,vector&lt;pair&lt;int,int&gt;&gt; ，为了方便通过id查找推文，后面的数据用pair形式存储时间和推文</p>
-<p>（2）关注和取消关注</p>
-<p>直接操作map1，加入当前用户关注的id和删除取消关注的id</p>
-<p>（3）创建推文</p>
-<p>直接操作map2，加入当前用户，在当前时间，写下的推文</p>
-<p>（4）检索推文</p>
-<p>需要注意的是搜索推文的时候需要把自己也加上。检索推文的时候需要进行比较，取前10条，这里可以建立优先队列，根据时间进行自动排序。</p>
-<p>建立优先级队列即大顶堆priori_queue&lt;pair&lt;int,int&gt;&gt;，这里会根据pair中第一个元素进行降序排列，当第一个元素相等会根据第二个元素排序，但由于时间肯定是不一样的，这里默认是对时间进行自动排序，离现在越近，时间越大。</p>
-<p>首先将自己加入自己关注的用户列表中，通过当前用户的id查到所有关注的人（这里需要包括自己），再通过查到关注的用户的id，找到他们在某个时间发的推文，将其插入队列中。这时候输出堆顶前10个就是最近的推文。</p>
+<h3 id="后台采样"><a href="#后台采样" class="headerlink" title="后台采样"></a>后台采样</h3><p>（1）按照字符级模型搭建网络模型，这里设置batch_size=1</p>
+<p>（2）根据得到的最佳模型，创建saver对象，加载参数至网络中</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">self.model = CharRNNLM(is_training=<span class="literal">False</span>,w2v_model = self.w2v.model,vocab_size=w2v_vocab_size, infer=<span class="literal">True</span>, **params)</span><br><span class="line">            saver = tf.train.Saver(name=<span class="string">'model_saver'</span>)</span><br><span class="line">            saver.restore(self.sess, best_model)</span><br></pre></td></tr></table></figure>
+
+<p>（3）初始化隐藏层输入为0，同时如果是藏头诗，则将输入的文本按照字典中位置得出当前字的向量表示，作为初始输入；如果是随机生成诗句，则随机在字典中选择一个位置形成向量作为初始输入</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> start_text <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span> <span class="keyword">and</span> len(start_text) &gt; <span class="number">0</span>:</span><br><span class="line">        seq = list(start_text)</span><br><span class="line">        <span class="keyword">for</span> char <span class="keyword">in</span> start_text[:<span class="number">-1</span>]:</span><br><span class="line">            x = np.array([[self.w2v_model.vocab_hash[char]]])</span><br><span class="line">        x = np.array([[self.w2v_model.vocab_hash[start_text[<span class="number">-1</span>]]]])</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        x = np.array([[np.random.randint(<span class="number">0</span>, self.vocab_size)]])</span><br><span class="line">        seq = []</span><br></pre></td></tr></table></figure>
+
+<p>（4）按照需要生成的诗句的长度，根据skip-gram模型，得出在当前输入的上下文中得到下一个字的概率值</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200623162639.png" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">state, logits = session.run([self.final_state, self.logits],</span><br><span class="line">                                        &#123;self.input_data: x, self.initial_state: state&#125;)</span><br><span class="line">unnormalized_probs = np.exp(logits[<span class="number">0</span>] - np.max(logits[<span class="number">0</span>]))</span><br><span class="line">probs = unnormalized_probs / np.sum(unnormalized_probs)</span><br></pre></td></tr></table></figure>
+
+<p>按照出现的词的概率进行随机采样</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sample = np.random.choice(self.vocab_size, <span class="number">1</span>, p=probs)[<span class="number">0</span>] <span class="comment">#随机采样</span></span><br></pre></td></tr></table></figure>
+
+<p>并将当前采样值作为下一次的输入</p>
+<p>（5）两种诗句形成方式（以[作为开头是因为数据集中诗句都是以此开头）</p>
+<p>随机生成诗句：以[作为开头生成长度60的诗句（60可调节），根据生成句子中的句号个数选择用户需要的进行返回。</p>
+<p>藏头诗：将[加在输入的文本前面，每次读入一个文本，并以此作为开头进行采样，每次只保留第一个逗号和第一个句号两个诗句。</p>
+<h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><p>（1）用户输入需要生成的诗句类型，如选择自由生成诗句，需要输入诗句数量；如选择藏头诗句，需要输入藏头文字。</p>
+<p>（2）前台将用户输入传回，后台根据输入的要求调用模型进行采样生成诗句。</p>
+<p>（3）后台将生成的诗句传回需要渲染的模板中进行显示。</p>
+<p><video src="/Users/xpf/Desktop/学习资料/项目/深度学习/自动生成古诗词/generate-poem/poem_show.mp4"></video></p>
 
     </div>
 
@@ -390,25 +397,22 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
-              <a href="/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" rel="tag"><i class="fa fa-tag"></i> 系统设计</a>
+              <a href="/tags/tensorflow/" rel="tag"><i class="fa fa-tag"></i> tensorflow</a>
+              <a href="/tags/NLP/" rel="tag"><i class="fa fa-tag"></i> NLP</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/blogs/nginx/" rel="next" title="mac下使用nginx实现负载均衡">
-                  <i class="fa fa-chevron-left"></i> mac下使用nginx实现负载均衡
+                <a href="/blogs/tfReg/" rel="next" title="用tensorflow实现机器学习算法——线性回归">
+                  <i class="fa fa-chevron-left"></i> 用tensorflow实现机器学习算法——线性回归
                 </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/blogs/NNet2/" rel="prev" title="神经网络和深度学习——第二周编程作业">
-                  神经网络和深度学习——第二周编程作业 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -448,7 +452,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存机制"><span class="nav-number">1.</span> <span class="nav-text">缓存机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设计简单推特"><span class="nav-number">2.</span> <span class="nav-text">设计简单推特</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#描述"><span class="nav-number">1.</span> <span class="nav-text">描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前台显示"><span class="nav-number">2.1.</span> <span class="nav-text">前台显示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后台采样"><span class="nav-number">2.2.</span> <span class="nav-text">后台采样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结果"><span class="nav-number">2.3.</span> <span class="nav-text">结果</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
