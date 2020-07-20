@@ -56,21 +56,26 @@
   };
 </script>
 
-  <meta name="description" content="算法目的从数据中找到各属性之间的隐含关系，Aprior算法就是在数据集中构造出频繁项集，从其中找出关联规则。这里的频繁项集是指经常出现在一起的数据属性，通过出现的频率来衡量频繁项集。关联规则是指两个集合之间存在的联系，如p-&amp;gt;q就是一种关联规则，关联规则通过置信度衡量，两个集合之间的置信度=p和q并集的支持度&#x2F;p的支持度。">
-<meta name="keywords" content="机器学习,关联分析">
+  <meta name="description" content="与线性回归的区别1.解决问题的不同线性回归是用于解决回归问题，即用于预测连续输出logistic回归用于解决分类问题，即用于预测离散数值的输出2.假设函数不同线性回归的假设函数为h=θ^T * xlogistic回归的假设函数为h=1&#x2F;(1+e^(-θ^T * x))：由于logistic回归预测的是分类问题，分类标签为0或者1，所以加上了sigmoid函数，将输出转换为0或者1，当得出的线性值θ">
+<meta name="keywords" content="机器学习,tensorflow">
 <meta property="og:type" content="article">
-<meta property="og:title" content="非监督学习笔记（二）——使用Aprior算法进行关联分析">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;apriori&#x2F;index.html">
+<meta property="og:title" content="用tensorflow实现机器学习算法——logistic回归">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;tfLog&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="算法目的从数据中找到各属性之间的隐含关系，Aprior算法就是在数据集中构造出频繁项集，从其中找出关联规则。这里的频繁项集是指经常出现在一起的数据属性，通过出现的频率来衡量频繁项集。关联规则是指两个集合之间存在的联系，如p-&amp;gt;q就是一种关联规则，关联规则通过置信度衡量，两个集合之间的置信度=p和q并集的支持度&#x2F;p的支持度。">
+<meta property="og:description" content="与线性回归的区别1.解决问题的不同线性回归是用于解决回归问题，即用于预测连续输出logistic回归用于解决分类问题，即用于预测离散数值的输出2.假设函数不同线性回归的假设函数为h=θ^T * xlogistic回归的假设函数为h=1&#x2F;(1+e^(-θ^T * x))：由于logistic回归预测的是分类问题，分类标签为0或者1，所以加上了sigmoid函数，将输出转换为0或者1，当得出的线性值θ">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200409183650.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200409184446.png">
-<meta property="og:updated_time" content="2020-04-09T10:58:40.508Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200720151414.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200720151306.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200720164624.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200720164029.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200720163840.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200720164015.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200720164029.png">
+<meta property="og:updated_time" content="2020-07-20T08:50:01.304Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200409183650.png">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200720151414.png">
 
-<link rel="canonical" href="https://www.xiapf.com/blogs/apriori/">
+<link rel="canonical" href="https://www.xiapf.com/blogs/tfLog/">
 
 
 <script id="page-configurations">
@@ -84,7 +89,7 @@
   };
 </script>
 
-  <title>非监督学习笔记（二）——使用Aprior算法进行关联分析 | 八戒大强攻</title>
+  <title>用tensorflow实现机器学习算法——logistic回归 | 八戒大强攻</title>
   
 
 
@@ -236,7 +241,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/apriori/">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/tfLog/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
@@ -249,7 +254,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          非监督学习笔记（二）——使用Aprior算法进行关联分析
+          用tensorflow实现机器学习算法——logistic回归
         </h2>
 
         <div class="post-meta">
@@ -260,7 +265,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-04-09 18:50:13 / 修改时间：18:58:40" itemprop="dateCreated datePublished" datetime="2020-04-09T18:50:13+08:00">2020-04-09</time>
+              <time title="创建时间：2020-07-20 16:48:38 / 修改时间：16:50:01" itemprop="dateCreated datePublished" datetime="2020-07-20T16:48:38+08:00">2020-07-20</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -268,14 +273,14 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
+                  <a href="/categories/tensorflow/" itemprop="url" rel="index">
+                    <span itemprop="name">tensorflow</span>
                   </a>
                 </span>
             </span>
 
           
-            <span id="/blogs/apriori/" class="post-meta-item leancloud_visitors" data-flag-title="非监督学习笔记（二）——使用Aprior算法进行关联分析" title="阅读次数">
+            <span id="/blogs/tfLog/" class="post-meta-item leancloud_visitors" data-flag-title="用tensorflow实现机器学习算法——logistic回归" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -290,8 +295,8 @@
       </span>
       <span class="post-meta-item-text">评论数：</span>
     
-    <a title="valine" href="/blogs/apriori/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/blogs/apriori/" itemprop="commentCount"></span>
+    <a title="valine" href="/blogs/tfLog/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/tfLog/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -301,14 +306,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
+              <span>4.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>4 分钟</span>
             </span>
 		  
 			
@@ -322,77 +327,71 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="算法目的"><a href="#算法目的" class="headerlink" title="算法目的"></a>算法目的</h2><p>从数据中找到各属性之间的隐含关系，Aprior算法就是在数据集中构造出频繁项集，从其中找出关联规则。</p><p>这里的频繁项集是指经常出现在一起的数据属性，通过出现的频率来衡量频繁项集。</p><p>关联规则是指两个集合之间存在的联系，如p-&gt;q就是一种关联规则，关联规则通过置信度衡量，两个集合之间的置信度=p和q并集的支持度/p的支持度。</p><a id="more"></a>
-
-
-<p>因此Aprior算法主要目的就是从数据中找到频繁集合，从频繁集合中找出关联规则。用户输入最小支持度得出频繁集合，根据设定的最小置信度得出想要的关联规则</p>
-<h2 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h2><h3 id="构造频繁集"><a href="#构造频繁集" class="headerlink" title="构造频繁集"></a>构造频繁集</h3><p>总体思路：</p>
-<p>从集合元素个数为1开始构造频繁集，非频繁集的单个元素不加入后续构造频繁集中，因为非频繁集的超集也是非频繁集。</p>
-<p>当集合个数大于等于2个时，每次取前k-2个集合进行合并，得出候选集，再根据最小置信度求出频繁集合</p>
-<p>1.构造单个元素的集合</p>
-<p>输入数值为整个数据集合</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.对每一个列表数据</span></span><br><span class="line"><span class="keyword">for</span> tran <span class="keyword">in</span> dataSet:</span><br><span class="line"><span class="comment">#2.对每个单个数据项</span></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> tran:</span><br><span class="line">	<span class="keyword">if</span> [item] <span class="keyword">not</span> <span class="keyword">in</span> C1:</span><br><span class="line">		C1.append([item])</span><br></pre></td></tr></table></figure>
-
-<p>2.计算各个数据集合的出现概率，并把大于最小支持度的集合保存，作为频繁集</p>
-<p>2.1计算各个数据集合的出现概率</p>
-<p>输入候选集合，对每个候选集合判断是否是当前集合的子集，如果是就需要增加其出现的次数，如果是首次出现则设置为1</p>
-<p>注：A.issubset(B):判断a是否是b的子集</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.计算所有数据项在原始数据集中出现的次数</span></span><br><span class="line">sSet=&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> tran <span class="keyword">in</span> D:</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> C1:</span><br><span class="line">	<span class="comment">#判断item是否是tran的子集</span></span><br><span class="line">	<span class="keyword">if</span> item.issubset(tran):</span><br><span class="line">		<span class="keyword">if</span> item <span class="keyword">not</span> <span class="keyword">in</span> sSet:<span class="comment">#初始字典中没有这个键</span></span><br><span class="line">			sSet[item]=<span class="number">1</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			sSet[item]+=<span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>2.2根据最小支持度保存频繁集合</p>
-<p>将每个候选集合出现的次数除以集合总数，得出出现的概率，再和最小支持度比较</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#2.计算每个数据项的支持度，并把小于最小支持度的数据项删除</span></span><br><span class="line">numLen=len(D)</span><br><span class="line">retList=[]</span><br><span class="line">supportData=&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> sSet:</span><br><span class="line">	support=sSet[key]/numLen</span><br><span class="line">	<span class="keyword">if</span>(support&gt;=minSupport):</span><br><span class="line">		<span class="comment">#在索引为0的位置之前插入</span></span><br><span class="line">		retList.insert(<span class="number">0</span>,key)</span><br><span class="line">		supportData[key]=support</span><br></pre></td></tr></table></figure>
-
-<p>3.apriori算法得出频繁集合</p>
-<p>注：当一个集合不是频繁集，那么他的超集也不是频繁集，以这个原则来减少需要构造的集合数。所以每次从一个元素的集合开始寻找频繁集，非频繁集的元素集合不保存，依次作为初始构造起点，非频繁集的元素自然不会加入到后续筛选多个元素的集合中去。</p>
-<p>3.1 从长度为1的集合开始找到频繁集合</p>
-<p>（1）构造数据 从原始数据集中得出不重复的总的数据集合</p>
-<p>（2）构造初始频繁集合</p>
-<p>得出单个数据集中的频繁集</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.构造数据</span></span><br><span class="line">D=list(map(set,dataSet))</span><br><span class="line"></span><br><span class="line"><span class="comment">#2.构造初始数据项</span></span><br><span class="line">C1=createC1(dataSet)</span><br><span class="line">L1,supportData=scanD(D,C1,minSupport)</span><br><span class="line">L=[L1]</span><br></pre></td></tr></table></figure>
-
-<p>（3）构造元素数多于2个的频繁集合</p>
-<p>令k=2,假设初始频繁集为L=[L1],当L[K-2]即前一个元素数量有频繁集合，那么就可以循环查看当前长度的元素数量是否也有频繁集合（假设前一个元素数量是1，频繁集合中元素数为1），从L[K-2]中构造当前的候选集合，并进行支持度判断</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#3.构造长度为2开始的频繁数据集</span></span><br><span class="line">k=<span class="number">2</span></span><br><span class="line"><span class="keyword">while</span>(len(L[k<span class="number">-2</span>])&gt;<span class="number">0</span>):</span><br><span class="line"><span class="comment">#3.1得到构造的频繁数据集</span></span><br><span class="line">Ck=aprioriGen(L[k<span class="number">-2</span>],k)</span><br><span class="line"><span class="comment">#3.2判断是否是频繁项</span></span><br><span class="line">Lk,Suk=scanD(D,Ck,minSupport)</span><br><span class="line"></span><br><span class="line">L.append(Lk)</span><br><span class="line"><span class="comment">#字典插入/更新数值</span></span><br><span class="line">supportData.update(Suk)</span><br><span class="line">k=k+<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-<p>3.2 构造长度大于2的频繁集合</p>
-<p>注：这里有个小技巧：取前k-2个集合，当长度相同时合并则为该数量下集合构成的候选集，如k=2时，此时输入的L[k-2]={1},{2},{3},取前k-2个，则是{1},{2},合并为{1,2}，每次i从0开始取值，下一层循环j从i+1开始取值，则得到k=2时的候选集为{1,2},{1,3},{2,3}</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(L)):</span><br><span class="line">	<span class="keyword">for</span> j <span class="keyword">in</span> range(i+<span class="number">1</span>,len(L)):</span><br><span class="line">		<span class="comment">#取前k-2个作为集合，如果相同则合并，即为上一层得出下一层的集合</span></span><br><span class="line">		L1=list(L[i])[:k<span class="number">-2</span>]<span class="comment">#取出两个集合前k-1个元素list[:]从开始到末尾位置</span></span><br><span class="line">		L2=list(L[j])[:k<span class="number">-2</span>]</span><br><span class="line">		L1.sort()</span><br><span class="line">		L2.sort()</span><br><span class="line">		<span class="keyword">if</span>(L1==L2):</span><br><span class="line">			retList.append(L[i]|L[j])</span><br></pre></td></tr></table></figure>
+        <h2 id="与线性回归的区别"><a href="#与线性回归的区别" class="headerlink" title="与线性回归的区别"></a>与线性回归的区别</h2><p>1.解决问题的不同</p><p>线性回归是用于解决回归问题，即用于预测连续输出</p><p>logistic回归用于解决分类问题，即用于预测离散数值的输出</p><p>2.假设函数不同</p><p>线性回归的假设函数为h=θ^T * x</p><p>logistic回归的假设函数为h=1/(1+e^(-θ^T * x))：由于logistic回归预测的是分类问题，分类标签为0或者1，所以加上了sigmoid函数，将输出转换为0或者1，当得出的线性值θ^T * x&gt;=0，即假设函数h的值&gt;=0.5，此时输出标签为1，当得出的线性值θ^T * x&lt;0，即假设函数h的值&lt;0.5，此时输出标签为0.</p><a id="more"></a>
 
 
 
-<h3 id="挖掘关联规则"><a href="#挖掘关联规则" class="headerlink" title="挖掘关联规则"></a>挖掘关联规则</h3><p>根据p的置信度=supprot (p|q) /support (p)求出频繁集的置信度</p>
-<p>总体思路：</p>
-<p>输入的频繁集合，支持度</p>
-<p>（1）单元素的频繁集没有关联规则，所以从L[1]开始遍历</p>
-<p>（2）对L[i]中的每个单项，构造出不重复的单个元素集合组成的列表H</p>
-<p>当只有两个元素时，直接得到关联规则</p>
-<p>当有两个以上的元素时，不断构造2个元素及以上的不重复子集来得出关联规则</p>
-<p>1.构造2个元素的频繁集合的置信度</p>
-<p>输入频繁项集和只有单个元素的列表H</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> freq <span class="keyword">in</span> H:</span><br><span class="line">		conf=supportData[freqSet]/supportData[freqSet-freq]</span><br><span class="line">		<span class="keyword">if</span>(conf&gt;minConf):</span><br><span class="line">			print(freqSet-freq,<span class="string">"-&gt;"</span>,freq,<span class="string">":"</span>,conf)</span><br><span class="line">			br1.append((freqSet-freq,freq,conf))</span><br><span class="line">			cbr1.append(freq)</span><br></pre></td></tr></table></figure>
-
-<p>2.构造2个元素以上的频繁集合的置信度</p>
-<p>输入单元素的频繁集合，在此基础上不断根据2个元素以上的频繁集合合并，得出不重复的集合元素，并得出关联规则</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">m=len(H[<span class="number">0</span>])</span><br><span class="line"><span class="keyword">if</span>(len(freqSet)&gt;(m+<span class="number">1</span>)):</span><br><span class="line">	hmq=aprioriGen(H,m+<span class="number">1</span>) <span class="comment">#得出2个元素以上的频繁集合</span></span><br><span class="line">	hmq=calConf(freqSet,hmq,supportData,br1,minConf)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(len(hmq)&gt;<span class="number">1</span>):</span><br><span class="line">		ruleFromConf(freqSet,hmq,supportData,br1,minConf)</span><br></pre></td></tr></table></figure>
-
-<p>3.将单个元素得出的关联规则和多个元素的频繁集得出的关联规则合并</p>
-<p>根据输入的频繁集合，支持度中，L[1]是包含2个元素的频繁集，L[2]是包含3个元素的频繁集</p>
-<p>当时2个元素的频繁集合时，直接根据公式得出置信度，即关联规则，当时多个元素的频繁集合时，需要将子集合并得出关联规则</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,len(L)):</span><br><span class="line">	<span class="keyword">for</span> freq <span class="keyword">in</span> L[i]:</span><br><span class="line">		H1=[frozenset([item]) <span class="keyword">for</span> item <span class="keyword">in</span> freq]</span><br><span class="line">     <span class="comment">#多个元素的频繁集合</span></span><br><span class="line">		<span class="keyword">if</span>(i&gt;<span class="number">1</span>):</span><br><span class="line">			ruleFromConf(freq,H1,supportData,bigRulesList,minConf)</span><br><span class="line">     <span class="comment">#单个元素的频繁集合</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			calConf(freq,H1,supportData,bigRulesList,minConf)</span><br></pre></td></tr></table></figure>
 
 
+<p>3.损失函数不同</p>
+<p>线性回归损失函数为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200720151414.png" alt></p>
+<p>logitstic回归损失函数为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200720151306.png" alt></p>
+<p>不沿用线性回归的损失函数是因为logistic回归中的假设函数为非线性函数，代入误差的平方中不是凸函数，所以重新选择了新的凸函数作为logistic回归的损失函数。</p>
+<h2 id="二分类问题"><a href="#二分类问题" class="headerlink" title="二分类问题"></a>二分类问题</h2><h3 id="梯度下降算法"><a href="#梯度下降算法" class="headerlink" title="梯度下降算法"></a>梯度下降算法</h3><p>（1）利用pandas中的read_csv读入（以逗号分隔才能这么读入），在第一列插入1作为偏置的特征</p>
+<p>当使用梯度下降就需要做归一化：加快收敛速度</p>
+<blockquote>
+<p>data=pd.read_csv(‘ex2data1.txt’,names=[‘test1’,’test2’,’score’])</p>
+<p>col=data.shape[1]<br>x=data.iloc[:,:col-1]<br>x=(x-x.mean())/x.std()<br>x.insert(0,’ones’,1)</p>
+<p>y=data.iloc[:,col-1:col]</p>
+</blockquote>
+<p>（2）定义sigmoid函数，将输出转换在0 ~ 1之间</p>
+<p>def sigmoid(z):<br>    return 1/(1+np.exp(-z))</p>
+<p>（3）每次迭代计算误差值，并利用梯度下降公式对每个参数进行修正；根据损失函数计算当前损失</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#2.计算成本函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">computeCost</span><span class="params">(theta,x,y)</span>:</span></span><br><span class="line">	theta=np.mat(theta)</span><br><span class="line">	m=len(x)</span><br><span class="line">	inner=sigmoid(x*theta.T)</span><br><span class="line">	cost=(<span class="number">-1</span>/m)*np.sum(np.multiply(y,np.log(inner))+np.multiply((<span class="number">1</span>-y),np.log(<span class="number">1</span>-inner)))<span class="comment">#对应位置相乘</span></span><br><span class="line">	<span class="keyword">return</span> cost</span><br><span class="line"></span><br><span class="line"><span class="comment">#3.梯度下降</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gradentDescent</span><span class="params">(x,theta,y,alpha,iters)</span>:</span></span><br><span class="line">	x=np.mat(x)</span><br><span class="line">	y=np.mat(y)</span><br><span class="line">	theta=np.mat(theta)</span><br><span class="line">	m,n=x.shape</span><br><span class="line">	costs=[]</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(iters):</span><br><span class="line">		error=sigmoid(x*theta.T)-y</span><br><span class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">			theta[:,j]=theta[:,j]-alpha*(<span class="number">1</span>/m)*np.sum(np.multiply(error,x[:,j]))</span><br><span class="line">			cost=computeCost(theta,x,y)</span><br><span class="line">		costs.append(cost)</span><br><span class="line">	<span class="keyword">return</span> theta,costs</span><br></pre></td></tr></table></figure>
 
-<h2 id="应用实例"><a href="#应用实例" class="headerlink" title="应用实例"></a>应用实例</h2><p>问题：发现毒蘑菇的相似特征</p>
-<p>数据集：原始数据集在UCI上，使用关联规则需要把样本数据转换为特征集合，有人做了解析，直接使用该数据集</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200409183650.png" alt="毒蘑菇数据"></p>
-<p>第一列1代表无毒，2代表有毒。</p>
-<p>利用apriori算法得出频繁集合，查看有毒特征一般和哪些特征一起出现，这样就可以通过其他特征分辨出毒蘑菇。</p>
-<p>根据得出的频繁项集，找到长度为2的频繁项集中有毒蘑菇特征的集合为</p>
-<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200409184446.png" alt="毒蘑菇频繁集"></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">data=apriori.loadMushroomData(<span class="string">"mushroom.dat"</span>)</span><br><span class="line">L,supportData=apriori.apriori(data,<span class="number">0.3</span>)</span><br><span class="line">print(L)</span><br><span class="line">print(supportData)</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> L[<span class="number">1</span>]:</span><br><span class="line">	<span class="keyword">if</span> &#123;<span class="number">2</span>&#125;.issubset(item):</span><br><span class="line">		print(item)</span><br></pre></td></tr></table></figure>
+<p>（4）根据得到的参数进行预测</p>
+<blockquote>
+<p>#4.预测<br>#准确率<br>def predict(theta,x):<br>    yhat=sigmoid(x*theta.T)<br>    m,n=yhat.shape<br>    p=np.zeros((m,n))<br>    for i in range(m):<br>        if(yhat[i]&gt;=0.5):<br>            p[i]=1<br>        else:<br>            p[i]=0<br>    return p</p>
+</blockquote>
+<p>得到模型的参数为：[[1.26836232 3.05675087 2.82011823]]<br>准确率为：0.89</p>
+<h3 id="使用其他优化算法——scipy-optimize-自带的fmin-tnc"><a href="#使用其他优化算法——scipy-optimize-自带的fmin-tnc" class="headerlink" title="使用其他优化算法——scipy.optimize 自带的fmin_tnc"></a>使用其他优化算法——scipy.optimize 自带的fmin_tnc</h3><p>根据给出的损失函数和导数能够直接求得最小值</p>
+<blockquote>
+<p>res=op.fmin_tnc(func=computeCost,x0=theta,args=(x,y),fprime=gradent)</p>
+</blockquote>
+<p>其中导数使用梯度下降部分的导数求解方式</p>
+<blockquote>
+<p>def gradent(theta,x,y):<br>    x=np.mat(x)<br>    y=np.mat(y)<br>    theta=np.mat(theta)<br>    m,n=x.shape<br>    error=sigmoid(x<em>theta.T)-y<br>    grad=np.zeros((n))<br>    for j in range(n):<br>        grad[j]=(1/m)</em>np.sum(np.multiply(error,x[:,j]))<br>    return grad</p>
+</blockquote>
+<p>得到的第一个参数就是模型的参数(array([1.7179636 , 4.01149168, 3.7426532 ]), 13, 1)<br>准确率为：0.89</p>
+<h3 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h3><p>从结果看，梯度下降算法和其他的高级优化算法结果相近，但是梯度下降算法需要给出迭代次数和学习率alpha。</p>
+<h2 id="使用tensorflow"><a href="#使用tensorflow" class="headerlink" title="使用tensorflow"></a>使用tensorflow</h2><p>（1）定义占位符用于输入数据</p>
+<p>（2）定义当前作用域下的参数，预测值的计算，损失的计算，即正向传播得到的值</p>
+<p>（3）定义梯度下降算法</p>
+<p>（4）运行会话，将输入数据、下降算法、损失、参数输入，最终得到损失和参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用TensorFlow实现逻辑回归</span></span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">logisticRegression</span><span class="params">(x_data,y_data,alpha,iters)</span>:</span></span><br><span class="line">	x=tf.placeholder(tf.float32,x_data.shape)</span><br><span class="line">	y=tf.placeholder(tf.float32,y_data.shape)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">with</span> tf.variable_scope(<span class="string">'logisticRegression'</span>):</span><br><span class="line">		w=tf.get_variable(<span class="string">'weight'</span>,(x.shape[<span class="number">1</span>],<span class="number">1</span>),initializer=tf.constant_initializer())</span><br><span class="line">		inner=tf.matmul(x,w)</span><br><span class="line">		yhat=tf.nn.softmax(inner)</span><br><span class="line">		<span class="comment"># loss=-tf.reduce_mean(tf.reduce_sum(y*tf.log(yhat)+(1-y)*tf.log(1-yhat),axis=1))#reduction_indices表示按行相加</span></span><br><span class="line">		loss=tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=yhat))</span><br><span class="line">	opt=tf.train.GradientDescentOptimizer(learning_rate=alpha)</span><br><span class="line">	opt_gennerate=opt.minimize(loss)</span><br><span class="line">	loss_all=[]</span><br><span class="line"></span><br><span class="line">	<span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">		sess.run(tf.global_variables_initializer())</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> range(iters):</span><br><span class="line">			_,loss_val,w_val=sess.run([opt_gennerate,loss,w],feed_dict=&#123;x:x_data,y:y_data&#125;)</span><br><span class="line">			loss_all.append(loss_val)</span><br><span class="line">		<span class="comment"># correct_predict=tf.equal(tf.argmax(yhat,1),tf.argmax(y,1))</span></span><br><span class="line">		<span class="comment"># accuarcy=tf.reduce_mean(tf.cast(correct_predict,tf.float32))</span></span><br><span class="line">		<span class="comment"># print('accuarcy:',accuarcy.eval(&#123;x:,y:&#125;)</span></span><br><span class="line">	parameters=&#123;<span class="string">'theta'</span>:w_val,<span class="string">'loss'</span>:loss_all&#125;</span><br></pre></td></tr></table></figure>
 
-<p>也可以选择其他长度的频繁项集查看</p>
+<p>使用tensorflow的准确率为0.6</p>
+<p>当需要得到测试集的准确率，可以增加以下代码：</p>
+<blockquote>
+<p>correct_predict=tf.equal(tf.argmax(yhat,1),tf.argmax(y,1))<br>accuarcy=tf.reduce_mean(tf.cast(correct_predict,tf.float32))<br>print(‘accuarcy:’,accuarcy.eval({x:,y:})</p>
+</blockquote>
+<h2 id="正则化"><a href="#正则化" class="headerlink" title="正则化"></a>正则化</h2><h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>当出现过拟合现象：即数据能很好的拟合训练集，但是在不能很好拟合测试集，出现高方差，无法将训练的模型泛化到新样本，此时就要进行正则化。</p>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><p>在损失函数和梯度下降中增加对参数的惩罚系数，修正每个模型参数，其中正则化参数λ用来一边控制使得训练的模型拟合参数，一边使得每个模型参数不要太大，减少过拟合的问题。</p>
+<p>线性回归和logistic回归中的梯度下降正则化的式子类似，但是其中的假设函数不同。</p>
+<p>（1）线性回归的正则化</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200720164624.png" alt></p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200720164029.png" alt></p>
+<p>（2）正规方程的正则化</p>
+<p>正规方程可以直接求得最小的参数θ，但是当特征很多的时候，求逆矩阵运算量大，当特征少的时候可以考虑使用。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200720163840.png" alt></p>
+<p>（3）logistic的正则化</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200720164015.png" alt></p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200720164029.png" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#2.计算成本函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">computeCostReg</span><span class="params">(theta,x,y,learning_rate)</span>:</span></span><br><span class="line">	theta=np.mat(theta)</span><br><span class="line">	m=len(x)</span><br><span class="line">	inner=sigmoid(x*theta.T)</span><br><span class="line">	reg=(learning_rate/(<span class="number">2</span>*m))*np.sum(np.power(theta[:,<span class="number">1</span>:theta.shape[<span class="number">1</span>]],<span class="number">2</span>))</span><br><span class="line">	cost=(<span class="number">-1</span>/m)*np.sum(np.multiply(y,np.log(inner))+np.multiply((<span class="number">1</span>-y),np.log(<span class="number">1</span>-inner)))+reg<span class="comment">#对应位置相乘</span></span><br><span class="line">	<span class="keyword">return</span> cost</span><br><span class="line"></span><br><span class="line"><span class="comment">#3.梯度下降</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gradientDescentReg</span><span class="params">(x,theta,y,alpha,iters,learning_rate)</span>:</span></span><br><span class="line">	x=np.mat(x)</span><br><span class="line">	y=np.mat(y)</span><br><span class="line">	theta=np.mat(theta)</span><br><span class="line">	m,n=x.shape</span><br><span class="line">	costs=[]</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(iters):</span><br><span class="line">		error=sigmoid(x*theta.T)-y</span><br><span class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">			<span class="keyword">if</span> j==<span class="number">0</span>:</span><br><span class="line">				theta[:,j]=theta[:,j]-alpha*(<span class="number">1</span>/m)*np.sum(np.multiply(error,x[:,j]))</span><br><span class="line">			<span class="keyword">else</span>:</span><br><span class="line">				theta[:,j]=theta[:,j]-alpha*(<span class="number">1</span>/m)*np.sum(np.multiply(error,x[:,j]))+(learning_rate/m)*theta[:,j]			</span><br><span class="line">			cost=computeCostReg(theta,x,y,learning_rate)</span><br><span class="line">		costs.append(cost)</span><br><span class="line">	<span class="keyword">return</span> theta,costs</span><br></pre></td></tr></table></figure>
+
+<p>就是在无正则化的损失函数计算和梯度下降中增加了正则化项，其中梯度下降中，需要对参数分类处理（第0个参数和其他参数）。</p>
 
     </div>
 
@@ -434,24 +433,21 @@
           
           <div class="post-tags">
               <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
-              <a href="/tags/%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90/" rel="tag"><i class="fa fa-tag"></i> 关联分析</a>
+              <a href="/tags/tensorflow/" rel="tag"><i class="fa fa-tag"></i> tensorflow</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/blogs/regression/" rel="next" title="监督学习笔记（四）——利用回归预测数值型数值">
-                  <i class="fa fa-chevron-left"></i> 监督学习笔记（四）——利用回归预测数值型数值
+                <a href="/blogs/tfPoem1/" rel="next" title="使用tensorflow搭建诗句生成器（一）">
+                  <i class="fa fa-chevron-left"></i> 使用tensorflow搭建诗句生成器（一）
                 </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/blogs/nginx/" rel="prev" title="mac下使用nginx实现负载均衡">
-                  mac下使用nginx实现负载均衡 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -491,7 +487,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法目的"><span class="nav-number">1.</span> <span class="nav-text">算法目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法原理"><span class="nav-number">2.</span> <span class="nav-text">算法原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#构造频繁集"><span class="nav-number">2.1.</span> <span class="nav-text">构造频繁集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#挖掘关联规则"><span class="nav-number">2.2.</span> <span class="nav-text">挖掘关联规则</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用实例"><span class="nav-number">3.</span> <span class="nav-text">应用实例</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#与线性回归的区别"><span class="nav-number">1.</span> <span class="nav-text">与线性回归的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二分类问题"><span class="nav-number">2.</span> <span class="nav-text">二分类问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度下降算法"><span class="nav-number">2.1.</span> <span class="nav-text">梯度下降算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用其他优化算法——scipy-optimize-自带的fmin-tnc"><span class="nav-number">2.2.</span> <span class="nav-text">使用其他优化算法——scipy.optimize 自带的fmin_tnc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对比"><span class="nav-number">2.3.</span> <span class="nav-text">对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用tensorflow"><span class="nav-number">3.</span> <span class="nav-text">使用tensorflow</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正则化"><span class="nav-number">4.</span> <span class="nav-text">正则化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#应用场景"><span class="nav-number">4.1.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法"><span class="nav-number">4.2.</span> <span class="nav-text">方法</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

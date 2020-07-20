@@ -167,7 +167,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">49</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">50</span></a>
 
   </li>
         <li class="menu-item menu-item-sitemap">
@@ -232,6 +232,124 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/tfLog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/tfLog/" class="post-title-link" itemprop="url">用tensorflow实现机器学习算法——logistic回归</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-07-20 16:48:38 / 修改时间：16:50:01" itemprop="dateCreated datePublished" datetime="2020-07-20T16:48:38+08:00">2020-07-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tensorflow/" itemprop="url" rel="index">
+                    <span itemprop="name">tensorflow</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/tfLog/" class="post-meta-item leancloud_visitors" data-flag-title="用tensorflow实现机器学习算法——logistic回归" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/tfLog/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/tfLog/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="与线性回归的区别"><a href="#与线性回归的区别" class="headerlink" title="与线性回归的区别"></a>与线性回归的区别</h2><p>1.解决问题的不同</p><p>线性回归是用于解决回归问题，即用于预测连续输出</p><p>logistic回归用于解决分类问题，即用于预测离散数值的输出</p><p>2.假设函数不同</p><p>线性回归的假设函数为h=θ^T * x</p><p>logistic回归的假设函数为h=1/(1+e^(-θ^T * x))：由于logistic回归预测的是分类问题，分类标签为0或者1，所以加上了sigmoid函数，将输出转换为0或者1，当得出的线性值θ^T * x&gt;=0，即假设函数h的值&gt;=0.5，此时输出标签为1，当得出的线性值θ^T * x&lt;0，即假设函数h的值&lt;0.5，此时输出标签为0.</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blogs/tfLog/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+</div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/tfPoem1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -257,7 +375,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-07-14 20:09:54 / 修改时间：20:12:45" itemprop="dateCreated datePublished" datetime="2020-07-14T20:09:54+08:00">2020-07-14</time>
+              <time title="创建时间：2020-07-14 20:09:54 / 修改时间：20:32:46" itemprop="dateCreated datePublished" datetime="2020-07-14T20:09:54+08:00">2020-07-14</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -298,7 +416,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.5k</span>
+              <span>2.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -319,7 +437,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>根据生成的最佳字符型模型，使用Flask框架结合html搭建web应用显示生成的诗句。根据用户输入诗句数量，随机n句诗句；或者根据用户输入的文字，根据最佳模型采样生成对应诗句。</p><h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="前台显示"><a href="#前台显示" class="headerlink" title="前台显示"></a>前台显示</h3><p>1、python端使用Flask框架搭建web应用</p><p>（1）导入Flask类，并创建一个app实例</p><p>（2）通过路由route()装饰器告诉Flask触发函数的url</p>
+          <h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>根据生成的最佳字符级模型，使用Flask框架结合html搭建web应用显示生成的诗句。根据用户输入诗句数量，随机n句诗句；或者根据用户输入的文字，根据最佳模型采样生成对应诗句。</p><h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="前台显示"><a href="#前台显示" class="headerlink" title="前台显示"></a>前台显示</h3><p>1、python端使用Flask框架搭建web应用</p><p>（1）导入Flask类，并创建一个app实例</p><p>（2）通过路由route()装饰器告诉Flask触发函数的url</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blogs/tfPoem1/#more" rel="contents">
@@ -1290,124 +1408,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/convNet5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
-      <meta itemprop="name" content="Xiapf">
-      <meta itemprop="description" content="好好学习，天天向上">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="八戒大强攻">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/convNet5/" class="post-title-link" itemprop="url">卷积神经网络——神经风格转换</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-10 11:10:55 / 修改时间：11:11:44" itemprop="dateCreated datePublished" datetime="2020-06-10T11:10:55+08:00">2020-06-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
-                    <span itemprop="name">神经网络</span>
-                  </a>
-                </span>
-            </span>
-
-          
-            <span id="/blogs/convNet5/" class="post-meta-item leancloud_visitors" data-flag-title="卷积神经网络——神经风格转换" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">评论数：</span>
-    
-    <a title="valine" href="/blogs/convNet5/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/blogs/convNet5/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-		  
-			
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>将一个图像作为内容图像，另一幅图作为风格图像，两个图像经过神经网络生辰一个新的图像，该图像既有前一个图像的内容，又有后一个图像的风格，这称为神经风格转换。</p><h2 id="损失函数的确定"><a href="#损失函数的确定" class="headerlink" title="损失函数的确定"></a>损失函数的确定</h2><p>神经网络浅层学习图片的点、线或者颜色等基础特征，深层学习图片中物体或者更具体的特征。</p><p>神经风格转换是让合成的图片中的内容更接近内容图片，风格更接近风格图片，即让合成的图片中的内容和内容图片相比损失更小，让合成的图片中的风格和风格图片相比损失更小，最终得到的总成本最小，通过成本函数调整网络的参数。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blogs/convNet5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <div>
-  
-</div>
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1457,7 +1457,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-count">50</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1537,13 +1537,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">212k</span>
+    <span title="站点总字数">216k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">3:13</span>
+    <span title="站点阅读时长">3:17</span>
 </div>
   <div class="addthis_inline_share_toolbox">
     <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
