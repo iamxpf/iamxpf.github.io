@@ -56,18 +56,21 @@
   };
 </script>
 
-  <meta name="description" content="回溯法回溯一般用于找到满足要求的的所有解，即相当于构造一棵树，从跟节点出发，找到满足条件的所有路径，并进行保存，当目前的路径不符合条件的时候，需要回溯，即剪枝，删除不符合的分支，当到达结束的条件时，即找到了一个满足条件的解，再继续构造下一个符合条件的路径。常用于解决树种求得所有解的问题和排列组合中求解问题，或者问题可以转换为求树中一条路径的问题，可以画图。">
-<meta name="keywords" content="算法,回溯">
+  <meta name="description" content="描述从字符角度出发，生成一个模型能够自动生成文本，即能够通过已有的字符，预测下一个字符出现的概率。实现字符级模型采用字符级模型，参考Andrej Karpathy写的The Unreasonable Effectiveness of Recurrent Neural Networks，这里采用lstm作为基本单元">
+<meta name="keywords" content="tensorflow,NLP">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Leecode算法学习笔记（二）">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;backTrackNote&#x2F;index.html">
+<meta property="og:title" content="使用tensorflow搭建诗句生成器（二）">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;tfPoem2&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="回溯法回溯一般用于找到满足要求的的所有解，即相当于构造一棵树，从跟节点出发，找到满足条件的所有路径，并进行保存，当目前的路径不符合条件的时候，需要回溯，即剪枝，删除不符合的分支，当到达结束的条件时，即找到了一个满足条件的解，再继续构造下一个符合条件的路径。常用于解决树种求得所有解的问题和排列组合中求解问题，或者问题可以转换为求树中一条路径的问题，可以画图。">
+<meta property="og:description" content="描述从字符角度出发，生成一个模型能够自动生成文本，即能够通过已有的字符，预测下一个字符出现的概率。实现字符级模型采用字符级模型，参考Andrej Karpathy写的The Unreasonable Effectiveness of Recurrent Neural Networks，这里采用lstm作为基本单元">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-04T04:56:30.496Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200720194245.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200623162639.png">
+<meta property="og:updated_time" content="2020-07-21T01:51:27.687Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200720194245.png">
 
-<link rel="canonical" href="https://www.xiapf.com/blogs/backTrackNote/">
+<link rel="canonical" href="https://www.xiapf.com/blogs/tfPoem2/">
 
 
 <script id="page-configurations">
@@ -81,7 +84,7 @@
   };
 </script>
 
-  <title>Leecode算法学习笔记（二） | 八戒大强攻</title>
+  <title>使用tensorflow搭建诗句生成器（二） | 八戒大强攻</title>
   
 
 
@@ -233,7 +236,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/backTrackNote/">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/tfPoem2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
@@ -246,7 +249,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          Leecode算法学习笔记（二）
+          使用tensorflow搭建诗句生成器（二）
         </h2>
 
         <div class="post-meta">
@@ -255,30 +258,24 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-02-25 15:08:13" itemprop="dateCreated datePublished" datetime="2020-02-25T15:08:13+08:00">2020-02-25</time>
+              <time title="创建时间：2020-07-21 09:50:13 / 修改时间：09:51:27" itemprop="dateCreated datePublished" datetime="2020-07-21T09:50:13+08:00">2020-07-21</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-04 12:56:30" itemprop="dateModified" datetime="2020-03-04T12:56:30+08:00">2020-03-04</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index">
-                    <span itemprop="name">算法</span>
+                  <a href="/categories/tensorflow/" itemprop="url" rel="index">
+                    <span itemprop="name">tensorflow</span>
                   </a>
                 </span>
             </span>
 
           
-            <span id="/blogs/backTrackNote/" class="post-meta-item leancloud_visitors" data-flag-title="Leecode算法学习笔记（二）" title="阅读次数">
+            <span id="/blogs/tfPoem2/" class="post-meta-item leancloud_visitors" data-flag-title="使用tensorflow搭建诗句生成器（二）" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -293,8 +290,8 @@
       </span>
       <span class="post-meta-item-text">评论数：</span>
     
-    <a title="valine" href="/blogs/backTrackNote/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/blogs/backTrackNote/" itemprop="commentCount"></span>
+    <a title="valine" href="/blogs/tfPoem2/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/tfPoem2/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -304,14 +301,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.7k</span>
+              <span>2.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 		  
 			
@@ -325,32 +322,46 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="回溯法"><a href="#回溯法" class="headerlink" title="回溯法"></a>回溯法</h2><p>回溯一般用于找到满足要求的的所有解，即相当于构造一棵树，从跟节点出发，找到满足条件的所有路径，并进行保存，当目前的路径不符合条件的时候，需要回溯，即剪枝，删除不符合的分支，当到达结束的条件时，即找到了一个满足条件的解，再继续构造下一个符合条件的路径。</p><p>常用于解决树种求得所有解的问题和排列组合中求解问题，或者问题可以转换为求树中一条路径的问题，可以画图。</p><a id="more"></a>
+        <h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>从字符角度出发，生成一个模型能够自动生成文本，即能够通过已有的字符，预测下一个字符出现的概率。</p><h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="字符级模型"><a href="#字符级模型" class="headerlink" title="字符级模型"></a>字符级模型</h3><p>采用字符级模型，参考Andrej Karpathy写的The Unreasonable Effectiveness of Recurrent Neural Networks，这里采用lstm作为基本单元</p><a id="more"></a>
 
-<h3 id="关于树的回溯"><a href="#关于树的回溯" class="headerlink" title="关于树的回溯"></a>关于树的回溯</h3><p>伪代码：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//result存储最终结果，res存储中间结果</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(TreeNode* root,<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&gt; result,<span class="built_in">vector</span> res，….)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="comment">//处理当前节点</span></span><br><span class="line">   res.push(root-&gt;val)</span><br><span class="line"></span><br><span class="line">   …</span><br><span class="line"></span><br><span class="line">  <span class="comment">//结束的条件</span></span><br><span class="line">  <span class="keyword">if</span>(满足题目要求（一般是值相等）并且到达根节点)</span><br><span class="line">  	result.push(res)</span><br><span class="line">  <span class="keyword">if</span>(root-&gt;left)</span><br><span class="line">  &#123;</span><br><span class="line">    doTree(root-&gt;left,其他参数)</span><br><span class="line">    <span class="comment">//不满足条件，需要回溯</span></span><br><span class="line">    res.pop()</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(root-&gt;right)</span><br><span class="line">  &#123;</span><br><span class="line">    doTree(root-&gt;right,其他参数)</span><br><span class="line">    <span class="comment">//不满足条件，需要回溯</span></span><br><span class="line">    res.pop()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（1）基本lstm单元</p>
+<p>定义基本的lstm单元，使用MultiRNNCell连接多层lstm，并加上dropout</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cell_fn = tf.nn.rnn_cell.BasicLSTMCell</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> is_training <span class="keyword">and</span> self.dropout &gt; <span class="number">0</span>:</span><br><span class="line">        cells = [tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob=<span class="number">1.0</span>-self.dropout) <span class="keyword">for</span> cell <span class="keyword">in</span> cells]<span class="comment">#输出部分作为下一层的输入</span></span><br><span class="line"></span><br><span class="line">    multi_cell = tf.nn.rnn_cell.MultiRNNCell(cells)</span><br></pre></td></tr></table></figure>
+
+<p>（2）定义网络结构</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200720194245.png" alt></p>
+<p>每个句子拆分成字符输入网络，每次输入的诗的大小通过num_unrollings进行设置，seq_length用于设置每次输入的单个句子的长度，经过embedding层得到字符的词嵌入向量表示，输入lstm单元，经过全连接层，最终得到预测的输出，其中经过lstm输出lstm组合单元的输出激活值值，传入到下一层。</p>
+<p>利用static_rnn使用指定的RNN生成循环神经网络：</p>
+<blockquote>
+<p>#使用指定的RNN神经元创建循环神经网络<br>        outputs, final_state = tf.nn.static_rnn(<br>                cell = multi_cell,<br>                inputs = sliced_inputs,<br>                initial_state=self.initial_state)<br>        self.final_state = final_state</p>
+</blockquote>
+<p>网络中其他设置：</p>
+<p>1°损失函数：稀疏softmax交叉熵函数sparse_softmax_cross_entropy_with_logits；</p>
+<p>2°训练时的设置：防止梯度爆照，进行梯度修剪，当梯度大于最大梯度时，直接使用最大梯度作为当前梯度值；</p>
+<blockquote>
+<p>tvars = tf.trainable_variables()<br>grads, _ = tf.clip_by_global_norm(tf.gradients(self.mean_loss, tvars), self.max_grad_norm)</p>
+</blockquote>
+<p>3°梯度下降算法采用adam算法</p>
+<h3 id="训练数据"><a href="#训练数据" class="headerlink" title="训练数据"></a>训练数据</h3><p>（1）训练集数据转换为词嵌入</p>
+<p>使用Word2Vec算法训练好的词向量模型，以&lt; / s &gt;开头，按词频排列，去除低频词。</p>
+<p>词向量模型存储在vectors_poem.bin中，使用skim-gram模型，选择一个词作为输入，在选定词的前后距离内选择一个词作为目标词来作为训练集，在当前输入的上下文中得到下一个字的概率值为</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200623162639.png" alt></p>
+<p>（2）训练数据集构建</p>
+<p>当前诗句为“锄禾日当午”，则输入文本为“锄禾日当午”，输出文本为“禾日当午锄”，使用前一个字推出上下文中后一个字来构建训练集。</p>
+<p>1°根据训练的词向量模型，将所有的诗句转换为词向量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">poem_ids = DataLoader.get_text_idx(poems, self.w2v.vocab_hash, self.seq_max_length)</span><br></pre></td></tr></table></figure>
+
+<p>以seq_max_length作为一句诗的最大长度，当超过最大长度，文本加上结束符]，按照转换之后的文本转换为词向量。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_text_idx</span><span class="params">(text, vocab, max_document_length)</span>:</span></span><br><span class="line">        max_document_length_without_end = max_document_length - <span class="number">1</span></span><br><span class="line">        text_array = []</span><br><span class="line">        <span class="keyword">for</span> i, x <span class="keyword">in</span> enumerate(text):</span><br><span class="line">            line = []</span><br><span class="line">            <span class="keyword">if</span> len(x) &gt; max_document_length:</span><br><span class="line">                x_parts = x[:max_document_length_without_end]</span><br><span class="line">                idx = x_parts.rfind(<span class="string">'。'</span>)</span><br><span class="line">                <span class="keyword">if</span> idx &gt; <span class="number">-1</span>:</span><br><span class="line">                    x_parts = x_parts[<span class="number">0</span>:idx + <span class="number">1</span>] + <span class="string">']'</span></span><br><span class="line">                x = x_parts</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> j, w <span class="keyword">in</span> enumerate(x):</span><br><span class="line">                <span class="keyword">if</span> (w <span class="keyword">not</span> <span class="keyword">in</span> vocab):</span><br><span class="line">                    w = <span class="string">'&lt;unknown&gt;'</span></span><br><span class="line">                line.append(vocab[w])</span><br><span class="line">            text_array.append(line)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> text_array</span><br></pre></td></tr></table></figure>
+
+<p>2°按照训练集、开发集、测试集进行划分，并将数据保存在poem_id.txt中</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">n_samples = len(poem_ids)</span><br><span class="line">    train_size = int(self.train_frac * n_samples)</span><br><span class="line">    valid_size = int(self.valid_frac * n_samples)</span><br><span class="line">    test_size = n_samples - train_size - valid_size</span><br><span class="line"></span><br><span class="line">    self.testingSamples = poem_ids[-test_size:]</span><br><span class="line">    self.validationSamples = poem_ids[-valid_size - test_size: -test_size]</span><br><span class="line">    self.trainingSamples = poem_ids[:train_size]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 保存处理过的训练数据集</span></span><br><span class="line">    poem_ids_file = os.path.join(self.data_dir, <span class="string">'poem_ids.txt'</span>)</span><br><span class="line">    self.save_dataset(poem_ids_file)</span><br></pre></td></tr></table></figure>
+
+<p>3°每次训练按照batch_size读取数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">x_seqs = np.ndarray((new_sample_size, self.seq_max_length), dtype=np.int32)</span><br><span class="line">    y_seqs = np.ndarray((new_sample_size, self.seq_max_length), dtype=np.int32)</span><br><span class="line">    self.x_lengths = []</span><br><span class="line">    <span class="keyword">for</span> i, sample <span class="keyword">in</span> enumerate(samples):</span><br><span class="line">        x_lengths.append(len(sample))</span><br><span class="line">        x_seqs[i] = sample + [self.padToken] * (self.seq_max_length - len(sample))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(sample_size, new_sample_size):</span><br><span class="line">        copyi = i - sample_size</span><br><span class="line">        x_seqs[i] = x_seqs[copyi]</span><br><span class="line">        x_lengths.append(x_lengths[copyi])</span><br><span class="line"></span><br><span class="line">    y_seqs[:, :<span class="number">-1</span>] = x_seqs[:, <span class="number">1</span>:]  <span class="comment"># x的1-最后给，y的0-倒数第二个</span></span><br><span class="line">    y_seqs[:, <span class="number">-1</span>] = x_seqs[:, <span class="number">0</span>]  <span class="comment"># x的第0个给y的最后一个</span></span><br></pre></td></tr></table></figure>
 
 
 
-<p>应用场景：</p>
-<p>找到所有满足目标节点的路径：每次把当前节点加入，并将目标值减去当前节点的值，判断当前叶子节点值（左右子树为空）与0是否相等，相等，则找到一个满足的结果，否则，继续对左右子树递归，此时若存在不满足条件的，需要回溯（pop）</p>
-<h3 id="排列组合"><a href="#排列组合" class="headerlink" title="排列组合"></a>排列组合</h3><p>排列组合求所有符合问题的解，基本框架：</p>
-<p>组合问题按顺序读取，不需要设置used数组，排列问题则需要设置</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">int</span> start,<span class="keyword">int</span> target)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">//结束的条件：找到满足要求的一个解</span></span><br><span class="line">  <span class="keyword">if</span>(满足值为<span class="number">0</span>或者其他条件)</span><br><span class="line">  &#123;</span><br><span class="line">    result.push(res);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//循环的条件</span></span><br><span class="line">  <span class="keyword">for</span>(i&lt;数组长度&amp;&amp;target-num[i]&gt;=<span class="number">0</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    [</span><br><span class="line">      <span class="comment">//避免重复元素得出重复组合</span></span><br><span class="line">      <span class="keyword">if</span>(i&gt;start&amp;&amp;num[i]==num[i<span class="number">-1</span>])</span><br><span class="line">      	<span class="keyword">continue</span>;</span><br><span class="line">    ]</span><br><span class="line">    [</span><br><span class="line">      <span class="comment">//全排列中不能使用上一层使用的元素</span></span><br><span class="line">      <span class="comment">//设置标志位或者其他判断条件</span></span><br><span class="line">      <span class="keyword">if</span>(!use[i])&#123;&#125;</span><br><span class="line">    ]</span><br><span class="line">    <span class="comment">//当时排列问题，并且有重复数字的时候，需要将上面两个条件结合</span></span><br><span class="line">    <span class="comment">//选择当前节点</span></span><br><span class="line">    res.push(num[i]);</span><br><span class="line">    [</span><br><span class="line">      <span class="comment">//选择了该节点，需要设置标志位</span></span><br><span class="line">      used[i]=<span class="literal">true</span>;</span><br><span class="line">    ]</span><br><span class="line">    <span class="comment">//[可以重复使用]</span></span><br><span class="line">    dfs(i,target-num[i]);</span><br><span class="line">    [<span class="comment">//不可以重复使用</span></span><br><span class="line">    [dfs(i+<span class="number">1</span>,target-num[i]);</span><br><span class="line">    ]</span><br><span class="line">    <span class="comment">//回溯，取消当前选择，返回上一层</span></span><br><span class="line">    res.pop();</span><br><span class="line">    [</span><br><span class="line">      <span class="comment">//撤销选择，需要还原标志位</span></span><br><span class="line">      used[i]=<span class="literal">true</span>;</span><br><span class="line">    ]</span><br><span class="line">      </span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> 应用场景：</p>
-<p>组合求和（数组元素内部不重复，在数组中找到和为目标值的组合）：首先对数组排序，排序能更方便去重。在dfs函数中，每次传入数组中数据的位置和目标值，当剩余值大于等于0，进入循环，将当前数组值存入路径中，再继续递归，做下一次决策，由于可重复，所以下一次可以仍然从i开始，当满足条件时，将当前路径存入结果，此时回溯到上一层，继续寻找合适的路径。</p>
-<p>组合求和（数组元素内部可能有重复，在数组中找到和为目标值的组合，此时不能重复使用数组的元素，解集不能包含重复的组合）：思路同上，因为不能重复使用数组元素，所以在for循环中dfs函数传值只鞥从i+1开始。与此同时，由于解集不能包含重复的组合，所以在排序后数组，当前一个数组元素和当前数组元素相同，那么当前元素得出的路径和上一个元素必定相同，因此这时需要跳过当前元素，对下一个元素处理。</p>
-<p>全排列（给定一个没有重复数字的序列，返回其所有可能的全排列）：排列题是上一次选择的节点，这次不能再选择。每一层都可以选择一个未出现的元素，需要对数组元素设置标志位，当使用过，就将标志位置为1，此时也需要在for循环中加一层判断，查看当前数组是否被使用，当使用过时，需要跳过该元素，下一层继续选择，找到一个合适的结果后存储下来，接着撤销本次选择，返回上一层查看是否有其他结果。</p>
-<p>全排列（给定一个可包含重复数字的序列，返回所有不重复的全排列）：思路同上，此时需要额外加个判断，看是否有重复的数字，有重复的数字则跳过。具体为：本次节点与前一个相同，并且前一个已使用过，说明已有相同的排列，则本次排列跳过。</p>
-<p>n皇后问题：转换为全排列问题，在每一个的n个位置中选一个作为当前选择，n行做n个选择，并且是做做不重复的选择，正好构成一个排列，此时的排列满足不在同一行不在同一列，只要对当前的排列需要再满足题设条件即可，即不在主对角线，不在副对角线，vector<bool> master1;//副对角线和相同，都为i+j i为行，j为列，两者相加和是当前行，vector<bool> master2;//主对角线差相同，为i-j+n-1 i为行，j为列，再设置两个标志位进行判断，最后将得到的排列用题目中格式打印出来作为结果。</bool></bool></p>
-<p>子集（给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集））：对不同子集个数进行深度遍历，此时需要在主函数中加一个循环</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>()+<span class="number">1</span>;i++)<span class="comment">//i的长度为0~nums.size(),所以需要加一</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//----通过i控制子集大小</span></span><br><span class="line">  dfs(start,i);</span><br><span class="line">  <span class="comment">//start是从数组中取元素的开始的位置，i是深度，即子集中元素的个数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>分割字符串（给定一个字符串 <em>s</em>，将 <em>s</em> 分割成一些子串，使每个子串都是回文串）：每次判断当前的起始至末尾位置是否是回文，如果是就将结果压入res，继续递归。通过不断变换分割的位置，来构造决策树。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=start;i&lt;len;i++)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(start~i之间不是回文)</span><br><span class="line">    继续找下一个回文的位置</span><br><span class="line">    </span><br><span class="line">   <span class="comment">//start~i之间是回文，压入结果内</span></span><br><span class="line">    res.push(s.substr(start,start+i+<span class="number">1</span>))</span><br><span class="line">    <span class="comment">//继续看下一个分割位置</span></span><br><span class="line">    dfs(i+<span class="number">1</span>,depth)</span><br><span class="line">    <span class="comment">//撤销选择，回到上一层决策</span></span><br><span class="line">    res.pop()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -390,25 +401,22 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
-              <a href="/tags/%E5%9B%9E%E6%BA%AF/" rel="tag"><i class="fa fa-tag"></i> 回溯</a>
+              <a href="/tags/tensorflow/" rel="tag"><i class="fa fa-tag"></i> tensorflow</a>
+              <a href="/tags/NLP/" rel="tag"><i class="fa fa-tag"></i> NLP</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/blogs/treeNote/" rel="next" title="Leecode算法学习笔记（一）">
-                  <i class="fa fa-chevron-left"></i> Leecode算法学习笔记（一）
+                <a href="/blogs/tfLog/" rel="next" title="用tensorflow实现机器学习算法——logistic回归">
+                  <i class="fa fa-chevron-left"></i> 用tensorflow实现机器学习算法——logistic回归
                 </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/blogs/listbNote/" rel="prev" title="Leecode算法学习笔记（三）">
-                  Leecode算法学习笔记（三） <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -448,7 +456,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#回溯法"><span class="nav-number">1.</span> <span class="nav-text">回溯法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于树的回溯"><span class="nav-number">1.1.</span> <span class="nav-text">关于树的回溯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#排列组合"><span class="nav-number">1.2.</span> <span class="nav-text">排列组合</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#描述"><span class="nav-number">1.</span> <span class="nav-text">描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符级模型"><span class="nav-number">2.1.</span> <span class="nav-text">字符级模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#训练数据"><span class="nav-number">2.2.</span> <span class="nav-text">训练数据</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
