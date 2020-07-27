@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1、题目：378. 有序矩阵中第K小的元素描述：给定一个 n * n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第k小的元素。请注意，它是排序后的第k小元素，而不是第 k 个不同的元素。思路：（1）优先队列构造一个大小为k的小顶堆，不断插入数组元素，自动进行排序代码12345678910priority_queue&amp;lt;int&amp;gt; p;for(int i=0;i&amp;lt;matrix.s">
+<meta name="keywords" content="good good good">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leecode做题记录（一）">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;LC1&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="1、题目：378. 有序矩阵中第K小的元素描述：给定一个 n * n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第k小的元素。请注意，它是排序后的第k小元素，而不是第 k 个不同的元素。思路：（1）优先队列构造一个大小为k的小顶堆，不断插入数组元素，自动进行排序代码12345678910priority_queue&amp;lt;int&amp;gt; p;for(int i=0;i&amp;lt;matrix.s">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-07-27T13:52:26.577Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/LC1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Leecode做题记录（一） | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">39</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">11</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">54</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/LC1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          Leecode做题记录（一）
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-07-27 21:50:24 / 修改时间：21:52:26" itemprop="dateCreated datePublished" datetime="2020-07-27T21:50:24+08:00">2020-07-27</time>
+            </span>
+
+          
+            <span id="/blogs/LC1/" class="post-meta-item leancloud_visitors" data-flag-title="Leecode做题记录（一）" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/LC1/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/LC1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>1、题目：378. 有序矩阵中第K小的元素</p><p>描述：给定一个 n * n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第k小的元素。请注意，它是排序后的第k小元素，而不是第 <code>k</code> 个不同的元素。</p><p>思路：</p><p>（1）优先队列</p><p>构造一个大小为k的小顶堆，不断插入数组元素，自动进行排序</p><p>代码</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">priority_queue&lt;<span class="keyword">int</span>&gt; p;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;matrix.<span class="built_in">size</span>();i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;matrix[<span class="number">0</span>].<span class="built_in">size</span>();j++)</span><br><span class="line">    &#123;</span><br><span class="line">        p.push(matrix[i][j]);</span><br><span class="line">        <span class="keyword">if</span>(p.<span class="built_in">size</span>()&gt;k)</span><br><span class="line">            p.pop();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><a id="more"></a>
+
+
+
+
+
+
+
+<p>（2）二分查找</p>
+<p>左上角到右下角构成一个递增序列,中间的mid的值将数列分成了两部分，可以画图看，是两个板块</p>
+<p>当小于等于mid的数的数量小于k时，说明第k小的元素要在前半部分板块查找；反之当当小于等于mid的数的数量大于等于k时，要在后半部分板块查找</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> left=matrix[<span class="number">0</span>][<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">int</span> right=matrix.back().back();</span><br><span class="line">    <span class="keyword">while</span>(left&lt;right)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> mid=(left+right)/<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span>(check(matrix,mid,k))</span><br><span class="line">            right=mid;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            left=mid+<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>2、题目：//108. 将有序数组转换为二叉搜索树</p>
+<p> 描述：将一个按照升序排列的有序数组，转换为一棵高度平衡二叉搜索树。本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1</p>
+<p>思路：树的构造要找准根节点，给出的数组是递增数组，为了构造二叉平衡树，根节点选择中间节点，选择了根节点之后，分别按照同样的方法在左右子树中划分根节点、左子树、右子树；当指向数组的左指针等于右指针，此时数组中没有树，即需要返回。</p>
+<p>注：根据中点构造根节点时，区间是左闭右开</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">root=dfs(<span class="number">0</span>,nums.<span class="built_in">size</span>(),nums);</span><br><span class="line">  </span><br><span class="line">  <span class="function">TreeNode* <span class="title">dfs</span><span class="params">(<span class="keyword">int</span> left,<span class="keyword">int</span> right,<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums)</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">      <span class="keyword">if</span>(left==right)</span><br><span class="line">          <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">      </span><br><span class="line">      <span class="keyword">int</span> mid=(left+right)/<span class="number">2</span>;</span><br><span class="line">      TreeNode* root=<span class="keyword">new</span> TreeNode(nums[mid]);</span><br><span class="line">      root-&gt;left=dfs(left,mid,nums);</span><br><span class="line">      root-&gt;right=dfs(mid+<span class="number">1</span>, right,nums);</span><br><span class="line">      <span class="keyword">return</span> root;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.题目：62. 不同路径    63. 不同路径 II</p>
+<p>描述1：一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。问总共有多少条不同的路径？</p>
+<p>描述2：一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？</p>
+<p>思路：动态规划，（i,j）表述到达位置i,j的路径数，由于机器人智能向右向下走，所以该数目等于当前位置的左边和上面路径之和。</p>
+<p>需要注意对第一行和第一列的单独处理，当有路障的时候，判断无路障再计算路径数目，有路障此路不通，路径数量为0</p>
+<p>代码1：没有障碍的简单情况</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;m;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;n;j++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//1.处理第一行和第一列</span></span><br><span class="line">                <span class="keyword">if</span>(i==<span class="number">0</span>||j==<span class="number">0</span>)</span><br><span class="line">                    dp[i][j]=<span class="number">0</span>;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    <span class="comment">//2.i，j位置的路径总数等于左边和上面的路径之和</span></span><br><span class="line">                    dp[i][j]=dp[i][j<span class="number">-1</span>]+dp[i<span class="number">-1</span>][j];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码2：有障碍的情况，此时第一行和第一列需要单独处理（根据有无路障进行赋值）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//3.处理剩余的</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;m;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">1</span>;j&lt;n;j++)</span><br><span class="line">                <span class="comment">//当没有障碍的时候</span></span><br><span class="line">                <span class="keyword">if</span>(obstacleGrid[i][j]==<span class="number">0</span>)</span><br><span class="line">                    dp[i][j]=dp[i<span class="number">-1</span>][j]+dp[i][j<span class="number">-1</span>];</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>4.题目：349. 两个数组的交集，350. 两个数组的交集 II</p>
+<p>描述1：给定两个数组，编写一个函数来计算它们的交集。输出结果中的每个元素一定是唯一的。</p>
+<p>描述2：给定两个数组，编写一个函数来计算它们的交集。输出结果中每个元素出现的次数，应与元素在两个数组中出现的次数一致。</p>
+<p>思路：排序+双指针，将两个数组排序后使用双指针，当数组a中元素小于数组b中元素，a数组直至后移，反之b数组指针后移，当相等时则找到了交集中的元素。</p>
+<p>当交集中的元素需要唯一的时候，可以使用set去重。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1.排序</span></span><br><span class="line">sort(nums1.<span class="built_in">begin</span>(),nums1.<span class="built_in">end</span>());</span><br><span class="line">sort(nums2.<span class="built_in">begin</span>(),nums2.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line"><span class="comment">//2.双指针</span></span><br><span class="line"><span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>;</span><br><span class="line"><span class="built_in">set</span>&lt;<span class="keyword">int</span>&gt; s;</span><br><span class="line"><span class="keyword">while</span>((i&lt;nums1.<span class="built_in">size</span>())&amp;&amp;(j&lt;nums2.<span class="built_in">size</span>()))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(nums1[i]&lt;nums2[j])</span><br><span class="line">        i++;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (nums2[j]&lt;nums1[i])</span><br><span class="line">        j++;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        s.insert(nums1[i]);</span><br><span class="line">        i++;</span><br><span class="line">        j++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>set去重</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> k=<span class="number">0</span>;</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res(s.<span class="built_in">size</span>());</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">auto</span> num:s)</span><br><span class="line">&#123;</span><br><span class="line">    res[k]=num;</span><br><span class="line">    k++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>附：1.当a数组比b数组小很多的时候，使用哈希表，a数组用于计数，在b数组中进行哈希查找，时间复杂度O(max(a,b)），空间复杂度O(min(a,b)）</p>
+<p>2.磁盘内存有限不能一次加载所有元素到内存，不能使用内部排序算法，使用归并排序，将分割的子数组写成小文件，归并后合并为大文件</p>
+<p>5.题目：112. 路径总和</p>
+<p>描述：给定一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和。说明: 叶子节点是指没有子节点的节点。</p>
+<p>思路：递归，使用目标值减去当前节点的值，不断在左右子树找一条路径，当找到一条路径（即遇到叶子节点），剩余的值等于叶子节点说明找到路径，此时返回TRUE，如果左右子树都找不到路径，则返回FALSE。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1.递归结束，找到一个叶子节点即路径</span></span><br><span class="line">    <span class="keyword">if</span>((root-&gt;left==<span class="literal">NULL</span>)&amp;&amp;(root-&gt;right==<span class="literal">NULL</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//判断剩余的值是否和叶子的值相等</span></span><br><span class="line">        <span class="keyword">if</span>(sum==root-&gt;val)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//2.递归，减去当前节点的值</span></span><br><span class="line">    <span class="keyword">int</span> val=root-&gt;val;</span><br><span class="line">    sum=sum-val;        </span><br><span class="line">    <span class="comment">//3.继续往左右子树找路径</span></span><br><span class="line">    <span class="keyword">return</span> hasPathSum(root-&gt;left, sum)||hasPathSum(root-&gt;right, sum);</span><br></pre></td></tr></table></figure>
+
+<p>6.题目：面试题 16.11. 跳水板</p>
+<p>描述：你正在使用一堆木板建造跳水板。有两种类型的木板，其中长度较短的木板长度为shorter，长度较长的木板长度为longer。你必须正好使用k块木板。编写一个方法，生成跳水板所有可能的长度。返回的长度需要从小到大排列。</p>
+<p>思路：这是两个木板的排列组合问题，只需要考虑每次选取短木板和长木板的个数，短木板个数可以取0 ~ k，长木板个数可以取0 ~ k，按照不同的情况相加得到不同的结果。</p>
+<p>因为需要从小到大排列，所以一开始取最多的短木板，慢慢减少短木板的数量，同时增加长木板的数量。最终由k+1中结果（木板数量在0 ~ k之间变化，共k+1种）。</p>
+<p>注：当短木板的数量=长木板的数量，此时题目就退化为取k次短木板/长木板。当k=0的特殊情况也需要考虑。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1.特殊情况</span></span><br><span class="line">    <span class="keyword">if</span>(k==<span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">    <span class="comment">//2.两块板长度相同</span></span><br><span class="line">    <span class="keyword">if</span>(shorter==longer)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res(<span class="number">1</span>);</span><br><span class="line">        res[<span class="number">0</span>]=k*shorter;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//3.对两块板子取不同的次数,最终有k+1种结果</span></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res(k+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;=k;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        res[i]=(k-i)*shorter+i*longer;<span class="comment">//结果从小到大排列</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>7.题目：7. 整数反转</p>
+<p>描述：给出一个 32 位的有符号整数，你需要将这个整数中每位上的数字进行反转。</p>
+<p>思路：每次取数字的最后一位，作为新数字的最高位。</p>
+<p>重点是需要判断加上当前最后一位的转换的结果是否溢出：（转换为字符串也可以解决溢出，但使用库函数效率低）</p>
+<p>（1）大于32位最大值：当前转换结果比最大值/10大，或者当前转换结果=最大值/10且当前最后一位数大于7（2^31-1最后一位是7），此时相加得到的结果溢出，返回0；</p>
+<p>（2）小于32位最小值同理：当前转换结果比最小值/10小，或者当前转换结果=最小值/10且当前最后一位数大于-8（2^31最后一位是-8），此时相加得到的结果溢出。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (x!=<span class="number">0</span>) &#123;</span><br><span class="line">         temp=x%<span class="number">10</span>;<span class="comment">//每次的个位数</span></span><br><span class="line">         <span class="comment">//考虑溢出 2^31-1尾数为7，-2^31尾数为8</span></span><br><span class="line">         <span class="keyword">if</span>((result&gt;INT_MAX/<span class="number">10</span>)||(result==INT_MAX/<span class="number">10</span>&amp;&amp;temp&gt;<span class="number">7</span>))<span class="comment">//考虑大于最大值 2^31-1</span></span><br><span class="line">             <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">         <span class="keyword">if</span>((result&lt;INT_MIN/<span class="number">10</span>)||(result==INT_MIN/<span class="number">10</span>&amp;&amp;temp&lt;<span class="number">-8</span>))<span class="comment">//考虑大于最小值-2^31</span></span><br><span class="line">             <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">         result=result*<span class="number">10</span>+temp;</span><br><span class="line">         x=x/<span class="number">10</span>;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+
+<p>8.题目：面试题 17.13. 恢复空格</p>
+<p>描述：哦，不！你不小心把一个长篇文章中的空格、标点都删掉了，并且大写也弄成了小写。像句子”I reset the computer. It still didn’t boot!”已经变成了”iresetthecomputeritstilldidntboot”。在处理标点符号和大小写之前，你得先把它断成词语。当然了，你有一本厚厚的词典dictionary，不过，有些词没在词典里。假设文章用sentence表示，设计一个算法，把文章断开，要求未识别的字符最少，返回未识别的字符数。注意：本题相对原题稍作改动，只需返回未识别的字符数</p>
+<p>思路：动态规划：dp[i]表示第i个位置前未识别的字符数（这里设置dp[0]=0，从句子的第一个字符开始标注dp数组）</p>
+<p>当在字典中找不到对应单词，则dp[i]=dp[i-1]+1;</p>
+<p>为了判断句子中是否出现字典中的单词，遍历字典中所有单词，在当前位置的前i-len（len是当前遍历的字典的单词长度，此时len需要小于等于i，即句子中的单词能容纳一个字典中单词的大小）中如果得到的字符正好在字典中，则dp[i]需要在自身dp[i]和dp[i-len]中取最小值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">dp[<span class="number">0</span>]=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;dp.<span class="built_in">size</span>();i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//找不到单词默认情况</span></span><br><span class="line">        dp[i]=dp[i<span class="number">-1</span>]+<span class="number">1</span>;</span><br><span class="line">        <span class="comment">//前len个长度</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;dictionary.<span class="built_in">size</span>();j++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> len=dictionary[j].<span class="built_in">size</span>();</span><br><span class="line">            <span class="keyword">if</span>(len&lt;=i)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(sentence.substr(i-len,len)==dictionary[j])</span><br><span class="line">                dp[i]=<span class="built_in">min</span>(dp[i],dp[i-len]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>9.题目：9. 回文数</p>
+<p>描述：判断一个整数是否是回文数。回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。</p>
+<p>思路：数学方法：负数翻转肯定不是回文，对正数处理，从末尾取值给新的数作为首位，得到新的数和原来的数对比即可。</p>
+<p>这里需要判断是否溢出，使用新数在加数据之前，判断是否比最大值/10还大。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(x&lt;<span class="number">0</span>)<span class="comment">//负数</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">int</span> y=<span class="number">0</span>;<span class="comment">//正数</span></span><br><span class="line">    <span class="keyword">int</span> old=x;</span><br><span class="line">    <span class="keyword">while</span>(old!=<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> tmp=old%<span class="number">10</span>;</span><br><span class="line">        <span class="comment">//判断是否溢出</span></span><br><span class="line">        <span class="keyword">if</span>(y&gt;INT_MAX/<span class="number">10</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        y=y*<span class="number">10</span>+tmp;</span><br><span class="line">        old=old/<span class="number">10</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> y==x;</span><br></pre></td></tr></table></figure>
+
+<p>10.题目：13. 罗马数字转整数</p>
+<p>描述：罗马数字包含以下七种字符: I， V， X， L，C，D 和 M。</p>
+<p>思路：哈希表+罗马数字串的规律：</p>
+<p>使用哈希表存储每个罗马字符代表的数字，形成字典。</p>
+<p>当当前字符比后面字符代表的数小，就减去该字符代表的值，反之，则加上该值，最后得到的结果就是罗马字符对应的数字。如IV，I代表1，V代表5，遇到I时，当前res=-1，遇到V正好到末尾，末尾‘\0’在字典中为0，则加上V代表的5，最终得到数字为4。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; <span class="built_in">map</span>=&#123;&#123;<span class="string">'I'</span>,<span class="number">1</span>&#125;,&#123;<span class="string">'V'</span>,<span class="number">5</span>&#125;,&#123;<span class="string">'X'</span>,<span class="number">10</span>&#125;,&#123;<span class="string">'L'</span>,<span class="number">50</span>&#125;,&#123;<span class="string">'C'</span>,<span class="number">100</span>&#125;,&#123;<span class="string">'D'</span>,<span class="number">500</span>&#125;,&#123;<span class="string">'M'</span>,<span class="number">1000</span>&#125;&#125;;</span><br><span class="line">    <span class="keyword">int</span> add=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;s.length();i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">map</span>[s[i]]&lt;<span class="built_in">map</span>[s[i+<span class="number">1</span>]])</span><br><span class="line">            res-=<span class="built_in">map</span>[s[i]];</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            res+=<span class="built_in">map</span>[s[i]];</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>11.题目：120. 三角形最小路径和</p>
+<p>描述：给定一个三角形，找出自顶向下的最小路径和。每一步只能移动到下一行中相邻的结点上。相邻的结点 在这里指的是 下标 与 上一层结点下标 相同或者等于 上一层结点下标 + 1 的两个结点。</p>
+<p>思路：自底部向上使用动态规划，dp[i] [j]表示从第i行j列到最底部的路径，每次都向上选自己上方或者右边较小的数。所以每个位置最小的路径都是自身加上下一行同列、右边列的较小数作为当前路径。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//增加第n行的虚拟行</span></span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; dp(len+<span class="number">1</span>,<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;(len+<span class="number">1</span>));</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=len<span class="number">-1</span>;i&gt;=<span class="number">0</span>;i--)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;=i;j++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//3.将本行当前元素和下一行中较小的相加</span></span><br><span class="line">            dp[i][j]=<span class="built_in">min</span>(dp[i+<span class="number">1</span>][j],dp[i+<span class="number">1</span>][j+<span class="number">1</span>])+triangle[i][j];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//每次都选最小的x往上加，最后得到的[0][0]节点就是最小路径</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>12.题目：14. 最长公共前缀</p>
+<p>描述：编写一个函数来查找字符串数组中的最长公共前缀。如果不存在公共前缀，返回空字符串 “”。</p>
+<p>思路：将第一个字符串作为比较字符串，遍历剩余的字符串。</p>
+<p>对每个字符串，当字符一样，则继续遍历；</p>
+<p>当字符不一样，删除不一样的字符。遍历所有的剩余字符串得到的就是最长的公共前缀，如果没有前缀，则最后字符串会被全部删完，得到空串。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">string</span> result=strs[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;strs.<span class="built_in">size</span>();i++)<span class="comment">//strs中的字符串z从第一个开始比较，第0个已经做了参照</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;result.length();j++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(result[j]==strs[i][j])</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                result.erase(j);<span class="comment">//不相同的字符删除</span></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>13.题目：96. 不同的二叉搜索树</p>
+<p>描述：给定一个整数 n，求以 1 … n 为节点组成的二叉搜索树有多少种？</p>
+<p>思路：使用动态规划，dp[i]表示长度为i的树的个数，长度为i的树的个数可以分解为左子树个数 * 右子树个数（因为是同时满足才能得到长度为i的个数，所以是相乘）。左子树个数等于长度为i-1的树的个数，右子树的个数等于长度为i-当前值的树的个数。</p>
+<p>又因为是二叉平衡树，考虑不同根节点当前长度的树的个数就是dp[i]的值</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">dp[<span class="number">0</span>]=<span class="number">1</span>;</span><br><span class="line">    <span class="comment">//不同长度1~n</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> len=<span class="number">1</span>;len&lt;=n;len++)</span><br><span class="line">    &#123;</span><br><span class="line">         <span class="comment">//用不同的数字作为根节点</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> root=<span class="number">1</span>;root&lt;=len;root++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> left=root<span class="number">-1</span>;<span class="comment">//左子树长度</span></span><br><span class="line">            <span class="keyword">int</span> right=len-root;<span class="comment">//右子树长度</span></span><br><span class="line">            <span class="comment">//左右子树两两结合</span></span><br><span class="line">            dp[len]+=dp[left]*dp[right];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>14.题目：20. 有效的括号</p>
+<p>描述：给定一个只包括 ‘(‘，’)’，’{‘，’}’，’[‘，’]’ 的字符串，判断字符串是否有效。有效字符串需满足：左括号必须用相同类型的右括号闭合。左括号必须以正确的顺序闭合。注意空字符串可被认为是有效字符串</p>
+<p>思路：使用哈希表存储括号对应关系，右括号在前，左括号在后。使用栈存储读到的字符。</p>
+<p>当字符串长度为奇数肯定不是有效括号，可提前进行判断。</p>
+<p>（1）依次读取字符串中字符，当遇到左括号直接入栈。</p>
+<p>（2）遇到右括号时，当栈内为空，则不是有效括号；</p>
+<p>当栈顶的括号等于哈希表中当前读入字符对应的左括号，则栈顶括号得到匹配，出栈，继续读下一个字符；</p>
+<p>当不等于哈希表中对应扩招，则不是有效括号。</p>
+<p>（3）当读完所有字符，栈内没有内容，说明都匹配上了，反之有剩余，说明不是有效括号。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>, <span class="keyword">char</span>&gt; <span class="built_in">map</span>&#123;&#123;<span class="string">'&#125;'</span>,<span class="string">'&#123;'</span>&#125;,&#123;<span class="string">']'</span>,<span class="string">'['</span>&#125;,&#123;<span class="string">')'</span>,<span class="string">'('</span>&#125;&#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;s.length();i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(s[i]==<span class="string">'&#123;'</span>||s[i]==<span class="string">'['</span>||s[i]==<span class="string">'('</span>)<span class="comment">//左括号，入栈</span></span><br><span class="line">            <span class="built_in">stack</span>.push(s[i]);</span><br><span class="line">        <span class="keyword">else</span><span class="comment">//遇到非左括号</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">stack</span>.empty())</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">char</span> temp=<span class="built_in">map</span>[s[i]];</span><br><span class="line">                <span class="keyword">if</span>(<span class="built_in">map</span>[s[i]]==<span class="built_in">stack</span>.top())<span class="comment">//top返回栈顶引用  想要提取栈顶元素，直接用s.top()！！！</span></span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="built_in">stack</span>.pop();<span class="comment">//出栈</span></span><br><span class="line">                    <span class="keyword">continue</span>;<span class="comment">//继续检测下一个</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    <span class="keyword">return</span>  <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>15.题目：392. 判断子序列</p>
+<p>描述：给定字符串 s 和 t ，判断 s 是否为 t 的子序列。你可以认为 s 和 t 中仅包含英文小写字母。字符串 t 可能会很长（长度 ~= 500,000），而 s 是个短字符串（长度 &lt;=100）。字符串的一个子序列是原始字符串删除一些（也可以不删除）字符而不改变剩余字符相对位置形成的新字符串。（例如，”ace”是”abcde”的一个子序列，而”aec”不是）。</p>
+<p>后续挑战 :如果有大量输入的 S，称作S1, S2, … , Sk 其中 k &gt;= 10亿，你需要依次检查它们是否为 T 的子序列。在这种情况下，你会怎样改变代码？</p>
+<p>思路：</p>
+<p>（1）当输入的比对子序列s数量少时：使用双指针</p>
+<p>一个指针指向s，一个指针指向t，当t中遇到和s相同的字符时，移动s的指针，继续比较，一直到t的结尾，当相同的字符数量和s的长度一致，说明是子序列。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(i&lt;s.size()&amp;&amp;j&lt;t.size())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(s[i]==t[j])</span><br><span class="line">        &#123;</span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            j++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>（2）当输入的比对子序列s数量多时：使用动态规划（自动机思想）</p>
+<p>对t记录每个位置后面的字符中，在26个字母出现的对应在字符串中位置，则每次只需要对si字符串遍历一次，进行跳跃遍历，当遍历到当前字符时，找下一个字符的位置，找不到则不是子序列。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">//让字符从第一个开始</span><br><span class="line">t=<span class="string">" "</span>+t;</span><br><span class="line">   int len=t.size();</span><br><span class="line">   vector&lt;vector&lt;int&gt;&gt; dp(len,vector&lt;int&gt;(<span class="number">26</span>));</span><br><span class="line">   int pos;</span><br><span class="line">   <span class="keyword">for</span>(int c=<span class="number">0</span>;c&lt;<span class="number">26</span>;c++)</span><br><span class="line">   &#123;</span><br><span class="line">       pos=<span class="number">-1</span>;</span><br><span class="line">       <span class="keyword">for</span>(int i=t.size()<span class="number">-1</span>;i&gt;=<span class="number">0</span>;i--)</span><br><span class="line">       &#123;</span><br><span class="line">           dp[i][c]=pos;</span><br><span class="line">           //下一个字符出现的位置 dp[<span class="number">1</span>][<span class="string">'b'</span> - <span class="string">'a'</span>]记录的是index = <span class="number">1</span>后面下一次出现 b 的 index，即 <span class="number">9</span>。</span><br><span class="line">           <span class="keyword">if</span>(t[i]==c+<span class="string">'a'</span>)</span><br><span class="line">               pos=i;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   //一次遍历</span><br><span class="line">   int i=<span class="number">0</span>;</span><br><span class="line">   <span class="keyword">for</span>(char c:s)</span><br><span class="line">   &#123;</span><br><span class="line">       i=dp[i][c-<span class="string">'a'</span>];</span><br><span class="line">       <span class="keyword">if</span>(i==<span class="number">-1</span>)</span><br><span class="line">           <span class="keyword">return</span> false;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> true;</span><br></pre></td></tr></table></figure>
+
+<p>16.题目：1025. 除数博弈</p>
+<p>描述：爱丽丝和鲍勃一起玩游戏，他们轮流行动。爱丽丝先手开局。最初，黑板上有一个数字 N 。在每个玩家的回合，玩家需要执行以下操作：选出任一 x，满足 0 &lt; x &lt; N 且 N % x == 0 。用 N - x 替换黑板上的数字 N 。如果玩家无法执行这些操作，就会输掉游戏。只有在爱丽丝在游戏中取得胜利时才返回 True，否则返回 False。假设两个玩家都以最佳状态参与游戏。</p>
+<p>思路：博弈类题目，按照题目规律写出几个符合要求的数字就能看出其中规律</p>
+<p>当数字是偶数的时候，爱丽丝必赢。</p>
+<p>原因：</p>
+<p>（1）当N是奇数时，N进行一次N-x是偶数，那么后手一定拿的是偶数，此时后手只需要拿一个奇数，保证后面给的都是奇数，则先手必输</p>
+<p>（2）当N是偶数时，先手只需要拿一个奇数1，保证后面给的都是奇数，则先手必赢</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//列出几种情况，归纳总结</span><br><span class="line">    <span class="keyword">if</span>(N%<span class="number">2</span>==<span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> true;</span><br><span class="line">    <span class="keyword">return</span> false;</span><br></pre></td></tr></table></figure>
+
+
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/tfLog2/" rel="next" title="使用logistic回归实现多分类">
+                  <i class="fa fa-chevron-left"></i> 使用logistic回归实现多分类
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">236k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:35</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
