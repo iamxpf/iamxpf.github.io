@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="算法简介代价函数代价函数和logistic回归类似，但是为了保证最大间隔，当y=1时，需要θT * X&amp;gt;=1，而不是θT * X&amp;gt;=0，当y=0时，需要θT * X&amp;lt;=-1，而不是θT * X&amp;lt;0，因此将假设函数部分替换为如下的函数：因此代价函数定义如下：其中C的作用和logistic回归中的1&#x2F;λ作用相同，平衡数据拟合程度和模型中参数的大小,SVM的代价函数不是像logi">
+<meta name="keywords" content="机器学习,分类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SVM算法">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;tfSVM&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="算法简介代价函数代价函数和logistic回归类似，但是为了保证最大间隔，当y=1时，需要θT * X&amp;gt;=1，而不是θT * X&amp;gt;=0，当y=0时，需要θT * X&amp;lt;=-1，而不是θT * X&amp;lt;0，因此将假设函数部分替换为如下的函数：因此代价函数定义如下：其中C的作用和logistic回归中的1&#x2F;λ作用相同，平衡数据拟合程度和模型中参数的大小,SVM的代价函数不是像logi">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806205412.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806205909.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806211426.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806212113.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806212528.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806212646.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806214111.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806214450.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806220044.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806214111.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806220753.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806222024.png">
+<meta property="og:updated_time" content="2020-08-06T15:04:17.547Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200806205412.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/tfSVM/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>SVM算法 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">37</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">11</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/tfSVM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          SVM算法
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-06 22:58:58 / 修改时间：23:04:17" itemprop="dateCreated datePublished" datetime="2020-08-06T22:58:58+08:00">2020-08-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/tfSVM/" class="post-meta-item leancloud_visitors" data-flag-title="SVM算法" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/tfSVM/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/tfSVM/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="算法简介"><a href="#算法简介" class="headerlink" title="算法简介"></a>算法简介</h2><h3 id="代价函数"><a href="#代价函数" class="headerlink" title="代价函数"></a>代价函数</h3><p>代价函数和logistic回归类似，但是为了保证最大间隔，<strong><u>当y=1时，需要θT * X&gt;=1，而不是θT * X&gt;=0，当y=0时，需要θT * X&lt;=-1，而不是θT * X&lt;0，</u></strong>因此将假设函数部分替换为如下的函数：</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806205412.png" alt></p><p>因此代价函数定义如下：</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806205909.jpg" alt></p><p>其中C的作用和logistic回归中的1/λ作用相同，平衡数据拟合程度和模型中参数的大小,SVM的代价函数不是像logistic中一样输出概率而是直接预测分类（是0还是1）</p><a id="more"></a>
+
+
+
+
+<p>当C很大的时候，此时需要让前一个求和尽量为0，即需要更多的拟合训练数据，产生过拟合所以会导致低偏差，高方差，对异常点也会很敏感，可以看成是λ很小。</p>
+<p>当C很小的时候，此时需要不需要尽量拟合数据，前一项影响降低，后一项影响增加，即需要让后一项数据尽量为0，即参数要小，所以会导致低方差，高偏差，对异常点不敏感，可以看成是λ很大。</p>
+<h3 id="最大间隔"><a href="#最大间隔" class="headerlink" title="最大间隔"></a>最大间隔</h3><p>（1）最大间隔的好处</p>
+<p>与其他分类算法对比，如logistic分类算法仅是对样本数据进行拟合即可，但是SVM算法在拟合数据时，尽量把正负样本以最大的间隔分开，所以拟合的直线和数据之间拥有更大的距离/间距，过程中是不断让训练样本的最小距离更大，所以和其他算法比SVM算法更具有鲁棒性。</p>
+<p>（2）最大间隔如何得出</p>
+<p>简化代价函数，可以把C放到很大，此时代价函数只剩下后一项，同时要满足间隔的要求，则代价函数可以变为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806211426.png" alt></p>
+<p>代价函数变形：</p>
+<p>其中代价函数的后一项可以看成是各个参数平方相加，加上根号和平方，即可以表示成向量的长度的平方，即总的向量θ=[θ1,θ2…,θn]的列向量，代价函数可以写成1/2 * (θ12+θ22+…)=1/2(√θ12+θ22+…)2=1/2 * ||θ||2，即向量θ的长度的平方</p>
+<p>约束条件变形：</p>
+<p>约束条件中的θ和 X(i)都看成向量，画图如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806212113.png" alt></p>
+<p>θT * X(i)可以看出向量的内积，其值相当于X(i)在θ上的投影的长度乘以θ的长度，记p=投影长度，||θ||是向量θ的长度，则原来的约束条件变为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806212528.png" alt></p>
+<p>则综合代价函数变形和约束条件变形，可得代价函数变形为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806212646.png" alt></p>
+<p>分析：</p>
+<p>从约束条件可以看出，当X(I)到参数θ，即直线的距离太小，按照等式p * ||θ||&gt;=1，则θ就需要很大，这样代价函数就无法取得最小值，所以SVM函数的代价函数决定了。要找X(I)到参数θ，即直线的距离大的，所以保证了以尽量大的间隔划分正负样本。</p>
+<h2 id="加入核函数"><a href="#加入核函数" class="headerlink" title="加入核函数"></a>加入核函数</h2><h3 id="原因及核函数定义"><a href="#原因及核函数定义" class="headerlink" title="原因及核函数定义"></a>原因及核函数定义</h3><p>当面对线性可分的数据，和logistic回归类似，用训练数据拟合一条直线即可，即假设函数用指向方程形式。但是当遇到非线性可分的数据时，这时候需要选择更复杂的特征来构架假设函数。这时候就需要一个能自动选择更好的特征：</p>
+<p>（1）构造标记点</p>
+<p>通过当前样本点和所有标记点相似度度量，将当前样本点映射为新的由相似度度量组成的特征向量，此时的特征变量变为当前样本点集中所有标记点之间的距离，这时候就完成了选择更好的特征，比原来特征更复杂也更能体现数据特点。</p>
+<p>如何选择标记点：一般将所有训练数据作为标记点，则映射之后的特征向量表示了当前样本和其他样本之间的距离。</p>
+<p>（2）定义核函数/相似度度量函数</p>
+<p>常用的是高斯函数：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806214111.png" alt></p>
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>（1）给定（x(1),y(1)）….（x(m),y(m)）一共m个样本</p>
+<p>（2）根据核函数得到新的特征向量</p>
+<p>当前样本为x(i)，则根据核函数公式计算它与所有训练样本之间的相似度数值，得到m个数字，则x(i)映射为含有m维的特征向量fm</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806214450.png" alt></p>
+<p>（3）根据代价函数最小化得到参数θ，当θT * X&gt;0，则预测y=1</p>
+<p>代价函数中部分细节修正，θ2可以看成是θT * θ，算法会给式子中间加上矩阵M（M取决于核函数），为了提高运算效率，因为当参数维度很高时，则计算θT * θ代价会很高。</p>
+<h4 id="核函数类型"><a href="#核函数类型" class="headerlink" title="核函数类型"></a>核函数类型</h4><p>（1）线性核函数：即无内核参数，适用于线性可分数据</p>
+<p>此时的SVM是一个线性分类器，利用sklearn中的svm库函数包，通过linearSVC调用无内核的SVM算法，输入参数C和使用的损失函数，用fit拟合训练数据，通过score计算准确度，使用decision_function返回各点到决策边界的距离</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用线性svm算法</span></span><br><span class="line">svml=sklearn.svm.LinearSVC(C=<span class="number">1</span>,loss=<span class="string">'hinge'</span>)<span class="comment">#设置损失函数（标准损失函数）以及C的值</span></span><br><span class="line"><span class="comment">#用训练数据拟合模型</span></span><br><span class="line">svml.fit(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],data[<span class="string">'y'</span>]) <span class="comment">#X1,X2作为一个整体</span></span><br><span class="line"><span class="comment">#返回平均准确度</span></span><br><span class="line">svml_score=svml.score(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],data[<span class="string">'y'</span>])</span><br><span class="line">data[<span class="string">'decision_function'</span>]=svml.decision_function(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]])</span><br></pre></td></tr></table></figure>
+
+<p>通过颜色反映距离大小，画图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806220044.png" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#按照点到分割平面的距离画图</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_sdf</span><span class="params">(data)</span>:</span></span><br><span class="line">	fig,ax=plt.subplots(figsize=(<span class="number">8</span>,<span class="number">8</span>))</span><br><span class="line">	ax.scatter(data[<span class="string">'X1'</span>],data[<span class="string">'X2'</span>],c=data[<span class="string">'decision_function'</span>],cmap=<span class="string">'RdBu'</span>)<span class="comment">#颜色用点的标签来标记</span></span><br><span class="line">	ax.set_title(<span class="string">'svm:C=1'</span>)</span><br><span class="line">	ax.set_xlabel(<span class="string">'X1'</span>)</span><br><span class="line">	ax.set_ylabel(<span class="string">'X2'</span>)</span><br><span class="line">	plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>（2）高斯核函数</p>
+<p>此时需要自己构造高斯内核函数：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806214111.png" alt></p>
+<p>需要选择高斯核中gamma参数，当gamma很小，此时的特征变化剧烈，会导致低偏差，高方差，反之，当gamma很大，则特征变化缓慢，会导致低方差，高偏差。</p>
+<p>利用sklearn中的svm库函数包，通过SVC调用有内核的SVM算法，输入参数C、调用的核函数（rbf是高斯核函数）、核函数中的gamma值（其中probility是返回对数组标签的概率故居），用fit拟合训练数据，通过score计算准确度，使用decision_function返回各点到决策边界的距离，通过predict_proba返回数据的标签，predict_proba(x)[:,0]返回第0列类别的对应数据的概率估计。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用svm算法</span></span><br><span class="line">svmg=sklearn.svm.SVC(C=<span class="number">100</span>,kernel=<span class="string">'rbf'</span>,gamma=<span class="number">10</span>,probability=<span class="literal">True</span>)<span class="comment">#高斯核函数</span></span><br><span class="line"><span class="comment">#用训练数据拟合模型</span></span><br><span class="line">svmg.fit(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],data[<span class="string">'y'</span>]) <span class="comment">#X1,X2作为一个整体</span></span><br><span class="line"><span class="comment">#返回平均准确度</span></span><br><span class="line">svmg_score=svmg.score(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],data[<span class="string">'y'</span>])</span><br><span class="line">data[<span class="string">'decision_function'</span>]=svmg.decision_function(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment">#用概率估计,估计类别</span></span><br><span class="line">data[<span class="string">'svmg_proba'</span>]=svmg.predict_proba(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]])[:,<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+
+<p>按照概率估计，属于当前类别的用红色标注出来</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806220753.png" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_proba</span><span class="params">(data)</span>:</span></span><br><span class="line">	fig,ax=plt.subplots(figsize=(<span class="number">8</span>,<span class="number">8</span>))</span><br><span class="line">	ax.scatter(data[<span class="string">'X1'</span>],data[<span class="string">'X2'</span>],c=data[<span class="string">'svmg_proba'</span>],cmap=<span class="string">'Reds'</span>)<span class="comment">#颜色用点的标签来标记,第一个类是红色</span></span><br><span class="line">	ax.set_title(<span class="string">'svm:C=1'</span>)</span><br><span class="line">	ax.set_xlabel(<span class="string">'X1'</span>)</span><br><span class="line">	ax.set_ylabel(<span class="string">'X2'</span>)</span><br><span class="line">	plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>注意点：当使用高斯核函数之前，需要将x进行归一化，不然核函数的数字很容易受到大的数字的影响。</p>
+<p>附：多分类问题可以和logistic回归的多分类一样，采用one-vs-all方法，训练k个svm分类器，最终选择最大的θ(i)T * X的类别i。</p>
+<h2 id="模型调参"><a href="#模型调参" class="headerlink" title="模型调参"></a>模型调参</h2><p>可以利用sklearn中的svm库函数包，但是需要自己定义代价函数中参数C和使用的核函数，以及核函数中的gamma参数，如何正确的选择参数C和ganmma</p>
+<p>数据导入：</p>
+<p>使用scipy.io下的loadmat导入mat格式的数据，并利用pandas库将数据转换为表格形式，导入训练数据及验证集数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#导入数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data</span><span class="params">(path)</span>:</span></span><br><span class="line">	data=sio.loadmat(path)</span><br><span class="line">	train=pd.DataFrame(data.get(<span class="string">'X'</span>),columns=[<span class="string">'X1'</span>,<span class="string">'X2'</span>])</span><br><span class="line">	train[<span class="string">'y'</span>]=data.get(<span class="string">'y'</span>)</span><br><span class="line">	cv=pd.DataFrame(data.get(<span class="string">'Xval'</span>),columns=[<span class="string">'Xval1'</span>,<span class="string">'Xval2'</span>])</span><br><span class="line">	cv[<span class="string">'yval'</span>]=data.get(<span class="string">'yval'</span>)</span><br><span class="line">	<span class="keyword">return</span> train,cv</span><br></pre></td></tr></table></figure>
+
+<p>按照数据类别显示数据的颜色，一个类别显示红色，一个类别颜色很淡</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806222024.png" alt></p>
+<h3 id="手动选择参数"><a href="#手动选择参数" class="headerlink" title="手动选择参数"></a>手动选择参数</h3><p>选择不同的C和gamm值传入模型，使用fit将训练数据拟合模型，将得到的模型在验证集上验证准确度。最终选择准确度最高的分数对应的C和gamma值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_parameter</span><span class="params">(train,cv)</span>:</span></span><br><span class="line">	candidate=[<span class="number">0.01</span>, <span class="number">0.03</span>, <span class="number">0.1</span>, <span class="number">0.3</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">10</span>, <span class="number">30</span>, <span class="number">100</span>]</span><br><span class="line">	parameters=[(C,gamma) <span class="keyword">for</span> C <span class="keyword">in</span> candidate <span class="keyword">for</span> gamma <span class="keyword">in</span> candidate]</span><br><span class="line"></span><br><span class="line">	scores=[]</span><br><span class="line">	<span class="keyword">for</span> C,gamma <span class="keyword">in</span> parameters:</span><br><span class="line">		svmg=sklearn.svm.SVC(C=C,kernel=<span class="string">'rbf'</span>,gamma=gamma)</span><br><span class="line">		svmg.fit(train[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],train[<span class="string">'y'</span>])</span><br><span class="line">		score=svmg.score(cv[[<span class="string">'Xval1'</span>,<span class="string">'Xval2'</span>]],cv[<span class="string">'yval'</span>])</span><br><span class="line">		scores.append(score)</span><br><span class="line">	best_score=scores[np.argmax(scores)]</span><br><span class="line">	best_parm=parameters[np.argmax(scores)] <span class="comment">#np.argmax(scores)返回最大的索引</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#找到最好的C和gamma进行模型训练</span></span><br><span class="line">	svmg=sklearn.svm.SVC(C=best_parm[<span class="number">0</span>],kernel=<span class="string">'rbf'</span>,gamma=best_parm[<span class="number">1</span>])</span><br><span class="line">	svmg.fit(train[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],train[<span class="string">'y'</span>])</span><br><span class="line">	yhat=svmg.predict(cv[[<span class="string">'Xval1'</span>,<span class="string">'Xval2'</span>]])</span><br><span class="line">	print(classification_report(cv[<span class="string">'yval'</span>],yhat))</span><br></pre></td></tr></table></figure>
+
+<p>最佳准确率和最佳参数为：</p>
+<p>0.965<br>(0.3, 100)</p>
+<p>使用最好的参数训练模型，在验证集上通过sklearn.metrics库下的classification_report评估模型结果：</p>
+<blockquote>
+<pre><code>          precision    recall  f1-score   support
+
+       0       0.97      0.96      0.97       113
+       1       0.95      0.97      0.96        87
+
+accuracy                           0.96       200</code></pre></blockquote>
+<p>总体准确度为96%</p>
+<h3 id="利用库函数中的模型调参"><a href="#利用库函数中的模型调参" class="headerlink" title="利用库函数中的模型调参"></a>利用库函数中的模型调参</h3><p>也可以直接利用sklearn.selection库下的网格网格搜索GridSearchCV，输入模型和参数，自动得到最佳精度和最佳参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#输入模型和参数，自动输出最佳的参数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">autoselect_parameter</span><span class="params">(train,cv)</span>:</span></span><br><span class="line">	candidate=[<span class="number">0.01</span>, <span class="number">0.03</span>, <span class="number">0.1</span>, <span class="number">0.3</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">10</span>, <span class="number">30</span>, <span class="number">100</span>]</span><br><span class="line">	parameters=&#123;<span class="string">'C'</span>:candidate,<span class="string">'gamma'</span>:candidate&#125;</span><br><span class="line">	svmg=sklearn.svm.SVC()</span><br><span class="line">	gscv=GridSearchCV(svmg,parameters,n_jobs=<span class="number">-1</span>)<span class="comment">#并行数和cpu核一致</span></span><br><span class="line">	gscv.fit(train[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],train[<span class="string">'y'</span>])</span><br><span class="line">	best_score=gscv.best_score_</span><br><span class="line">	best_parm=gscv.best_params_</span><br><span class="line"></span><br><span class="line">	<span class="comment">#找到最好的C和gamma进行模型训练</span></span><br><span class="line">	svmg=sklearn.svm.SVC(C=best_parm[<span class="string">'C'</span>],kernel=<span class="string">'rbf'</span>,gamma=best_parm[<span class="string">'gamma'</span>])</span><br><span class="line">	svmg.fit(train[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],train[<span class="string">'y'</span>])</span><br><span class="line">	yhat=svmg.predict(cv[[<span class="string">'Xval1'</span>,<span class="string">'Xval2'</span>]])</span><br><span class="line">	print(classification_report(cv[<span class="string">'yval'</span>],yhat))</span><br></pre></td></tr></table></figure>
+
+<p>最佳准确率和最佳参数为：</p>
+<p>0.9194905869324475<br>{‘C’: 30, ‘gamma’: 3}</p>
+<p>使用最好的参数训练模型，在验证集上通过sklearn.metrics库下的classification_report评估模型结果：</p>
+<blockquote>
+<pre><code>          precision    recall  f1-score   support
+
+       0       0.95      0.96      0.96       113
+       1       0.95      0.93      0.94        87
+
+accuracy                           0.95       200</code></pre></blockquote>
+<p>总体准确度为95%，结果和手动选择参数不同，原因是：网格搜索会自动把部分训练集数据划分一小部分作为验证集，所以搭建模型的训练数据量和手动选择参数中训练数据量不同，模型上有些微的差异，所以得到准确度会有一点不同。</p>
+<h2 id="模型对比"><a href="#模型对比" class="headerlink" title="模型对比"></a>模型对比</h2><p>使用垃圾分类邮件数据集来对比SVM分类和logistic回归分类的效果，其中数据集已经经过处理，x按照词汇表中的单词得到了每个邮件对应的向量。</p>
+<p>使用scipy.io下的loadmat导入mat格式的数据，分别导入训练数据及测试集数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#导入数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data</span><span class="params">(path1,path2)</span>:</span></span><br><span class="line">	data1=sio.loadmat(path1)</span><br><span class="line">	data2=sio.loadmat(path2)</span><br><span class="line"></span><br><span class="line">	x=data1.get(<span class="string">'X'</span>)</span><br><span class="line">	y=data1.get(<span class="string">'y'</span>)</span><br><span class="line">	xtest=data2.get(<span class="string">'Xtest'</span>)</span><br><span class="line">	ytest=data2.get(<span class="string">'ytest'</span>)</span><br><span class="line">	y=np.ravel(y)</span><br><span class="line">	ytest=np.ravel(ytest)</span><br><span class="line">	<span class="keyword">return</span> x,y,xtest,ytest</span><br></pre></td></tr></table></figure>
+
+<h3 id="SVM"><a href="#SVM" class="headerlink" title="SVM"></a>SVM</h3><p>利用sklearn中的svm库函数包，通过SVC调用有内核的SVM算法，使用默认参数，用fit将训练集数据拟合模型，通过predict预测测试集的输出，通过sklearn.metrics库下的classification_report评估模型结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用svm</span></span><br><span class="line">svm=sklearn.svm.SVC()</span><br><span class="line">svm.fit(x,y)</span><br><span class="line">yhat=svm.predict(xtest)</span><br><span class="line">print(classification_report(ytest,yhat))</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<pre><code>          precision    recall  f1-score   support
+
+       0       0.99      1.00      0.99       692
+       1       0.99      0.97      0.98       308
+
+accuracy                           0.99      1000</code></pre></blockquote>
+<p>总体精确度达99%，但是运行时间较长，因为比logtistic回归多用了核函数。</p>
+<h3 id="logostic回归"><a href="#logostic回归" class="headerlink" title="logostic回归"></a>logostic回归</h3><p>利用sklearn中的linear_model库函数包，通过LogisticRegression调用logistic回归算法，使用默认参数，用fit将训练集数据拟合模型，通过predict预测测试集的输出，通过sklearn.metrics库下的classification_report评估模型结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用logotic回归</span></span><br><span class="line">logitic=sklearn.linear_model.LogisticRegression()</span><br><span class="line">logitic.fit(x,y)</span><br><span class="line">yhat=logitic.predict(xtest)</span><br><span class="line">print(classification_report(ytest,yhat))</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<pre><code>          precision    recall  f1-score   support
+
+       0       1.00      0.99      1.00       692
+       1       0.99      0.99      0.99       308
+
+accuracy                           0.99      1000</code></pre></blockquote>
+<p>总体精确度达99%，运行时间较短。</p>
+<h3 id="两种分类算法如何选择"><a href="#两种分类算法如何选择" class="headerlink" title="两种分类算法如何选择"></a>两种分类算法如何选择</h3><p>n:代表特征数量，m:代表训练样本数量</p>
+<p>（1）当n&gt;m</p>
+<p>选择：用logistic回归/不带核函数的svm</p>
+<p>原因：没有足够多的数据去拟合复杂的非线性函数</p>
+<p>（2）当n很小，m很大（n=1 ~1000,m&gt;=5万）</p>
+<p>选择：用logistic回归/不带核函数的svm</p>
+<p>原因：m太大，特征变量多，用核函数的svm成本代价高</p>
+<p>（3）当n很小，m大小适中（n=1 ~1000,m&lt;5万）</p>
+<p>选择：用带核函数的svm</p>
+<p>原因：m适中，特征变量不多，用核函数的svm成本代价不高，同时有足够多的数据去拟合复杂的非线性函数</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+              <a href="/tags/%E5%88%86%E7%B1%BB/" rel="tag"><i class="fa fa-tag"></i> 分类</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/tfNN/" rel="next" title="神经网络算法">
+                  <i class="fa fa-chevron-left"></i> 神经网络算法
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法简介"><span class="nav-number">1.</span> <span class="nav-text">算法简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#代价函数"><span class="nav-number">1.1.</span> <span class="nav-text">代价函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最大间隔"><span class="nav-number">1.2.</span> <span class="nav-text">最大间隔</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加入核函数"><span class="nav-number">2.</span> <span class="nav-text">加入核函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原因及核函数定义"><span class="nav-number">2.1.</span> <span class="nav-text">原因及核函数定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法流程"><span class="nav-number">2.2.</span> <span class="nav-text">算法流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#核函数类型"><span class="nav-number">2.2.1.</span> <span class="nav-text">核函数类型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型调参"><span class="nav-number">3.</span> <span class="nav-text">模型调参</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#手动选择参数"><span class="nav-number">3.1.</span> <span class="nav-text">手动选择参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用库函数中的模型调参"><span class="nav-number">3.2.</span> <span class="nav-text">利用库函数中的模型调参</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型对比"><span class="nav-number">4.</span> <span class="nav-text">模型对比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SVM"><span class="nav-number">4.1.</span> <span class="nav-text">SVM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#logostic回归"><span class="nav-number">4.2.</span> <span class="nav-text">logostic回归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两种分类算法如何选择"><span class="nav-number">4.3.</span> <span class="nav-text">两种分类算法如何选择</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">253k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:50</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>

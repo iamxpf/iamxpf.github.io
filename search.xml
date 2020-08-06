@@ -1,6 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>SVM算法</title>
+    <url>/blogs/tfSVM/</url>
+    <content><![CDATA[<h2 id="算法简介"><a href="#算法简介" class="headerlink" title="算法简介"></a>算法简介</h2><h3 id="代价函数"><a href="#代价函数" class="headerlink" title="代价函数"></a>代价函数</h3><p>代价函数和logistic回归类似，但是为了保证最大间隔，<strong><u>当y=1时，需要θT * X&gt;=1，而不是θT * X&gt;=0，当y=0时，需要θT * X&lt;=-1，而不是θT * X&lt;0，</u></strong>因此将假设函数部分替换为如下的函数：</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806205412.png" alt></p><p>因此代价函数定义如下：</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806205909.jpg" alt></p><p>其中C的作用和logistic回归中的1/λ作用相同，平衡数据拟合程度和模型中参数的大小,SVM的代价函数不是像logistic中一样输出概率而是直接预测分类（是0还是1）</p><a id="more"></a>
+
+
+
+
+<p>当C很大的时候，此时需要让前一个求和尽量为0，即需要更多的拟合训练数据，产生过拟合所以会导致低偏差，高方差，对异常点也会很敏感，可以看成是λ很小。</p>
+<p>当C很小的时候，此时需要不需要尽量拟合数据，前一项影响降低，后一项影响增加，即需要让后一项数据尽量为0，即参数要小，所以会导致低方差，高偏差，对异常点不敏感，可以看成是λ很大。</p>
+<h3 id="最大间隔"><a href="#最大间隔" class="headerlink" title="最大间隔"></a>最大间隔</h3><p>（1）最大间隔的好处</p>
+<p>与其他分类算法对比，如logistic分类算法仅是对样本数据进行拟合即可，但是SVM算法在拟合数据时，尽量把正负样本以最大的间隔分开，所以拟合的直线和数据之间拥有更大的距离/间距，过程中是不断让训练样本的最小距离更大，所以和其他算法比SVM算法更具有鲁棒性。</p>
+<p>（2）最大间隔如何得出</p>
+<p>简化代价函数，可以把C放到很大，此时代价函数只剩下后一项，同时要满足间隔的要求，则代价函数可以变为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806211426.png" alt></p>
+<p>代价函数变形：</p>
+<p>其中代价函数的后一项可以看成是各个参数平方相加，加上根号和平方，即可以表示成向量的长度的平方，即总的向量θ=[θ1,θ2…,θn]的列向量，代价函数可以写成1/2 * (θ12+θ22+…)=1/2(√θ12+θ22+…)2=1/2 * ||θ||2，即向量θ的长度的平方</p>
+<p>约束条件变形：</p>
+<p>约束条件中的θ和 X(i)都看成向量，画图如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806212113.png" alt></p>
+<p>θT * X(i)可以看出向量的内积，其值相当于X(i)在θ上的投影的长度乘以θ的长度，记p=投影长度，||θ||是向量θ的长度，则原来的约束条件变为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806212528.png" alt></p>
+<p>则综合代价函数变形和约束条件变形，可得代价函数变形为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806212646.png" alt></p>
+<p>分析：</p>
+<p>从约束条件可以看出，当X(I)到参数θ，即直线的距离太小，按照等式p * ||θ||&gt;=1，则θ就需要很大，这样代价函数就无法取得最小值，所以SVM函数的代价函数决定了。要找X(I)到参数θ，即直线的距离大的，所以保证了以尽量大的间隔划分正负样本。</p>
+<h2 id="加入核函数"><a href="#加入核函数" class="headerlink" title="加入核函数"></a>加入核函数</h2><h3 id="原因及核函数定义"><a href="#原因及核函数定义" class="headerlink" title="原因及核函数定义"></a>原因及核函数定义</h3><p>当面对线性可分的数据，和logistic回归类似，用训练数据拟合一条直线即可，即假设函数用指向方程形式。但是当遇到非线性可分的数据时，这时候需要选择更复杂的特征来构架假设函数。这时候就需要一个能自动选择更好的特征：</p>
+<p>（1）构造标记点</p>
+<p>通过当前样本点和所有标记点相似度度量，将当前样本点映射为新的由相似度度量组成的特征向量，此时的特征变量变为当前样本点集中所有标记点之间的距离，这时候就完成了选择更好的特征，比原来特征更复杂也更能体现数据特点。</p>
+<p>如何选择标记点：一般将所有训练数据作为标记点，则映射之后的特征向量表示了当前样本和其他样本之间的距离。</p>
+<p>（2）定义核函数/相似度度量函数</p>
+<p>常用的是高斯函数：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806214111.png" alt></p>
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>（1）给定（x(1),y(1)）….（x(m),y(m)）一共m个样本</p>
+<p>（2）根据核函数得到新的特征向量</p>
+<p>当前样本为x(i)，则根据核函数公式计算它与所有训练样本之间的相似度数值，得到m个数字，则x(i)映射为含有m维的特征向量fm</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806214450.png" alt></p>
+<p>（3）根据代价函数最小化得到参数θ，当θT * X&gt;0，则预测y=1</p>
+<p>代价函数中部分细节修正，θ2可以看成是θT * θ，算法会给式子中间加上矩阵M（M取决于核函数），为了提高运算效率，因为当参数维度很高时，则计算θT * θ代价会很高。</p>
+<h4 id="核函数类型"><a href="#核函数类型" class="headerlink" title="核函数类型"></a>核函数类型</h4><p>（1）线性核函数：即无内核参数，适用于线性可分数据</p>
+<p>此时的SVM是一个线性分类器，利用sklearn中的svm库函数包，通过linearSVC调用无内核的SVM算法，输入参数C和使用的损失函数，用fit拟合训练数据，通过score计算准确度，使用decision_function返回各点到决策边界的距离</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#使用线性svm算法</span></span><br><span class="line">svml=sklearn.svm.LinearSVC(C=<span class="number">1</span>,loss=<span class="string">'hinge'</span>)<span class="comment">#设置损失函数（标准损失函数）以及C的值</span></span><br><span class="line"><span class="comment">#用训练数据拟合模型</span></span><br><span class="line">svml.fit(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],data[<span class="string">'y'</span>]) <span class="comment">#X1,X2作为一个整体</span></span><br><span class="line"><span class="comment">#返回平均准确度</span></span><br><span class="line">svml_score=svml.score(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],data[<span class="string">'y'</span>])</span><br><span class="line">data[<span class="string">'decision_function'</span>]=svml.decision_function(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]])</span><br></pre></td></tr></table></figure>
+
+<p>通过颜色反映距离大小，画图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806220044.png" alt></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#按照点到分割平面的距离画图</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_sdf</span><span class="params">(data)</span>:</span></span><br><span class="line">	fig,ax=plt.subplots(figsize=(<span class="number">8</span>,<span class="number">8</span>))</span><br><span class="line">	ax.scatter(data[<span class="string">'X1'</span>],data[<span class="string">'X2'</span>],c=data[<span class="string">'decision_function'</span>],cmap=<span class="string">'RdBu'</span>)<span class="comment">#颜色用点的标签来标记</span></span><br><span class="line">	ax.set_title(<span class="string">'svm:C=1'</span>)</span><br><span class="line">	ax.set_xlabel(<span class="string">'X1'</span>)</span><br><span class="line">	ax.set_ylabel(<span class="string">'X2'</span>)</span><br><span class="line">	plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>（2）高斯核函数</p>
+<p>此时需要自己构造高斯内核函数：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806214111.png" alt></p>
+<p>需要选择高斯核中gamma参数，当gamma很小，此时的特征变化剧烈，会导致低偏差，高方差，反之，当gamma很大，则特征变化缓慢，会导致低方差，高偏差。</p>
+<p>利用sklearn中的svm库函数包，通过SVC调用有内核的SVM算法，输入参数C、调用的核函数（rbf是高斯核函数）、核函数中的gamma值（其中probility是返回对数组标签的概率故居），用fit拟合训练数据，通过score计算准确度，使用decision_function返回各点到决策边界的距离，通过predict_proba返回数据的标签，predict_proba(x)[:,0]返回第0列类别的对应数据的概率估计。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#使用svm算法</span></span><br><span class="line">svmg=sklearn.svm.SVC(C=<span class="number">100</span>,kernel=<span class="string">'rbf'</span>,gamma=<span class="number">10</span>,probability=<span class="literal">True</span>)<span class="comment">#高斯核函数</span></span><br><span class="line"><span class="comment">#用训练数据拟合模型</span></span><br><span class="line">svmg.fit(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],data[<span class="string">'y'</span>]) <span class="comment">#X1,X2作为一个整体</span></span><br><span class="line"><span class="comment">#返回平均准确度</span></span><br><span class="line">svmg_score=svmg.score(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],data[<span class="string">'y'</span>])</span><br><span class="line">data[<span class="string">'decision_function'</span>]=svmg.decision_function(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment">#用概率估计,估计类别</span></span><br><span class="line">data[<span class="string">'svmg_proba'</span>]=svmg.predict_proba(data[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]])[:,<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+
+<p>按照概率估计，属于当前类别的用红色标注出来</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806220753.png" alt></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_proba</span><span class="params">(data)</span>:</span></span><br><span class="line">	fig,ax=plt.subplots(figsize=(<span class="number">8</span>,<span class="number">8</span>))</span><br><span class="line">	ax.scatter(data[<span class="string">'X1'</span>],data[<span class="string">'X2'</span>],c=data[<span class="string">'svmg_proba'</span>],cmap=<span class="string">'Reds'</span>)<span class="comment">#颜色用点的标签来标记,第一个类是红色</span></span><br><span class="line">	ax.set_title(<span class="string">'svm:C=1'</span>)</span><br><span class="line">	ax.set_xlabel(<span class="string">'X1'</span>)</span><br><span class="line">	ax.set_ylabel(<span class="string">'X2'</span>)</span><br><span class="line">	plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>注意点：当使用高斯核函数之前，需要将x进行归一化，不然核函数的数字很容易受到大的数字的影响。</p>
+<p>附：多分类问题可以和logistic回归的多分类一样，采用one-vs-all方法，训练k个svm分类器，最终选择最大的θ(i)T * X的类别i。</p>
+<h2 id="模型调参"><a href="#模型调参" class="headerlink" title="模型调参"></a>模型调参</h2><p>可以利用sklearn中的svm库函数包，但是需要自己定义代价函数中参数C和使用的核函数，以及核函数中的gamma参数，如何正确的选择参数C和ganmma</p>
+<p>数据导入：</p>
+<p>使用scipy.io下的loadmat导入mat格式的数据，并利用pandas库将数据转换为表格形式，导入训练数据及验证集数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#导入数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data</span><span class="params">(path)</span>:</span></span><br><span class="line">	data=sio.loadmat(path)</span><br><span class="line">	train=pd.DataFrame(data.get(<span class="string">'X'</span>),columns=[<span class="string">'X1'</span>,<span class="string">'X2'</span>])</span><br><span class="line">	train[<span class="string">'y'</span>]=data.get(<span class="string">'y'</span>)</span><br><span class="line">	cv=pd.DataFrame(data.get(<span class="string">'Xval'</span>),columns=[<span class="string">'Xval1'</span>,<span class="string">'Xval2'</span>])</span><br><span class="line">	cv[<span class="string">'yval'</span>]=data.get(<span class="string">'yval'</span>)</span><br><span class="line">	<span class="keyword">return</span> train,cv</span><br></pre></td></tr></table></figure>
+
+<p>按照数据类别显示数据的颜色，一个类别显示红色，一个类别颜色很淡</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806222024.png" alt></p>
+<h3 id="手动选择参数"><a href="#手动选择参数" class="headerlink" title="手动选择参数"></a>手动选择参数</h3><p>选择不同的C和gamm值传入模型，使用fit将训练数据拟合模型，将得到的模型在验证集上验证准确度。最终选择准确度最高的分数对应的C和gamma值</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_parameter</span><span class="params">(train,cv)</span>:</span></span><br><span class="line">	candidate=[<span class="number">0.01</span>, <span class="number">0.03</span>, <span class="number">0.1</span>, <span class="number">0.3</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">10</span>, <span class="number">30</span>, <span class="number">100</span>]</span><br><span class="line">	parameters=[(C,gamma) <span class="keyword">for</span> C <span class="keyword">in</span> candidate <span class="keyword">for</span> gamma <span class="keyword">in</span> candidate]</span><br><span class="line"></span><br><span class="line">	scores=[]</span><br><span class="line">	<span class="keyword">for</span> C,gamma <span class="keyword">in</span> parameters:</span><br><span class="line">		svmg=sklearn.svm.SVC(C=C,kernel=<span class="string">'rbf'</span>,gamma=gamma)</span><br><span class="line">		svmg.fit(train[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],train[<span class="string">'y'</span>])</span><br><span class="line">		score=svmg.score(cv[[<span class="string">'Xval1'</span>,<span class="string">'Xval2'</span>]],cv[<span class="string">'yval'</span>])</span><br><span class="line">		scores.append(score)</span><br><span class="line">	best_score=scores[np.argmax(scores)]</span><br><span class="line">	best_parm=parameters[np.argmax(scores)] <span class="comment">#np.argmax(scores)返回最大的索引</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#找到最好的C和gamma进行模型训练</span></span><br><span class="line">	svmg=sklearn.svm.SVC(C=best_parm[<span class="number">0</span>],kernel=<span class="string">'rbf'</span>,gamma=best_parm[<span class="number">1</span>])</span><br><span class="line">	svmg.fit(train[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],train[<span class="string">'y'</span>])</span><br><span class="line">	yhat=svmg.predict(cv[[<span class="string">'Xval1'</span>,<span class="string">'Xval2'</span>]])</span><br><span class="line">	print(classification_report(cv[<span class="string">'yval'</span>],yhat))</span><br></pre></td></tr></table></figure>
+
+<p>最佳准确率和最佳参数为：</p>
+<p>0.965<br>(0.3, 100)</p>
+<p>使用最好的参数训练模型，在验证集上通过sklearn.metrics库下的classification_report评估模型结果：</p>
+<blockquote>
+<pre><code>          precision    recall  f1-score   support
+
+       0       0.97      0.96      0.97       113
+       1       0.95      0.97      0.96        87
+
+accuracy                           0.96       200</code></pre></blockquote>
+<p>总体准确度为96%</p>
+<h3 id="利用库函数中的模型调参"><a href="#利用库函数中的模型调参" class="headerlink" title="利用库函数中的模型调参"></a>利用库函数中的模型调参</h3><p>也可以直接利用sklearn.selection库下的网格网格搜索GridSearchCV，输入模型和参数，自动得到最佳精度和最佳参数</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#输入模型和参数，自动输出最佳的参数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">autoselect_parameter</span><span class="params">(train,cv)</span>:</span></span><br><span class="line">	candidate=[<span class="number">0.01</span>, <span class="number">0.03</span>, <span class="number">0.1</span>, <span class="number">0.3</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">10</span>, <span class="number">30</span>, <span class="number">100</span>]</span><br><span class="line">	parameters=&#123;<span class="string">'C'</span>:candidate,<span class="string">'gamma'</span>:candidate&#125;</span><br><span class="line">	svmg=sklearn.svm.SVC()</span><br><span class="line">	gscv=GridSearchCV(svmg,parameters,n_jobs=<span class="number">-1</span>)<span class="comment">#并行数和cpu核一致</span></span><br><span class="line">	gscv.fit(train[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],train[<span class="string">'y'</span>])</span><br><span class="line">	best_score=gscv.best_score_</span><br><span class="line">	best_parm=gscv.best_params_</span><br><span class="line"></span><br><span class="line">	<span class="comment">#找到最好的C和gamma进行模型训练</span></span><br><span class="line">	svmg=sklearn.svm.SVC(C=best_parm[<span class="string">'C'</span>],kernel=<span class="string">'rbf'</span>,gamma=best_parm[<span class="string">'gamma'</span>])</span><br><span class="line">	svmg.fit(train[[<span class="string">'X1'</span>,<span class="string">'X2'</span>]],train[<span class="string">'y'</span>])</span><br><span class="line">	yhat=svmg.predict(cv[[<span class="string">'Xval1'</span>,<span class="string">'Xval2'</span>]])</span><br><span class="line">	print(classification_report(cv[<span class="string">'yval'</span>],yhat))</span><br></pre></td></tr></table></figure>
+
+<p>最佳准确率和最佳参数为：</p>
+<p>0.9194905869324475<br>{‘C’: 30, ‘gamma’: 3}</p>
+<p>使用最好的参数训练模型，在验证集上通过sklearn.metrics库下的classification_report评估模型结果：</p>
+<blockquote>
+<pre><code>          precision    recall  f1-score   support
+
+       0       0.95      0.96      0.96       113
+       1       0.95      0.93      0.94        87
+
+accuracy                           0.95       200</code></pre></blockquote>
+<p>总体准确度为95%，结果和手动选择参数不同，原因是：网格搜索会自动把部分训练集数据划分一小部分作为验证集，所以搭建模型的训练数据量和手动选择参数中训练数据量不同，模型上有些微的差异，所以得到准确度会有一点不同。</p>
+<h2 id="模型对比"><a href="#模型对比" class="headerlink" title="模型对比"></a>模型对比</h2><p>使用垃圾分类邮件数据集来对比SVM分类和logistic回归分类的效果，其中数据集已经经过处理，x按照词汇表中的单词得到了每个邮件对应的向量。</p>
+<p>使用scipy.io下的loadmat导入mat格式的数据，分别导入训练数据及测试集数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#导入数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data</span><span class="params">(path1,path2)</span>:</span></span><br><span class="line">	data1=sio.loadmat(path1)</span><br><span class="line">	data2=sio.loadmat(path2)</span><br><span class="line"></span><br><span class="line">	x=data1.get(<span class="string">'X'</span>)</span><br><span class="line">	y=data1.get(<span class="string">'y'</span>)</span><br><span class="line">	xtest=data2.get(<span class="string">'Xtest'</span>)</span><br><span class="line">	ytest=data2.get(<span class="string">'ytest'</span>)</span><br><span class="line">	y=np.ravel(y)</span><br><span class="line">	ytest=np.ravel(ytest)</span><br><span class="line">	<span class="keyword">return</span> x,y,xtest,ytest</span><br></pre></td></tr></table></figure>
+
+<h3 id="SVM"><a href="#SVM" class="headerlink" title="SVM"></a>SVM</h3><p>利用sklearn中的svm库函数包，通过SVC调用有内核的SVM算法，使用默认参数，用fit将训练集数据拟合模型，通过predict预测测试集的输出，通过sklearn.metrics库下的classification_report评估模型结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#使用svm</span></span><br><span class="line">svm=sklearn.svm.SVC()</span><br><span class="line">svm.fit(x,y)</span><br><span class="line">yhat=svm.predict(xtest)</span><br><span class="line">print(classification_report(ytest,yhat))</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<pre><code>          precision    recall  f1-score   support
+
+       0       0.99      1.00      0.99       692
+       1       0.99      0.97      0.98       308
+
+accuracy                           0.99      1000</code></pre></blockquote>
+<p>总体精确度达99%，但是运行时间较长，因为比logtistic回归多用了核函数。</p>
+<h3 id="logostic回归"><a href="#logostic回归" class="headerlink" title="logostic回归"></a>logostic回归</h3><p>利用sklearn中的linear_model库函数包，通过LogisticRegression调用logistic回归算法，使用默认参数，用fit将训练集数据拟合模型，通过predict预测测试集的输出，通过sklearn.metrics库下的classification_report评估模型结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#使用logotic回归</span></span><br><span class="line">logitic=sklearn.linear_model.LogisticRegression()</span><br><span class="line">logitic.fit(x,y)</span><br><span class="line">yhat=logitic.predict(xtest)</span><br><span class="line">print(classification_report(ytest,yhat))</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<pre><code>          precision    recall  f1-score   support
+
+       0       1.00      0.99      1.00       692
+       1       0.99      0.99      0.99       308
+
+accuracy                           0.99      1000</code></pre></blockquote>
+<p>总体精确度达99%，运行时间较短。</p>
+<h3 id="两种分类算法如何选择"><a href="#两种分类算法如何选择" class="headerlink" title="两种分类算法如何选择"></a>两种分类算法如何选择</h3><p>n:代表特征数量，m:代表训练样本数量</p>
+<p>（1）当n&gt;m</p>
+<p>选择：用logistic回归/不带核函数的svm</p>
+<p>原因：没有足够多的数据去拟合复杂的非线性函数</p>
+<p>（2）当n很小，m很大（n=1 ~1000,m&gt;=5万）</p>
+<p>选择：用logistic回归/不带核函数的svm</p>
+<p>原因：m太大，特征变量多，用核函数的svm成本代价高</p>
+<p>（3）当n很小，m大小适中（n=1 ~1000,m&lt;5万）</p>
+<p>选择：用带核函数的svm</p>
+<p>原因：m适中，特征变量不多，用核函数的svm成本代价不高，同时有足够多的数据去拟合复杂的非线性函数</p>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+        <tag>分类</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>神经网络算法</title>
     <url>/blogs/tfNN/</url>
     <content><![CDATA[<h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>当特征很多，学习非线性假设成本很好，这时候可以考虑使用神经网络算法。</p><h3 id="网络设计"><a href="#网络设计" class="headerlink" title="网络设计"></a>网络设计</h3><p>神经网络可以看成是神经元组合而成，每一层有若干个神经元接收上一层的输入，经过神经元的计算之后将值传给下一层，最后一层可以接上一个sigmoid函数或者softmax函数输出分类值。</p><p>一个简单的神经网络如下图：</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200804205816.jpg" alt></p><h3 id="前向传播"><a href="#前向传播" class="headerlink" title="前向传播"></a>前向传播</h3><a id="more"></a>
@@ -32,7 +172,7 @@
 <p>最后一层向前一层：根据代价函数将误差传到线性值dz=a-y，则对参数的梯度需要累加dw+=dz3 * da2：</p>
 <p>d3i=a3i-yi<br>delta2+=np.mat(d3i).T * np.mat(a2i)</p>
 <p>中间层传递：dL/dz3 * dz3/da2 * da2/dz2=dz3 * w3 * 对激活函数求导，则对参数的梯度需要累加dw+=dz2 * da1：</p>
-<p>d2i=np.multiply(np.dot(theta2.T,d3i),sigmoid_grad(z2i))<br>delta1+=np.mat(d2i[1:]).T*np.mat(a1i) #25,401</p>
+<p>d2i=np.multiply(np.dot(theta2.T,d3i),sigmoid_grad(z2i))<br>delta1+=np.mat(d2i[1:]).T * np.mat(a1i) </p>
 <p>最终将累加的参数的梯度除以样本总数，则得到进行一次反向传播参数需要修正的量。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#反向传播</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid_grad</span><span class="params">(a)</span>:</span></span><br><span class="line">	<span class="keyword">return</span> np.multiply(sigmoid(a),<span class="number">1</span>-sigmoid(a))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gradient</span><span class="params">(theta,x,y)</span>:</span></span><br><span class="line">	theta1,theta2=demerge(theta)</span><br><span class="line">	m=len(x)</span><br><span class="line">	delta1=np.zeros(theta1.shape)</span><br><span class="line">	delta2=np.zeros(theta2.shape)</span><br><span class="line">	a1,z2,a2,z3,a3=forward(theta,x)</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">		a1i=a1[i,:]<span class="comment">#1,401</span></span><br><span class="line">		z2i=z2[i,:]<span class="comment">#1,25		</span></span><br><span class="line">		a2i=a2[i,:]<span class="comment">#1,26</span></span><br><span class="line">		z3i=z3[i,:]<span class="comment">#1,10</span></span><br><span class="line">		yi=y[i,:]<span class="comment">#1,10</span></span><br><span class="line">		a3i=a3[i,:]<span class="comment">#1,10</span></span><br><span class="line"></span><br><span class="line">		d3i=a3i-yi  <span class="comment">#1*10</span></span><br><span class="line">		delta2+=np.mat(d3i).T*np.mat(a2i) <span class="comment">#10,26</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">#误差乘以参数</span></span><br><span class="line">		z2i=np.insert(z2i,<span class="number">0</span>,np.ones(<span class="number">1</span>))</span><br><span class="line">		d2i=np.multiply(np.dot(theta2.T,d3i),sigmoid_grad(z2i)) </span><br><span class="line">		delta1+=np.mat(d2i[<span class="number">1</span>:]).T*np.mat(a1i) <span class="comment">#25,401</span></span><br><span class="line"></span><br><span class="line">	delta1=delta1/m</span><br><span class="line">	delta2=delta2/m</span><br><span class="line">	<span class="keyword">return</span> merge(delta1,delta2)</span><br><span class="line"><span class="comment">#加入正则化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regular_grad</span><span class="params">(theta,x,y,l=<span class="number">1</span>)</span>:</span></span><br><span class="line">	delta1,delta2=demerge(gradient(theta,x,y))</span><br><span class="line">	t1,t2=demerge(theta)</span><br><span class="line">	m=len(x)</span><br><span class="line">	theta1[:,<span class="number">0</span>]=<span class="number">0</span></span><br><span class="line">	regular_grad1=(l/m)*theta1+delta1</span><br><span class="line">	theta2[:,<span class="number">0</span>]=<span class="number">0</span></span><br><span class="line">	regular_grad2=(l/m)*theta2+delta2</span><br><span class="line">	<span class="keyword">return</span> merge(regular_grad1,regular_grad2)</span><br></pre></td></tr></table></figure>
 
@@ -354,6 +494,7 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
       </categories>
       <tags>
         <tag>机器学习</tag>
+        <tag>分类</tag>
       </tags>
   </entry>
   <entry>
@@ -471,11 +612,11 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>就是在无正则化的损失函数计算和梯度下降中增加了正则化项，其中梯度下降中，需要对参数分类处理（第0个参数和其他参数）。</p>
 ]]></content>
       <categories>
-        <category>tensorflow</category>
+        <category>机器学习</category>
       </categories>
       <tags>
         <tag>机器学习</tag>
-        <tag>tensorflow</tag>
+        <tag>分类</tag>
       </tags>
   </entry>
   <entry>
@@ -576,11 +717,11 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200713174946.png" alt></p>
 ]]></content>
       <categories>
-        <category>tensorflow</category>
+        <category>机器学习</category>
       </categories>
       <tags>
         <tag>机器学习</tag>
-        <tag>tensorflow</tag>
+        <tag>回归</tag>
       </tags>
   </entry>
   <entry>
@@ -2621,7 +2762,7 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
       </categories>
       <tags>
         <tag>机器学习</tag>
-        <tag>boost</tag>
+        <tag>集成学习</tag>
       </tags>
   </entry>
   <entry>
@@ -3094,8 +3235,8 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
         <category>机器学习</category>
       </categories>
       <tags>
-        <tag>回归</tag>
         <tag>机器学习</tag>
+        <tag>回归</tag>
       </tags>
   </entry>
   <entry>
@@ -3176,8 +3317,8 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
         <category>机器学习</category>
       </categories>
       <tags>
-        <tag>回归</tag>
         <tag>机器学习</tag>
+        <tag>分类</tag>
       </tags>
   </entry>
   <entry>
@@ -3317,7 +3458,6 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
       </categories>
       <tags>
         <tag>机器学习</tag>
-        <tag>k均值聚类</tag>
       </tags>
   </entry>
   <entry>
@@ -3376,7 +3516,7 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
       </categories>
       <tags>
         <tag>机器学习</tag>
-        <tag>贝叶斯分类</tag>
+        <tag>分类</tag>
       </tags>
   </entry>
   <entry>
@@ -3442,7 +3582,7 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
       </categories>
       <tags>
         <tag>机器学习</tag>
-        <tag>支持向量机</tag>
+        <tag>分类</tag>
       </tags>
   </entry>
   <entry>

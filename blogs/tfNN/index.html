@@ -67,7 +67,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200804205816.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200804214032.jpg">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200804223607.jpg">
-<meta property="og:updated_time" content="2020-08-04T14:42:03.460Z">
+<meta property="og:updated_time" content="2020-08-04T14:44:03.235Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200804205816.jpg">
 
@@ -162,7 +162,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">39</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">37</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -172,7 +172,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">56</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">57</span></a>
 
   </li>
         <li class="menu-item menu-item-sitemap">
@@ -261,7 +261,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-08-04 22:41:03 / 修改时间：22:42:03" itemprop="dateCreated datePublished" datetime="2020-08-04T22:41:03+08:00">2020-08-04</time>
+              <time title="创建时间：2020-08-04 22:41:03 / 修改时间：22:44:03" itemprop="dateCreated datePublished" datetime="2020-08-04T22:41:03+08:00">2020-08-04</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -352,7 +352,7 @@
 <p>最后一层向前一层：根据代价函数将误差传到线性值dz=a-y，则对参数的梯度需要累加dw+=dz3 * da2：</p>
 <p>d3i=a3i-yi<br>delta2+=np.mat(d3i).T * np.mat(a2i)</p>
 <p>中间层传递：dL/dz3 * dz3/da2 * da2/dz2=dz3 * w3 * 对激活函数求导，则对参数的梯度需要累加dw+=dz2 * da1：</p>
-<p>d2i=np.multiply(np.dot(theta2.T,d3i),sigmoid_grad(z2i))<br>delta1+=np.mat(d2i[1:]).T*np.mat(a1i) #25,401</p>
+<p>d2i=np.multiply(np.dot(theta2.T,d3i),sigmoid_grad(z2i))<br>delta1+=np.mat(d2i[1:]).T * np.mat(a1i) </p>
 <p>最终将累加的参数的梯度除以样本总数，则得到进行一次反向传播参数需要修正的量。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#反向传播</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid_grad</span><span class="params">(a)</span>:</span></span><br><span class="line">	<span class="keyword">return</span> np.multiply(sigmoid(a),<span class="number">1</span>-sigmoid(a))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gradient</span><span class="params">(theta,x,y)</span>:</span></span><br><span class="line">	theta1,theta2=demerge(theta)</span><br><span class="line">	m=len(x)</span><br><span class="line">	delta1=np.zeros(theta1.shape)</span><br><span class="line">	delta2=np.zeros(theta2.shape)</span><br><span class="line">	a1,z2,a2,z3,a3=forward(theta,x)</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">		a1i=a1[i,:]<span class="comment">#1,401</span></span><br><span class="line">		z2i=z2[i,:]<span class="comment">#1,25		</span></span><br><span class="line">		a2i=a2[i,:]<span class="comment">#1,26</span></span><br><span class="line">		z3i=z3[i,:]<span class="comment">#1,10</span></span><br><span class="line">		yi=y[i,:]<span class="comment">#1,10</span></span><br><span class="line">		a3i=a3[i,:]<span class="comment">#1,10</span></span><br><span class="line"></span><br><span class="line">		d3i=a3i-yi  <span class="comment">#1*10</span></span><br><span class="line">		delta2+=np.mat(d3i).T*np.mat(a2i) <span class="comment">#10,26</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">#误差乘以参数</span></span><br><span class="line">		z2i=np.insert(z2i,<span class="number">0</span>,np.ones(<span class="number">1</span>))</span><br><span class="line">		d2i=np.multiply(np.dot(theta2.T,d3i),sigmoid_grad(z2i)) </span><br><span class="line">		delta1+=np.mat(d2i[<span class="number">1</span>:]).T*np.mat(a1i) <span class="comment">#25,401</span></span><br><span class="line"></span><br><span class="line">	delta1=delta1/m</span><br><span class="line">	delta2=delta2/m</span><br><span class="line">	<span class="keyword">return</span> merge(delta1,delta2)</span><br><span class="line"><span class="comment">#加入正则化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regular_grad</span><span class="params">(theta,x,y,l=<span class="number">1</span>)</span>:</span></span><br><span class="line">	delta1,delta2=demerge(gradient(theta,x,y))</span><br><span class="line">	t1,t2=demerge(theta)</span><br><span class="line">	m=len(x)</span><br><span class="line">	theta1[:,<span class="number">0</span>]=<span class="number">0</span></span><br><span class="line">	regular_grad1=(l/m)*theta1+delta1</span><br><span class="line">	theta2[:,<span class="number">0</span>]=<span class="number">0</span></span><br><span class="line">	regular_grad2=(l/m)*theta2+delta2</span><br><span class="line">	<span class="keyword">return</span> merge(regular_grad1,regular_grad2)</span><br></pre></td></tr></table></figure>
 
@@ -425,6 +425,9 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
+                <a href="/blogs/tfSVM/" rel="prev" title="SVM算法">
+                  SVM算法 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
       </footer>
@@ -479,7 +482,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">57</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -492,7 +495,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-count">37</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -559,13 +562,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">246k</span>
+    <span title="站点总字数">253k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">3:44</span>
+    <span title="站点阅读时长">3:50</span>
 </div>
   <div class="addthis_inline_share_toolbox">
     <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>

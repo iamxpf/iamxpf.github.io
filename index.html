@@ -157,7 +157,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">39</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">37</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -167,7 +167,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">56</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">57</span></a>
 
   </li>
         <li class="menu-item menu-item-sitemap">
@@ -232,6 +232,124 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/tfSVM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/tfSVM/" class="post-title-link" itemprop="url">SVM算法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-06 22:58:58 / 修改时间：23:04:17" itemprop="dateCreated datePublished" datetime="2020-08-06T22:58:58+08:00">2020-08-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/tfSVM/" class="post-meta-item leancloud_visitors" data-flag-title="SVM算法" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/tfSVM/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/tfSVM/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="算法简介"><a href="#算法简介" class="headerlink" title="算法简介"></a>算法简介</h2><h3 id="代价函数"><a href="#代价函数" class="headerlink" title="代价函数"></a>代价函数</h3><p>代价函数和logistic回归类似，但是为了保证最大间隔，<strong><u>当y=1时，需要θT * X&gt;=1，而不是θT * X&gt;=0，当y=0时，需要θT * X&lt;=-1，而不是θT * X&lt;0，</u></strong>因此将假设函数部分替换为如下的函数：</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806205412.png" alt></p><p>因此代价函数定义如下：</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200806205909.jpg" alt></p><p>其中C的作用和logistic回归中的1/λ作用相同，平衡数据拟合程度和模型中参数的大小,SVM的代价函数不是像logistic中一样输出概率而是直接预测分类（是0还是1）</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blogs/tfSVM/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+</div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/tfNN/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -257,7 +375,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-08-04 22:41:03 / 修改时间：22:42:03" itemprop="dateCreated datePublished" datetime="2020-08-04T22:41:03+08:00">2020-08-04</time>
+              <time title="创建时间：2020-08-04 22:41:03 / 修改时间：22:44:03" itemprop="dateCreated datePublished" datetime="2020-08-04T22:41:03+08:00">2020-08-04</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -373,10 +491,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-08-03 22:21:53 / 修改时间：22:22:45" itemprop="dateCreated datePublished" datetime="2020-08-03T22:21:53+08:00">2020-08-03</time>
+              <time title="创建时间：2020-08-03 22:21:53" itemprop="dateCreated datePublished" datetime="2020-08-03T22:21:53+08:00">2020-08-03</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-06 23:01:05" itemprop="dateModified" datetime="2020-08-06T23:01:05+08:00">2020-08-06</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -598,10 +722,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-07-23 11:31:37 / 修改时间：15:09:41" itemprop="dateCreated datePublished" datetime="2020-07-23T11:31:37+08:00">2020-07-23</time>
+              <time title="创建时间：2020-07-23 11:31:37" itemprop="dateCreated datePublished" datetime="2020-07-23T11:31:37+08:00">2020-07-23</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-06 22:59:50" itemprop="dateModified" datetime="2020-08-06T22:59:50+08:00">2020-08-06</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -834,18 +964,24 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-07-20 16:48:38 / 修改时间：16:52:51" itemprop="dateCreated datePublished" datetime="2020-07-20T16:48:38+08:00">2020-07-20</time>
+              <time title="创建时间：2020-07-20 16:48:38" itemprop="dateCreated datePublished" datetime="2020-07-20T16:48:38+08:00">2020-07-20</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-06 22:59:52" itemprop="dateModified" datetime="2020-08-06T22:59:52+08:00">2020-08-06</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tensorflow/" itemprop="url" rel="index">
-                    <span itemprop="name">tensorflow</span>
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
                   </a>
                 </span>
             </span>
@@ -1200,18 +1336,24 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-07-13 17:50:46 / 修改时间：17:51:51" itemprop="dateCreated datePublished" datetime="2020-07-13T17:50:46+08:00">2020-07-13</time>
+              <time title="创建时间：2020-07-13 17:50:46" itemprop="dateCreated datePublished" datetime="2020-07-13T17:50:46+08:00">2020-07-13</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-06 23:00:45" itemprop="dateModified" datetime="2020-08-06T23:00:45+08:00">2020-08-06</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tensorflow/" itemprop="url" rel="index">
-                    <span itemprop="name">tensorflow</span>
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
                   </a>
                 </span>
             </span>
@@ -1291,124 +1433,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/diversityFace/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
-      <meta itemprop="name" content="Xiapf">
-      <meta itemprop="description" content="好好学习，天天向上">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="八戒大强攻">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/diversityFace/" class="post-title-link" itemprop="url">人脸识别中不同方法对比分析</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-07-06 17:10:05 / 修改时间：17:11:36" itemprop="dateCreated datePublished" datetime="2020-07-06T17:10:05+08:00">2020-07-06</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
-                    <span itemprop="name">深度学习</span>
-                  </a>
-                </span>
-            </span>
-
-          
-            <span id="/blogs/diversityFace/" class="post-meta-item leancloud_visitors" data-flag-title="人脸识别中不同方法对比分析" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">评论数：</span>
-    
-    <a title="valine" href="/blogs/diversityFace/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/blogs/diversityFace/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-		  
-			
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="项目设置"><a href="#项目设置" class="headerlink" title="项目设置"></a>项目设置</h2><p>（1）问题描述</p><p>对于待分类的图像，根据模式识别算法判断它和哪一个图像最相似</p><p>（2）数据集来源</p><p>实验数据集来自Biometric Ideal Test官网<a href="http://biometrics.idealtest.org/dbDetailForUser.do?id=9" target="_blank" rel="external nofollow noopener noreferrer">http://biometrics.idealtest.org/dbDetailForUser.do?id=9</a> ，保存在FaceV5文件夹下。</p><p>选择其中100个人的不同的4张图片作为数据集，选择每个人的一张图片作为测试集共100张图像，保存在used文件夹下，将剩余的图像作为训练集，共300张图像，保存在unused文件夹下。每张图片的第0 ~ 2位用数字表示，用来标识每个人的身份，最终测试样本预测的类别也是需要根据图片的名称来进行判断是否识别准确。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blogs/diversityFace/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <div>
-  
-</div>
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1458,7 +1482,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">57</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1471,7 +1495,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-count">37</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1538,13 +1562,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">246k</span>
+    <span title="站点总字数">253k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">3:44</span>
+    <span title="站点阅读时长">3:50</span>
 </div>
   <div class="addthis_inline_share_toolbox">
     <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
