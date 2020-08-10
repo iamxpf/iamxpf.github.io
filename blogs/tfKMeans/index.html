@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="描述使用场景聚类算法用于无监督学习，KMeans算法是聚类算法的一种，当给定训练集{x1,x2,….,xm }，找到这些无标签数据中的结构。聚类问题就是给定一组未加标签的数据集，将数据分为有紧密关系的子集成簇。算法流程输入：（1）从数据中聚类的簇的个数K（2）训练数据集（无标签数据）利用scioy.io库下的函数loadmat导入mat文件，数据中有两个特征，没有标签；">
+<meta name="keywords" content="机器学习,无监督学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聚类算法KMeans算法">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;tfKMeans&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="描述使用场景聚类算法用于无监督学习，KMeans算法是聚类算法的一种，当给定训练集{x1,x2,….,xm }，找到这些无标签数据中的结构。聚类问题就是给定一组未加标签的数据集，将数据分为有紧密关系的子集成簇。算法流程输入：（1）从数据中聚类的簇的个数K（2）训练数据集（无标签数据）利用scioy.io库下的函数loadmat导入mat文件，数据中有两个特征，没有标签；">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200810155815.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200810164450.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200810155839.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200810164918.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200810170305.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200810170705.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200810171424.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200810171734.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200810181145.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200810181531.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200810182931.png">
+<meta property="og:updated_time" content="2020-08-10T10:34:53.807Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200810155815.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/tfKMeans/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>聚类算法KMeans算法 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">38</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">11</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">58</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/tfKMeans/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          聚类算法KMeans算法
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-10 18:32:54 / 修改时间：18:34:53" itemprop="dateCreated datePublished" datetime="2020-08-10T18:32:54+08:00">2020-08-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/tfKMeans/" class="post-meta-item leancloud_visitors" data-flag-title="聚类算法KMeans算法" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/tfKMeans/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/tfKMeans/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>聚类算法用于无监督学习，KMeans算法是聚类算法的一种，当给定训练集{x1,x2,….,xm }，找到这些无标签数据中的结构。聚类问题就是给定一组未加标签的数据集，将数据分为有紧密关系的子集成簇。</p><h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>输入：（1）从数据中聚类的簇的个数K</p><p>（2）训练数据集（无标签数据）</p><p>利用scioy.io库下的函数loadmat导入mat文件，数据中有两个特征，没有标签；</p><a id="more"></a>
+
+
+
+<p>将数据利用pandas库下的DataFrame转换为表格形式，方便调用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#导入数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data</span><span class="params">(path)</span>:</span></span><br><span class="line">	data=sio.loadmat(path)</span><br><span class="line">	df=pd.DataFrame(data.get(<span class="string">'X'</span>),columns=[<span class="string">'x1'</span>,<span class="string">'x2'</span>])</span><br><span class="line">	<span class="keyword">return</span> df</span><br></pre></td></tr></table></figure>
+
+<p>数据展示可以看出是三个簇的样子，但是数据都没有标签，每个数据点目前都是一样的</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200810155815.png" alt></p>
+<hr>
+<p>算法：（0）随机初始化K个簇的中心：μ1，μ2，…，μk</p>
+<p>利用pandas库下的DataFrame数据的sample来进行随机取几个样本点作为初始的簇中心</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#随机初始化族中心</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">random_init</span><span class="params">(data,k)</span>:</span></span><br><span class="line">	<span class="keyword">return</span> np.array(data.sample(k))<span class="comment">#表格中的采样方法</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>不断重复下面（1）（2）步骤，直至簇的中心不再变化：</p>
+<p>（1）簇分配：遍历样本，计算每个样本距离最近的簇的中心，进行点的分配</p>
+<p>根据公式||x(i)-μ||2，找到某个中心点μ，使得样本点x(i)到它的距离的平方最小，即取距离最小的簇。</p>
+<p>分配点：利用numpy库下的apply_along_axis，传入所有数据，根据最小距离函数：计算每个样本点距离簇中心的最小距离。</p>
+<p>求距离：利用numpy库下的apply_along_axis。传入每个样本点和簇中心的差，根据第二范数公式得到距离，利用argmin求的最小距离。</p>
+<p>附：numpy库下的apply_along_axis可以沿着某一个计算轴，根据函数计算传入数据的输出值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#计算点和中心的距离</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_find_your_cluster</span><span class="params">(x,centroids)</span>:</span></span><br><span class="line">	distance_index=np.apply_along_axis(np.linalg.norm,<span class="number">1</span>,x-centroids)<span class="comment">#方法，数据的轴，数据</span></span><br><span class="line">	<span class="keyword">return</span> np.argmin(distance_index) <span class="comment">#选择最小的距离的族的索引</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将点分配到簇中</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">assign_cluster</span><span class="params">(data,centroids)</span>:</span><span class="comment">#每次传一个样本计算距离</span></span><br><span class="line">	<span class="keyword">return</span> np.apply_along_axis(<span class="keyword">lambda</span> x:_find_your_cluster(x,centroids),<span class="number">1</span>,np.array(data)) <span class="comment">#lambda x:_find_your_cluster中的x对应函数中的x,x对应np.array(data)</span></span><br></pre></td></tr></table></figure>
+
+<p>将距离点最小的簇的索引分配给该点，便于后续分组求簇的均值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#把每个数据对应的中心点加到表格数据中</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_cluster_centroids</span><span class="params">(data,C)</span>:</span></span><br><span class="line">	data_new=data.copy()</span><br><span class="line">	data_new[<span class="string">'C'</span>]=C</span><br><span class="line">	<span class="keyword">return</span> data_new</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>（2）移动聚类中心：将之前分配的簇，计算簇内点的均值，记作新的簇的中心</p>
+<p>根据每个点对应分的簇，利用pandas库下的DataFrame数据下的分组函数groupby，按照某一列进行分组，同时利用mean()求数据均值，将数据利用sort_values按照某一列排序（可选），因为之前加入了每个点对应的簇，所以为了保持数据一致，需要利用drop函数把数据中最后一列簇索引沿着列方向删除。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">##重新计算新的簇的中心 利用分组函数按照簇的中心分组,取平均得到新的质心</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">new_centroids</span><span class="params">(data,C)</span>:</span></span><br><span class="line">	data=add_cluster_centroids(data,C) <span class="comment">#用被C更新过的表格</span></span><br><span class="line">	<span class="keyword">return</span> np.array(data.groupby(<span class="string">'C'</span>,as_index=<span class="literal">False</span>).mean().sort_values(by=<span class="string">'C'</span>).drop(<span class="string">'C'</span>,axis=<span class="number">1</span>)) <span class="comment">#把排序那列的名称保留</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>总体算法：循环以上两个步骤，每次迭代分配点到相应的簇中，并重新计算簇的中心：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#kmeans算法</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">kmeans_for_iters</span><span class="params">(data,k,iters=<span class="number">100</span>,tol=<span class="number">0.0001</span>)</span>:</span><span class="comment">#tol为结束条件</span></span><br><span class="line">	<span class="comment">#随机初始化簇类中心</span></span><br><span class="line">	centroids=random_init(data,k)</span><br><span class="line">	costs=[]</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(iters):</span><br><span class="line">		print(<span class="string">'run iter:&#123;&#125;'</span>.format(i))</span><br><span class="line">		C=assign_cluster(data,centroids)<span class="comment">#将点分配到簇中</span></span><br><span class="line">		centroids=new_centroids(data,C)<span class="comment">#重新计算新的簇的中心</span></span><br><span class="line">		costs.append(cost(data,centroids,C))<span class="comment">#计算代价函数</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(len(costs)&gt;<span class="number">1</span>):</span><br><span class="line">			<span class="keyword">if</span> (np.abs(costs[<span class="number">-1</span>]-costs[<span class="number">-2</span>])/costs[<span class="number">-1</span>])&lt;tol:<span class="comment">#当簇的中心不再变化</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">return</span> C,centroids,costs[<span class="number">-1</span>]<span class="comment">#返回最终的簇的索引，簇，成本</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="代价函数"><a href="#代价函数" class="headerlink" title="代价函数"></a>代价函数</h3><p>和其他算法相同，KMeans算法在运行过程中也是通过分配数据到簇中，不断改变簇的中心，来最小化代价函数的。</p>
+<p>（1）定义</p>
+<p>代价函数：每个样本点到其所属的簇中心距离之和是最小的，其中c(i)表示样本点所属簇的类别/索引，μ表示簇中心，μc(I)表示所属c(I)类别的簇的中心。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200810164450.png" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#代价函数 计算每个样本和其对应的簇中心的距离</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cost</span><span class="params">(data,centroids,C)</span>:</span></span><br><span class="line">	m=data.shape[<span class="number">0</span>]</span><br><span class="line">	cost_term=(<span class="number">1</span>/m)*np.sum(np.apply_along_axis(np.linalg.norm,<span class="number">1</span>,np.array(data)-centroids[C]))</span><br><span class="line">	<span class="keyword">return</span> cost_term</span><br></pre></td></tr></table></figure>
+
+<p>（2）算法中如何体现</p>
+<p>由公式可以看出，要保证样本到所属类别的中心的簇距离最小，即可以分为两部分：一是保证样本正确分到所属类别，即在分配簇时，要找到最小距离的簇；二是簇内每个点到中心距离要最小，即簇的中心需要选好。</p>
+<p>在分配簇中：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200810155839.jpg" alt></p>
+<p>通过找到与样本点最小的中心，来最小化c(i)，即找到样本所属的类别。</p>
+<p>在调整簇中心中：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200810164918.jpg" alt></p>
+<p>通过将簇内的点求均值找到更合理的簇中心，即要最小化μ。</p>
+<h3 id="如何解决局部最优"><a href="#如何解决局部最优" class="headerlink" title="如何解决局部最优"></a>如何解决局部最优</h3><p>因为在初始选择簇中心的时候，是随机选择几个样本点作为簇中心，如果初始选择不佳，则分类就会出现如下问题：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200810170305.png" alt></p>
+<p>图像中可以看出簇也是分为3类，但是明显可以看出分类有问题，初始化的时候在上面的圆圈中找了两个点，在下面的圆圈中找了一个点，所以导致下面两个簇分为一个类，上面的一个簇反而拆分成了两个簇。</p>
+<p>这种分类也是遵循了最小化代价函数，保证点到簇中心最小，但是由于初始化不当，陷入了这种局部最优。为了避免这种局部最优问题，可以多次随机初始化训练KMeans算法，每次计算代价函数，最终选择代价函数最小的模型作为最终的结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#多次随机初始化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">kmeans</span><span class="params">(data,k,iters=<span class="number">100</span>,n_nums=<span class="number">10</span>)</span>:</span></span><br><span class="line">	<span class="comment">#选择成本最小的</span></span><br><span class="line">	nums_initial=np.array([kmeans_for_iters(data,k,iters) <span class="keyword">for</span> _ <span class="keyword">in</span> range(n_nums)]) <span class="comment">#保存每次结果</span></span><br><span class="line">	best_res=np.argmin(nums_initial[:,<span class="number">-1</span>])</span><br><span class="line">	<span class="keyword">return</span> nums_initial[best_res]</span><br></pre></td></tr></table></figure>
+
+<p>这样保证了初始的随机取点，又得到了最小代价的模型。</p>
+<h3 id="如何选择聚类数量K"><a href="#如何选择聚类数量K" class="headerlink" title="如何选择聚类数量K"></a>如何选择聚类数量K</h3><p>（1）肘部法则</p>
+<p>改变K计算不同K下的代价，进行画图，找到代价下降很快后突然变慢的点，这种位置是肘部，则是最佳的K，如图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200810170705.png" alt></p>
+<p>但是实际应用中代价可能没有明显变化，所以这种方法不能适用所有情况。</p>
+<p>选择不同的K的值得到不同的模型，计算代价：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">klist=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>]</span><br><span class="line">kcosts=[]</span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> klist:</span><br><span class="line">	best_res=kmeans(data,k)</span><br><span class="line">	kcost=best_res[<span class="number">-1</span>]</span><br><span class="line">	kcosts.append(kcost)</span><br><span class="line">plt.plot(klist,kcosts)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>得到分别对应的代价值为：[2.4599108484075822, 1.5470043751823426, 0.794176363371587, 0.7065872753726378, 0.6211872806110786, 0.5793526629824044, 0.5062612369155735, 0.4789280784350547]</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200810171424.png" alt></p>
+<p>可以看出该数据集进行K选择之后，能符合肘部法则，选择K=3是最佳的分类簇</p>
+<p>按照K=3，分类的结果为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200810171734.png" alt></p>
+<p>分类结果也合理，按照不同的颜色标识了不同的簇。</p>
+<p>（2）根据算法的应用目的进行K的选择</p>
+<p>当K增大，则分类会细致，当K变小，则分类少应用方便，需要根据具体目的选择K的值。</p>
+<h2 id="用sklearn库实现KMeans算法"><a href="#用sklearn库实现KMeans算法" class="headerlink" title="用sklearn库实现KMeans算法"></a>用sklearn库实现KMeans算法</h2><p>（1）搭建模型：利用sklearn库下的cluster聚类库下的KMeans，指定分类簇n_clusters的大小</p>
+<p>（2）拟合数据：利用fit函数输入训练数据</p>
+<p>（3）模型结果：利用predict函数得到每个数据点对应的簇的类别</p>
+<p>cluster_centers_属性得到每个簇的中心</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用sklearn中的kmeans</span></span><br><span class="line"><span class="keyword">import</span> sklearn.cluster</span><br><span class="line">km=sklearn.cluster.KMeans(n_clusters=<span class="number">3</span>)</span><br><span class="line">km.fit(data)</span><br><span class="line">C=km.predict(data)</span><br><span class="line">centroids=km.cluster_centers_</span><br></pre></td></tr></table></figure>
+
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><h3 id="描述-1"><a href="#描述-1" class="headerlink" title="描述"></a>描述</h3><p>将一幅图像128 * 128的彩色图像利用KMeans算法进行压缩。</p>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>将图像中每个像素点进行分类，分为K个簇，使用簇中心来代替簇内的像素点，以此压缩图片。</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>1、导入数据并标准化</p>
+<p>利用skimage库下的io库下的imread读入图像，并将每个像素点除以255，通过归一化减少量纲的影响，否则大小不一的像素会使得结果完全受像素值影响。并将彩色图像像素值转换为二维数据形式。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#导入数据</span></span><br><span class="line"><span class="keyword">from</span> skimage <span class="keyword">import</span> io</span><br><span class="line">img=io.imread(<span class="string">'./data/bird_small.png'</span>)/<span class="number">255</span></span><br><span class="line">m,_,channel=img.shape</span><br><span class="line">data=img.reshape(m*m,channel)</span><br></pre></td></tr></table></figure>
+
+<p>2、多次随机一次KMeans</p>
+<p>（1）随机初始化簇类中心</p>
+<p>（2）每次迭代中，将数据按照到各个簇中心的最小距离分配点，分配后重新计算数据的均值即簇的中心</p>
+<p>1°把所有数据分配到不同的簇中：按照样本点到不同簇的距离取最小值则为该样本所在的簇</p>
+<p>2°得到每个簇所在的索引位置，并将每个数据后面加上对应中心的位置</p>
+<p>3°分配完一次所有数据后，按照簇内的数据的平均值重新计算簇的中心</p>
+<p>模型训练：n_clusters指明簇的个数，max_iter指明每个迭代次数，n_init指明随机初始化的次数，n_jobs指明并行进程数（-1表示和CPU内核相同）。</p>
+<p>通过predict得到每个样本点对应的簇的类别，通过cluster_centers_得到簇的中心，使用得到的簇的中心来代替簇内的点，得到的像素值利用skimage.io下的imsave进行保存</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#使用sklearn中的kmeans</span></span><br><span class="line"><span class="keyword">import</span> sklearn.cluster</span><br><span class="line">km=sklearn.cluster.KMeans(n_clusters=test,max_iter=<span class="number">10</span>,n_init=<span class="number">3</span>,n_jobs=<span class="number">-1</span>)</span><br><span class="line">km.fit(data)</span><br><span class="line">centroids=km.cluster_centers_</span><br><span class="line">C=km.predict(data)</span><br><span class="line"> <span class="comment"># 用每个簇的中心来代替簇内的点</span></span><br><span class="line">pic=centroids[C].reshape(m,m,channel)</span><br><span class="line">io.imsave(<span class="string">'5.png'</span>,pic)</span><br></pre></td></tr></table></figure>
+
+<p>3、分析不同K的取值的影响</p>
+<p>（1）分析不同K取值下的代价函数的变化</p>
+<p>选择不同的簇类的K，得到不同模型下的簇的类别和簇中心点，根据代价函数定义保存每次的代价值，并将对应压缩的图像保存在compress文件夹下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sklearn.cluster</span><br><span class="line">clusters=list(range(<span class="number">1</span>,<span class="number">21</span>))</span><br><span class="line">kcosts=[]</span><br><span class="line"><span class="keyword">for</span> cluster <span class="keyword">in</span> clusters:</span><br><span class="line">	km=sklearn.cluster.KMeans(n_clusters=cluster,max_iter=<span class="number">10</span>,n_init=<span class="number">3</span>,n_jobs=<span class="number">-1</span>)</span><br><span class="line">	km.fit(data)</span><br><span class="line">	centroids=km.cluster_centers_</span><br><span class="line">	C=km.predict(data)</span><br><span class="line">	kcost=cost(data,centroids,C)</span><br><span class="line">	kcosts.append(kcost)</span><br><span class="line">	pic=centroids[C].reshape(m,m,channel)</span><br><span class="line">	io.imsave(<span class="string">'./compress/&#123;&#125;.png'</span>.format(cluster),pic)</span><br><span class="line">plt.plot(clusters,kcosts)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>最终随着K的变化代价值变化为：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200810181145.png" alt></p>
+<p>从图中可以看出没有明显的肘部，则肘部法则无法对判断K的取值起作用。</p>
+<p>（2）从应用目的分析不同的K的取值的影响</p>
+<p>查看不同K的取值下的压缩的结果：（将图像以K的值命名）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200810181531.png" alt></p>
+<p>可以看出随着K的增大，图像大小在增大，越小的K得到的压缩图像色彩就越少，越大的K得到的压缩图像就越丰富，当K取1 ~ 4时，图像为单一色彩，其中K取1时不能显示出原始图像信息，所以可以根据后续的应用来选择K，当只是为了识别出原始图像，不要求过多颜色，可以将K取小的值，当需要保留原始图像中丰富的色彩，则需要取大的K的值。</p>
+<p>总体来看，原始图像33kb，压缩之后的图像最大的（K=20）也压缩了原始图像的三分之一，并且基本和原始图像没有变化，可见KMeans算法用于压缩图像的有效性。</p>
+<p>使用subplots显示多幅图像，并且通过ax[0]，ax[1]设置每个子图的标题和具体显示的内容，通过plt.rcParams[‘font.sans-serif’]=[‘Arial Unicode MS’]显示中文标题。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">img=io.imread(<span class="string">'./data/bird_small.png'</span>)/<span class="number">255</span></span><br><span class="line">img2=io.imread(<span class="string">'./compress/20.png'</span>)/<span class="number">255</span></span><br><span class="line">fig,ax=plt.subplots(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">plt.rcParams[<span class="string">'font.sans-serif'</span>]=[<span class="string">'Arial Unicode MS'</span>] <span class="comment">#显示中文</span></span><br><span class="line">ax[<span class="number">0</span>].imshow(img)</span><br><span class="line">ax[<span class="number">0</span>].set_title(<span class="string">'原始图像'</span>)</span><br><span class="line">ax[<span class="number">1</span>].imshow(img2)</span><br><span class="line">ax[<span class="number">1</span>].set_title(<span class="string">'压缩之后'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>原始图像和压缩之后：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200810182931.png" alt></p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+              <a href="/tags/%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 无监督学习</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/tfSVM/" rel="next" title="SVM算法">
+                  <i class="fa fa-chevron-left"></i> SVM算法
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#描述"><span class="nav-number">1.</span> <span class="nav-text">描述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用场景"><span class="nav-number">1.1.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法流程"><span class="nav-number">1.2.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代价函数"><span class="nav-number">1.3.</span> <span class="nav-text">代价函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何解决局部最优"><span class="nav-number">1.4.</span> <span class="nav-text">如何解决局部最优</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何选择聚类数量K"><span class="nav-number">1.5.</span> <span class="nav-text">如何选择聚类数量K</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用sklearn库实现KMeans算法"><span class="nav-number">2.</span> <span class="nav-text">用sklearn库实现KMeans算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用"><span class="nav-number">3.</span> <span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#描述-1"><span class="nav-number">3.1.</span> <span class="nav-text">描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路"><span class="nav-number">3.2.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-number">3.3.</span> <span class="nav-text">实现</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">259k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:56</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
