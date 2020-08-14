@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.xiapf.com/blogs/tfPCA/</loc>
+    
+    <lastmod>2020-08-14T06:06:18.935Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.xiapf.com/blogs/tfKMeans/</loc>
     
-    <lastmod>2020-08-10T10:34:53.807Z</lastmod>
+    <lastmod>2020-08-10T10:37:07.141Z</lastmod>
     
   </url>
   
@@ -422,6 +429,13 @@
   </url>
   
   <url>
+    <loc>https://www.xiapf.com/blogs/docker/</loc>
+    
+    <lastmod>2019-12-13T12:52:51.111Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.xiapf.com/blogs/hello-world/</loc>
     
     <lastmod>2019-12-13T12:52:51.111Z</lastmod>
@@ -430,13 +444,6 @@
   
   <url>
     <loc>https://www.xiapf.com/blogs/future-futuretask/</loc>
-    
-    <lastmod>2019-12-13T12:52:51.111Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.xiapf.com/blogs/docker/</loc>
     
     <lastmod>2019-12-13T12:52:51.111Z</lastmod>
     

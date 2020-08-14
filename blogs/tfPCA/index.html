@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="无监督学习算法——降维降维的两种作用：数据压缩和可视化数据数据压缩使用降维可以进行数据压缩，减少数据内存，加快算法速度。原因：当数据来源于多方的时候，此时很容易出现高冗余的特征，此时可以对数据降维。做法：将原始数据找到一个低维度的空间，将数据投影到该空间上，得到的新数据即为压缩后的数据可视化数据原因：当数据集很大时，其中的特征数量很大，对原始数据无法直接画图看出数据分布，此时可以使用降维算法，将多">
+<meta name="keywords" content="机器学习,无监督学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="降维算法PCA算法">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;tfPCA&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="无监督学习算法——降维降维的两种作用：数据压缩和可视化数据数据压缩使用降维可以进行数据压缩，减少数据内存，加快算法速度。原因：当数据来源于多方的时候，此时很容易出现高冗余的特征，此时可以对数据降维。做法：将原始数据找到一个低维度的空间，将数据投影到该空间上，得到的新数据即为压缩后的数据可视化数据原因：当数据集很大时，其中的特征数量很大，对原始数据无法直接画图看出数据分布，此时可以使用降维算法，将多">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814133252.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814133849.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814104721.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814105146.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814105211.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814110351.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814121906.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814122315.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814122402.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814124032.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814132003.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814135305.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814135608.png">
+<meta property="og:updated_time" content="2020-08-14T06:06:18.935Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200814133252.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/tfPCA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>降维算法PCA算法 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">38</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">11</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">59</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/tfPCA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          降维算法PCA算法
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-14 13:48:35 / 修改时间：14:06:18" itemprop="dateCreated datePublished" datetime="2020-08-14T13:48:35+08:00">2020-08-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/tfPCA/" class="post-meta-item leancloud_visitors" data-flag-title="降维算法PCA算法" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/tfPCA/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/tfPCA/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="无监督学习算法——降维"><a href="#无监督学习算法——降维" class="headerlink" title="无监督学习算法——降维"></a>无监督学习算法——降维</h2><p>降维的两种作用：数据压缩和可视化数据</p><h3 id="数据压缩"><a href="#数据压缩" class="headerlink" title="数据压缩"></a>数据压缩</h3><p>使用降维可以进行数据压缩，减少数据内存，加快算法速度。</p><p>原因：当数据来源于多方的时候，此时很容易出现高冗余的特征，此时可以对数据降维。</p><p>做法：将原始数据找到一个低维度的空间，将数据投影到该空间上，得到的新数据即为压缩后的数据</p><h3 id="可视化数据"><a href="#可视化数据" class="headerlink" title="可视化数据"></a>可视化数据</h3><p>原因：当数据集很大时，其中的特征数量很大，对原始数据无法直接画图看出数据分布，此时可以使用降维算法，将多维度的数据降维至2维，这样就能很容易的将数据可视化。</p><a id="more"></a>
+
+
+
+
+<p>方法：选择k=2或者k=3来压缩数据，通过将原数据变为2维或者3维来可视化</p>
+<h2 id="降维问题常用算法——PCA算法"><a href="#降维问题常用算法——PCA算法" class="headerlink" title="降维问题常用算法——PCA算法"></a>降维问题常用算法——PCA算法</h2><h3 id="算法描述"><a href="#算法描述" class="headerlink" title="算法描述"></a>算法描述</h3><p>原始数据为n维</p>
+<p>（1）找到一个向量u属于Rn空间的向量，找该向量的原则就是数据投影的误差最小化的方向</p>
+<p>（2）将数据从n维-&gt;k维，找到k个方向的向量u(i),…u(k)，此时这些向量定义了一个低维度的平面</p>
+<p>（3）将数据投影到这k个向量展开的线性子空间上，即k维平面上</p>
+<p>总的来说，<u>pca是找到一个低维度的空间，通过最小化投影距离的方法来对数据投影，以此实现数据的降维</u>。投影就是两个向量的乘积</p>
+<h3 id="pca中二维数据降维和线性回归的区别"><a href="#pca中二维数据降维和线性回归的区别" class="headerlink" title="pca中二维数据降维和线性回归的区别"></a>pca中二维数据降维和线性回归的区别</h3><p>（1）<u>pca</u>中将数据从2维-&gt;1维，是通过找到一个直线，<u>最小化点和直线之间的最短距离</u>，此时的直线为低维度的空间，然后将数据投影到直线上。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814133252.png" alt></p>
+<p>（2）<u>线性回归</u>是通过找到拟合数据的直线，也是找到一个直线，但是是<u>最小化的点与假设直线得到的预测值之间的距离</u>。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814133849.png" alt></p>
+<p>上述二者虽然都是找直线，但是最小化的目标不同，一个是最小化最短距离（即垂直距离），一个是最小化预测值和真实值距离（即竖直距离）</p>
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>总体过程：<u>数据预处理-&gt;找到协方差矩阵-&gt;求解协方差矩阵的特征向量-&gt;提取前k个特征向量定义低维度平面-&gt;数据投影</u></p>
+<p>（1）数据预处理</p>
+<p>利用scipy.io库下的loadmat函数导入mat格式的数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#导入数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data</span><span class="params">(path)</span>:</span></span><br><span class="line">	data=sio.loadmat(path)</span><br><span class="line">	x=data.get(<span class="string">'X'</span>)</span><br><span class="line">	<span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814104721.png" alt></p>
+<p>导入的数据为无标签的数据x，x的维度为（50，2），即每个样本有两个数据特征，并且每行代表一个样本点。</p>
+<p>对数据进行均值标准化+特征缩放，减少不同量纲之间的影响（对每个特征进行处理即每一列进行预处理）：</p>
+<p>均值标准化：使用原始点-平均值</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814105146.png" alt></p>
+<p>特征缩放：用均值标准化的结果除以（最大值-最小值）或者是特征的标准差</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814105211.png" alt></p>
+<p>对每一个特征进行标准化，如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#归一化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">normalize</span><span class="params">(x)</span>:</span></span><br><span class="line">	m,n=x.shape</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">		x[:,i]=(x[:,i]-x[:,i].mean())/x[:,i].std()</span><br><span class="line">	<span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+
+<p>（2）pca处理</p>
+<p>pca的总体过程就是找到一个低维的空间，对数据进行投影，目标是在找到向量u(i)指定空间方向，同时要最小化投影距离。</p>
+<p>则为了找到投影的空间向量u(i)，则是通过计算原始数据的协方差矩阵，得到协方差矩阵的特征向量即为投影的低维的空间的向量指向。</p>
+<p>（3）协方差矩阵</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814110351.png" alt></p>
+<p>其中m为样本总数，n为样本的特征数量，得到的协方差矩阵的维度为（n,n）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">covariance_matrix</span><span class="params">(x)</span>:</span></span><br><span class="line">	m,n=x.shape</span><br><span class="line">	sigma=(<span class="number">1</span>/m)*np.dot(x.T,x)</span><br><span class="line">	<span class="keyword">return</span> sigma <span class="comment">#(n,n)</span></span><br></pre></td></tr></table></figure>
+
+<p>（4）协方差矩阵的特征向量</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814121906.jpg" alt></p>
+<p>利用奇异值分解svd得到矩阵的特征向量U，U的每一列代表一个特征向量，当需要提取k个主成分时，保留U矩阵的前K个向量来指向低维度子空间方向即可，需要注意的是提取的k数量不能大于U的列数。由于协方差矩阵的维度为（n,n），协方差矩阵的特征向量U的维度为（n,n）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#取前k个特征向量，进行投影</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">project_data</span><span class="params">(x,U,k)</span>:</span></span><br><span class="line">	m,n=U.shape</span><br><span class="line">	<span class="keyword">if</span>(k&gt;n):</span><br><span class="line">		print(<span class="string">'k should be less than the number of columns in U'</span>)</span><br><span class="line">		exit()</span><br><span class="line">	z=np.dot(x,U[:,:k])</span><br><span class="line">	<span class="keyword">return</span> z</span><br></pre></td></tr></table></figure>
+
+<p>（5）提取前k个特征向量投影</p>
+<p>当提取特征向量U的前k个向量后得到的低维度空间的方向向量Ureduce，其维度为（n,k），使用数据x在空间上进行投影，即x * Ureduce，则投影后的数据z=x * Ureduce，其维度为（m,k）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#取前k个特征向量，进行投影</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">project_data</span><span class="params">(x,U,k)</span>:</span></span><br><span class="line">	m,n=U.shape</span><br><span class="line">	<span class="keyword">if</span>(k&gt;n):</span><br><span class="line">		print(<span class="string">'k should be less than the number of columns in U'</span>)</span><br><span class="line">		exit()</span><br><span class="line">	z=np.dot(x,U[:,:k])</span><br><span class="line">	<span class="keyword">return</span> z</span><br></pre></td></tr></table></figure>
+
+<p>这样就得到投影后的数据z，即将原始数据x进行降维后得到的新数据z，使用seaborn下的regplot显示原始数据x，这里将x转换为表格数据传给regplot，使用seaborn下的rugplot显示降维数据z，因为降维后的数据为一维数据，所以在图上用线条长度表示大小。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814122315.jpg" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">data=pd.DataFrame(x_norm,columns=[<span class="string">'X1'</span>,<span class="string">'X2'</span>])</span><br><span class="line">fig,(ax1,ax2)=plt.subplots(ncols=<span class="number">2</span>,figsize=(<span class="number">12</span>,<span class="number">4</span>))</span><br><span class="line">sns.regplot(<span class="string">'X1'</span>,<span class="string">'X2'</span>,data=data,fit_reg=<span class="literal">False</span>,ax=ax1)</span><br><span class="line">ax1.set_title(<span class="string">'raw_data'</span>)</span><br><span class="line"></span><br><span class="line">sns.rugplot(z,ax=ax2)<span class="comment">#用于绘制出一维数组中数据点实际的分布位置情况，即不添加任何数学意义上的拟合，单纯的将记录值在坐标轴上表现出来</span></span><br><span class="line">ax2.set_title(<span class="string">'product_data'</span>)</span><br><span class="line">ax2.set_xlabel(<span class="string">'z'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<h3 id="压缩后的数据还原"><a href="#压缩后的数据还原" class="headerlink" title="压缩后的数据还原"></a>压缩后的数据还原</h3><p>由于投影后的数据z=x * Ureduce，则可以使用压缩后还原的数据可以表示为x_approx=z * Ureduce.T，用x_approx作为原始数据的近似，z的维度为（m,k），Ureduce.T维度为（k,n），则近似后的数据维度为（m,n）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#将投影数据还原</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reduct_data</span><span class="params">(z,U)</span>:</span></span><br><span class="line">	m,n=z.shape</span><br><span class="line">	<span class="keyword">if</span>(n&gt;=U.shape[<span class="number">0</span>]):</span><br><span class="line">		print(<span class="string">'The dimension of z should be smaller than the dimension of U'</span>)</span><br><span class="line">		exit()</span><br><span class="line">	x_approx=np.dot(z,U[:,:n].T)</span><br><span class="line">	<span class="keyword">return</span> x_approx</span><br></pre></td></tr></table></figure>
+
+<p>这样就得到近似的原始数据x_approx，使用seaborn下的regplot显示原始数据x，这里将x转换为表格数据传给regplot，使用seaborn下的rugplot显示降维数据z，因为降维后的数据为一维数据，所以在图上用线条长度表示大小，使用seaborn下的regplot显示近似原始数据x_approx，这里将x_approx转换为表格数据传给regplot。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814122402.png" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">data=pd.DataFrame(x_norm,columns=[<span class="string">'X1'</span>,<span class="string">'X2'</span>])</span><br><span class="line">data_approx=pd.DataFrame(x_approx,columns=[<span class="string">'X1'</span>,<span class="string">'X2'</span>])</span><br><span class="line"></span><br><span class="line">fig,(ax1,ax2,ax3)=plt.subplots(ncols=<span class="number">3</span>,figsize=(<span class="number">12</span>,<span class="number">6</span>))</span><br><span class="line">sns.regplot(<span class="string">'X1'</span>,<span class="string">'X2'</span>,data=data,fit_reg=<span class="literal">False</span>,ax=ax1)</span><br><span class="line">ax1.set_title(<span class="string">'raw_data'</span>)</span><br><span class="line"></span><br><span class="line">sns.rugplot(z,ax=ax2)<span class="comment">#用于绘制出一维数组中数据点实际的分布位置情况，即不添加任何数学意义上的拟合，单纯的将记录值在坐标轴上表现出来</span></span><br><span class="line">ax2.set_title(<span class="string">'product_data'</span>)</span><br><span class="line">ax2.set_xlabel(<span class="string">'z'</span>)</span><br><span class="line"></span><br><span class="line">sns.regplot(<span class="string">'X1'</span>,<span class="string">'X2'</span>,data=data_approx,fit_reg=<span class="literal">False</span>,ax=ax3)</span><br><span class="line">ax3.set_title(<span class="string">'approx_data'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<h3 id="k——主成分数量的选择"><a href="#k——主成分数量的选择" class="headerlink" title="k——主成分数量的选择"></a>k——主成分数量的选择</h3><p>总体思路：</p>
+<p>（1）使用不同的k值（从小到大），运行pca算法，得到不同的低维子空间的向量Ureduce，投影后的数据z，进而得到投影后的近似原始数据x_approx</p>
+<p>（2）根据以下式子计算原始数据和近似数据的误差 / 原始数据的方差即数据的波动情况，找到使得式子小于等于某个数（0.01/0.1等数据），则称选择的k有99%的方差性保留，即通过近似数据得到的误差对整体数据波动的影响，得到通过pca投影后的数据保留了多少原始数据。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814124032.png" alt></p>
+<p>但是通过以上思路每次都要运性pca，效率慢，因此可以利用奇异值分解后得到的奇异值矩阵S进行主成分的选择，奇异值矩阵告诉了方差被保留的比例：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814132003.png" alt></p>
+<p>首先计算所有奇异值矩阵中的和，即主对角线元素相加，随着i的增加，分别取对应行的主对角元素，当满足上述式子后得到的i值就是能够保留99%的方差的k的取值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#k的选择</span></span><br><span class="line">sum_s=np.sum(S)</span><br><span class="line">tmp_s=<span class="number">0</span></span><br><span class="line">print(sum_s)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(S)):</span><br><span class="line">	tmp_s+=S[i]</span><br><span class="line">	<span class="keyword">if</span>(tmp_s/sum_s&gt;=<span class="number">0.99</span>):</span><br><span class="line">		k=i</span><br><span class="line">		<span class="keyword">break</span></span><br><span class="line">print(k)</span><br></pre></td></tr></table></figure>
+
+<p>最终k的取值为1</p>
+<h3 id="对监督学习算法加速"><a href="#对监督学习算法加速" class="headerlink" title="对监督学习算法加速"></a>对监督学习算法加速</h3><p>数据集{ (x1,y1）…,（xm,ym）}</p>
+<p>（1）数据抽取：将监督学习中的数据集中，提出标签后保留无标签的数据</p>
+<p>（2）pca降维：对无标签数据进行降维，得到新数据z，数据集变为{ (z1,y1）…,（zm,ym）}</p>
+<p>（3）使用新数据运行算法，得到假设h(θ)中参数值，则模型训练结束</p>
+<p>（4）对测试样本，将xtest通过pca得到ztest，使用新数据ztest传入假设函数，得到模型的测试数据预测值。</p>
+<p>注：</p>
+<p>（1）pca只在训练数据集上使用，低维度的数据能让算法运行更快；</p>
+<p>（2）不能用于减少过拟合，虽然能减少数据特征，但是因为丢弃标签进行pca，所有会导致一部分数据丢失，过拟合采用加入正则化项；</p>
+<p>（3）当使用原始数据建立算法系统后，运行慢或者占用内存多才考虑加入第二步的pca降维，其余情况不用先考虑加入pca。</p>
+<h2 id="用sklearn库实现KMeans算法"><a href="#用sklearn库实现KMeans算法" class="headerlink" title="用sklearn库实现KMeans算法"></a>用sklearn库实现KMeans算法</h2><p>（1）搭建模型：利用sklearn库下的decomposition库下的PCA，指定成分n_components的大小，如果大小设置为整数，则n_components=k，即主成分保留的数量。如果将其设置为小数，则说明降维后的数据能保留的信息，即保留原始数据的方差性的比例。如n_components=0.99表示99%的方差性保留。</p>
+<p>（2）拟合数据：利用fit_transform函数输入训练数据，并将原始数据降维</p>
+<p>（3）恢复数据：利用inverse_transform函数得到投影后的数据恢复得到的近似原始数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用sklearn库的pca</span></span><br><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA</span><br><span class="line"><span class="comment">#搭建模型</span></span><br><span class="line">sk_pca=PCA(n_components=<span class="number">100</span>) <span class="comment">#PCA方法参数n_components，如果设置为整数，则n_components=k。如果将其设置为小数，则说明降维后的数据能保留的信息  </span></span><br><span class="line"></span><br><span class="line"><span class="comment">#降维</span></span><br><span class="line">z=sk_pca.fit_transform(x)</span><br><span class="line"></span><br><span class="line"><span class="comment">#恢复数据</span></span><br><span class="line">x_approx=sk_pca.inverse_transform(z)</span><br></pre></td></tr></table></figure>
+
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><p>当导入图片数据时，需要将数据旋转只统一方向，即需要对原始数据进行reshape。</p>
+<p>将每个照片转换为（32，32）,再转换为一维数据的1024数据，每个样本横向堆叠，得到的x维度为（5000，1024）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x=load_data(<span class="string">'./data/ex7faces.mat'</span>)</span><br><span class="line">x=np.array([x_each.reshape(<span class="number">32</span>,<span class="number">32</span>).T.reshape(<span class="number">1024</span>) <span class="keyword">for</span> x_each <span class="keyword">in</span> x]) <span class="comment">#每个照片转换为（32，32）,再转换为一维数据</span></span><br></pre></td></tr></table></figure>
+
+<p>显示前64个图片</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814135305.png" alt></p>
+<p>利用plt的subplots得到各个子图区域，通过ax的matshow将数据转换为图片大小显示像素数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#画出前n个图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_n_img</span><span class="params">(x,n)</span>:</span></span><br><span class="line">	m=x.shape[<span class="number">1</span>]</span><br><span class="line">	img_size=int(np.sqrt(m))</span><br><span class="line">	gird_size=int(np.sqrt(n))</span><br><span class="line">	first_n_img=x[:n,:]</span><br><span class="line"></span><br><span class="line">	fig,ax=plt.subplots(gird_size,gird_size,sharex=<span class="literal">True</span>,sharey=<span class="literal">True</span>,figsize=(gird_size,gird_size))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> r <span class="keyword">in</span> range(gird_size):</span><br><span class="line">		<span class="keyword">for</span> c <span class="keyword">in</span> range(gird_size):</span><br><span class="line">			ax[r,c].matshow(first_n_img[gird_size*r+c].reshape(img_size,img_size))</span><br><span class="line">			plt.xticks(np.array([]))</span><br><span class="line">			plt.yticks(np.array([]))</span><br></pre></td></tr></table></figure>
+
+<p>如果没有上面reshape的预处理，得到的图像如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814135608.png" alt></p>
+<p>此时的图像没有摆正，不利于后续观察</p>
+<h3 id="用pca进行人脸识别"><a href="#用pca进行人脸识别" class="headerlink" title="用pca进行人脸识别"></a>用pca进行人脸识别</h3><p>待续</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+              <a href="/tags/%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 无监督学习</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/tfKMeans/" rel="next" title="聚类算法KMeans算法">
+                  <i class="fa fa-chevron-left"></i> 聚类算法KMeans算法
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#无监督学习算法——降维"><span class="nav-number">1.</span> <span class="nav-text">无监督学习算法——降维</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据压缩"><span class="nav-number">1.1.</span> <span class="nav-text">数据压缩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可视化数据"><span class="nav-number">1.2.</span> <span class="nav-text">可视化数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#降维问题常用算法——PCA算法"><span class="nav-number">2.</span> <span class="nav-text">降维问题常用算法——PCA算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法描述"><span class="nav-number">2.1.</span> <span class="nav-text">算法描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pca中二维数据降维和线性回归的区别"><span class="nav-number">2.2.</span> <span class="nav-text">pca中二维数据降维和线性回归的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法流程"><span class="nav-number">2.3.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#压缩后的数据还原"><span class="nav-number">2.4.</span> <span class="nav-text">压缩后的数据还原</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#k——主成分数量的选择"><span class="nav-number">2.5.</span> <span class="nav-text">k——主成分数量的选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对监督学习算法加速"><span class="nav-number">2.6.</span> <span class="nav-text">对监督学习算法加速</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用sklearn库实现KMeans算法"><span class="nav-number">3.</span> <span class="nav-text">用sklearn库实现KMeans算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用"><span class="nav-number">4.</span> <span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#注意点"><span class="nav-number">4.1.</span> <span class="nav-text">注意点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用pca进行人脸识别"><span class="nav-number">4.2.</span> <span class="nav-text">用pca进行人脸识别</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">264k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">4:01</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>

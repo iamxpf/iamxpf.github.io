@@ -1,9 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>降维算法PCA算法</title>
+    <url>/blogs/tfPCA/</url>
+    <content><![CDATA[<h2 id="无监督学习算法——降维"><a href="#无监督学习算法——降维" class="headerlink" title="无监督学习算法——降维"></a>无监督学习算法——降维</h2><p>降维的两种作用：数据压缩和可视化数据</p><h3 id="数据压缩"><a href="#数据压缩" class="headerlink" title="数据压缩"></a>数据压缩</h3><p>使用降维可以进行数据压缩，减少数据内存，加快算法速度。</p><p>原因：当数据来源于多方的时候，此时很容易出现高冗余的特征，此时可以对数据降维。</p><p>做法：将原始数据找到一个低维度的空间，将数据投影到该空间上，得到的新数据即为压缩后的数据</p><h3 id="可视化数据"><a href="#可视化数据" class="headerlink" title="可视化数据"></a>可视化数据</h3><p>原因：当数据集很大时，其中的特征数量很大，对原始数据无法直接画图看出数据分布，此时可以使用降维算法，将多维度的数据降维至2维，这样就能很容易的将数据可视化。</p><a id="more"></a>
+
+
+
+
+<p>方法：选择k=2或者k=3来压缩数据，通过将原数据变为2维或者3维来可视化</p>
+<h2 id="降维问题常用算法——PCA算法"><a href="#降维问题常用算法——PCA算法" class="headerlink" title="降维问题常用算法——PCA算法"></a>降维问题常用算法——PCA算法</h2><h3 id="算法描述"><a href="#算法描述" class="headerlink" title="算法描述"></a>算法描述</h3><p>原始数据为n维</p>
+<p>（1）找到一个向量u属于Rn空间的向量，找该向量的原则就是数据投影的误差最小化的方向</p>
+<p>（2）将数据从n维-&gt;k维，找到k个方向的向量u(i),…u(k)，此时这些向量定义了一个低维度的平面</p>
+<p>（3）将数据投影到这k个向量展开的线性子空间上，即k维平面上</p>
+<p>总的来说，<u>pca是找到一个低维度的空间，通过最小化投影距离的方法来对数据投影，以此实现数据的降维</u>。投影就是两个向量的乘积</p>
+<h3 id="pca中二维数据降维和线性回归的区别"><a href="#pca中二维数据降维和线性回归的区别" class="headerlink" title="pca中二维数据降维和线性回归的区别"></a>pca中二维数据降维和线性回归的区别</h3><p>（1）<u>pca</u>中将数据从2维-&gt;1维，是通过找到一个直线，<u>最小化点和直线之间的最短距离</u>，此时的直线为低维度的空间，然后将数据投影到直线上。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814133252.png" alt></p>
+<p>（2）<u>线性回归</u>是通过找到拟合数据的直线，也是找到一个直线，但是是<u>最小化的点与假设直线得到的预测值之间的距离</u>。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814133849.png" alt></p>
+<p>上述二者虽然都是找直线，但是最小化的目标不同，一个是最小化最短距离（即垂直距离），一个是最小化预测值和真实值距离（即竖直距离）</p>
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>总体过程：<u>数据预处理-&gt;找到协方差矩阵-&gt;求解协方差矩阵的特征向量-&gt;提取前k个特征向量定义低维度平面-&gt;数据投影</u></p>
+<p>（1）数据预处理</p>
+<p>利用scipy.io库下的loadmat函数导入mat格式的数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#导入数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data</span><span class="params">(path)</span>:</span></span><br><span class="line">	data=sio.loadmat(path)</span><br><span class="line">	x=data.get(<span class="string">'X'</span>)</span><br><span class="line">	<span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814104721.png" alt></p>
+<p>导入的数据为无标签的数据x，x的维度为（50，2），即每个样本有两个数据特征，并且每行代表一个样本点。</p>
+<p>对数据进行均值标准化+特征缩放，减少不同量纲之间的影响（对每个特征进行处理即每一列进行预处理）：</p>
+<p>均值标准化：使用原始点-平均值</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814105146.png" alt></p>
+<p>特征缩放：用均值标准化的结果除以（最大值-最小值）或者是特征的标准差</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814105211.png" alt></p>
+<p>对每一个特征进行标准化，如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#归一化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">normalize</span><span class="params">(x)</span>:</span></span><br><span class="line">	m,n=x.shape</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">		x[:,i]=(x[:,i]-x[:,i].mean())/x[:,i].std()</span><br><span class="line">	<span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+
+<p>（2）pca处理</p>
+<p>pca的总体过程就是找到一个低维的空间，对数据进行投影，目标是在找到向量u(i)指定空间方向，同时要最小化投影距离。</p>
+<p>则为了找到投影的空间向量u(i)，则是通过计算原始数据的协方差矩阵，得到协方差矩阵的特征向量即为投影的低维的空间的向量指向。</p>
+<p>（3）协方差矩阵</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814110351.png" alt></p>
+<p>其中m为样本总数，n为样本的特征数量，得到的协方差矩阵的维度为（n,n）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">covariance_matrix</span><span class="params">(x)</span>:</span></span><br><span class="line">	m,n=x.shape</span><br><span class="line">	sigma=(<span class="number">1</span>/m)*np.dot(x.T,x)</span><br><span class="line">	<span class="keyword">return</span> sigma <span class="comment">#(n,n)</span></span><br></pre></td></tr></table></figure>
+
+<p>（4）协方差矩阵的特征向量</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814121906.jpg" alt></p>
+<p>利用奇异值分解svd得到矩阵的特征向量U，U的每一列代表一个特征向量，当需要提取k个主成分时，保留U矩阵的前K个向量来指向低维度子空间方向即可，需要注意的是提取的k数量不能大于U的列数。由于协方差矩阵的维度为（n,n），协方差矩阵的特征向量U的维度为（n,n）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#取前k个特征向量，进行投影</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">project_data</span><span class="params">(x,U,k)</span>:</span></span><br><span class="line">	m,n=U.shape</span><br><span class="line">	<span class="keyword">if</span>(k&gt;n):</span><br><span class="line">		print(<span class="string">'k should be less than the number of columns in U'</span>)</span><br><span class="line">		exit()</span><br><span class="line">	z=np.dot(x,U[:,:k])</span><br><span class="line">	<span class="keyword">return</span> z</span><br></pre></td></tr></table></figure>
+
+<p>（5）提取前k个特征向量投影</p>
+<p>当提取特征向量U的前k个向量后得到的低维度空间的方向向量Ureduce，其维度为（n,k），使用数据x在空间上进行投影，即x * Ureduce，则投影后的数据z=x * Ureduce，其维度为（m,k）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#取前k个特征向量，进行投影</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">project_data</span><span class="params">(x,U,k)</span>:</span></span><br><span class="line">	m,n=U.shape</span><br><span class="line">	<span class="keyword">if</span>(k&gt;n):</span><br><span class="line">		print(<span class="string">'k should be less than the number of columns in U'</span>)</span><br><span class="line">		exit()</span><br><span class="line">	z=np.dot(x,U[:,:k])</span><br><span class="line">	<span class="keyword">return</span> z</span><br></pre></td></tr></table></figure>
+
+<p>这样就得到投影后的数据z，即将原始数据x进行降维后得到的新数据z，使用seaborn下的regplot显示原始数据x，这里将x转换为表格数据传给regplot，使用seaborn下的rugplot显示降维数据z，因为降维后的数据为一维数据，所以在图上用线条长度表示大小。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814122315.jpg" alt></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">data=pd.DataFrame(x_norm,columns=[<span class="string">'X1'</span>,<span class="string">'X2'</span>])</span><br><span class="line">fig,(ax1,ax2)=plt.subplots(ncols=<span class="number">2</span>,figsize=(<span class="number">12</span>,<span class="number">4</span>))</span><br><span class="line">sns.regplot(<span class="string">'X1'</span>,<span class="string">'X2'</span>,data=data,fit_reg=<span class="literal">False</span>,ax=ax1)</span><br><span class="line">ax1.set_title(<span class="string">'raw_data'</span>)</span><br><span class="line"></span><br><span class="line">sns.rugplot(z,ax=ax2)<span class="comment">#用于绘制出一维数组中数据点实际的分布位置情况，即不添加任何数学意义上的拟合，单纯的将记录值在坐标轴上表现出来</span></span><br><span class="line">ax2.set_title(<span class="string">'product_data'</span>)</span><br><span class="line">ax2.set_xlabel(<span class="string">'z'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<h3 id="压缩后的数据还原"><a href="#压缩后的数据还原" class="headerlink" title="压缩后的数据还原"></a>压缩后的数据还原</h3><p>由于投影后的数据z=x * Ureduce，则可以使用压缩后还原的数据可以表示为x_approx=z * Ureduce.T，用x_approx作为原始数据的近似，z的维度为（m,k），Ureduce.T维度为（k,n），则近似后的数据维度为（m,n）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#将投影数据还原</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reduct_data</span><span class="params">(z,U)</span>:</span></span><br><span class="line">	m,n=z.shape</span><br><span class="line">	<span class="keyword">if</span>(n&gt;=U.shape[<span class="number">0</span>]):</span><br><span class="line">		print(<span class="string">'The dimension of z should be smaller than the dimension of U'</span>)</span><br><span class="line">		exit()</span><br><span class="line">	x_approx=np.dot(z,U[:,:n].T)</span><br><span class="line">	<span class="keyword">return</span> x_approx</span><br></pre></td></tr></table></figure>
+
+<p>这样就得到近似的原始数据x_approx，使用seaborn下的regplot显示原始数据x，这里将x转换为表格数据传给regplot，使用seaborn下的rugplot显示降维数据z，因为降维后的数据为一维数据，所以在图上用线条长度表示大小，使用seaborn下的regplot显示近似原始数据x_approx，这里将x_approx转换为表格数据传给regplot。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814122402.png" alt></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">data=pd.DataFrame(x_norm,columns=[<span class="string">'X1'</span>,<span class="string">'X2'</span>])</span><br><span class="line">data_approx=pd.DataFrame(x_approx,columns=[<span class="string">'X1'</span>,<span class="string">'X2'</span>])</span><br><span class="line"></span><br><span class="line">fig,(ax1,ax2,ax3)=plt.subplots(ncols=<span class="number">3</span>,figsize=(<span class="number">12</span>,<span class="number">6</span>))</span><br><span class="line">sns.regplot(<span class="string">'X1'</span>,<span class="string">'X2'</span>,data=data,fit_reg=<span class="literal">False</span>,ax=ax1)</span><br><span class="line">ax1.set_title(<span class="string">'raw_data'</span>)</span><br><span class="line"></span><br><span class="line">sns.rugplot(z,ax=ax2)<span class="comment">#用于绘制出一维数组中数据点实际的分布位置情况，即不添加任何数学意义上的拟合，单纯的将记录值在坐标轴上表现出来</span></span><br><span class="line">ax2.set_title(<span class="string">'product_data'</span>)</span><br><span class="line">ax2.set_xlabel(<span class="string">'z'</span>)</span><br><span class="line"></span><br><span class="line">sns.regplot(<span class="string">'X1'</span>,<span class="string">'X2'</span>,data=data_approx,fit_reg=<span class="literal">False</span>,ax=ax3)</span><br><span class="line">ax3.set_title(<span class="string">'approx_data'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<h3 id="k——主成分数量的选择"><a href="#k——主成分数量的选择" class="headerlink" title="k——主成分数量的选择"></a>k——主成分数量的选择</h3><p>总体思路：</p>
+<p>（1）使用不同的k值（从小到大），运行pca算法，得到不同的低维子空间的向量Ureduce，投影后的数据z，进而得到投影后的近似原始数据x_approx</p>
+<p>（2）根据以下式子计算原始数据和近似数据的误差 / 原始数据的方差即数据的波动情况，找到使得式子小于等于某个数（0.01/0.1等数据），则称选择的k有99%的方差性保留，即通过近似数据得到的误差对整体数据波动的影响，得到通过pca投影后的数据保留了多少原始数据。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814124032.png" alt></p>
+<p>但是通过以上思路每次都要运性pca，效率慢，因此可以利用奇异值分解后得到的奇异值矩阵S进行主成分的选择，奇异值矩阵告诉了方差被保留的比例：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814132003.png" alt></p>
+<p>首先计算所有奇异值矩阵中的和，即主对角线元素相加，随着i的增加，分别取对应行的主对角元素，当满足上述式子后得到的i值就是能够保留99%的方差的k的取值。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#k的选择</span></span><br><span class="line">sum_s=np.sum(S)</span><br><span class="line">tmp_s=<span class="number">0</span></span><br><span class="line">print(sum_s)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(S)):</span><br><span class="line">	tmp_s+=S[i]</span><br><span class="line">	<span class="keyword">if</span>(tmp_s/sum_s&gt;=<span class="number">0.99</span>):</span><br><span class="line">		k=i</span><br><span class="line">		<span class="keyword">break</span></span><br><span class="line">print(k)</span><br></pre></td></tr></table></figure>
+
+<p>最终k的取值为1</p>
+<h3 id="对监督学习算法加速"><a href="#对监督学习算法加速" class="headerlink" title="对监督学习算法加速"></a>对监督学习算法加速</h3><p>数据集{ (x1,y1）…,（xm,ym）}</p>
+<p>（1）数据抽取：将监督学习中的数据集中，提出标签后保留无标签的数据</p>
+<p>（2）pca降维：对无标签数据进行降维，得到新数据z，数据集变为{ (z1,y1）…,（zm,ym）}</p>
+<p>（3）使用新数据运行算法，得到假设h(θ)中参数值，则模型训练结束</p>
+<p>（4）对测试样本，将xtest通过pca得到ztest，使用新数据ztest传入假设函数，得到模型的测试数据预测值。</p>
+<p>注：</p>
+<p>（1）pca只在训练数据集上使用，低维度的数据能让算法运行更快；</p>
+<p>（2）不能用于减少过拟合，虽然能减少数据特征，但是因为丢弃标签进行pca，所有会导致一部分数据丢失，过拟合采用加入正则化项；</p>
+<p>（3）当使用原始数据建立算法系统后，运行慢或者占用内存多才考虑加入第二步的pca降维，其余情况不用先考虑加入pca。</p>
+<h2 id="用sklearn库实现KMeans算法"><a href="#用sklearn库实现KMeans算法" class="headerlink" title="用sklearn库实现KMeans算法"></a>用sklearn库实现KMeans算法</h2><p>（1）搭建模型：利用sklearn库下的decomposition库下的PCA，指定成分n_components的大小，如果大小设置为整数，则n_components=k，即主成分保留的数量。如果将其设置为小数，则说明降维后的数据能保留的信息，即保留原始数据的方差性的比例。如n_components=0.99表示99%的方差性保留。</p>
+<p>（2）拟合数据：利用fit_transform函数输入训练数据，并将原始数据降维</p>
+<p>（3）恢复数据：利用inverse_transform函数得到投影后的数据恢复得到的近似原始数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#用sklearn库的pca</span></span><br><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA</span><br><span class="line"><span class="comment">#搭建模型</span></span><br><span class="line">sk_pca=PCA(n_components=<span class="number">100</span>) <span class="comment">#PCA方法参数n_components，如果设置为整数，则n_components=k。如果将其设置为小数，则说明降维后的数据能保留的信息  </span></span><br><span class="line"></span><br><span class="line"><span class="comment">#降维</span></span><br><span class="line">z=sk_pca.fit_transform(x)</span><br><span class="line"></span><br><span class="line"><span class="comment">#恢复数据</span></span><br><span class="line">x_approx=sk_pca.inverse_transform(z)</span><br></pre></td></tr></table></figure>
+
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><p>当导入图片数据时，需要将数据旋转只统一方向，即需要对原始数据进行reshape。</p>
+<p>将每个照片转换为（32，32）,再转换为一维数据的1024数据，每个样本横向堆叠，得到的x维度为（5000，1024）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">x=load_data(<span class="string">'./data/ex7faces.mat'</span>)</span><br><span class="line">x=np.array([x_each.reshape(<span class="number">32</span>,<span class="number">32</span>).T.reshape(<span class="number">1024</span>) <span class="keyword">for</span> x_each <span class="keyword">in</span> x]) <span class="comment">#每个照片转换为（32，32）,再转换为一维数据</span></span><br></pre></td></tr></table></figure>
+
+<p>显示前64个图片</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814135305.png" alt></p>
+<p>利用plt的subplots得到各个子图区域，通过ax的matshow将数据转换为图片大小显示像素数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#画出前n个图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_n_img</span><span class="params">(x,n)</span>:</span></span><br><span class="line">	m=x.shape[<span class="number">1</span>]</span><br><span class="line">	img_size=int(np.sqrt(m))</span><br><span class="line">	gird_size=int(np.sqrt(n))</span><br><span class="line">	first_n_img=x[:n,:]</span><br><span class="line"></span><br><span class="line">	fig,ax=plt.subplots(gird_size,gird_size,sharex=<span class="literal">True</span>,sharey=<span class="literal">True</span>,figsize=(gird_size,gird_size))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> r <span class="keyword">in</span> range(gird_size):</span><br><span class="line">		<span class="keyword">for</span> c <span class="keyword">in</span> range(gird_size):</span><br><span class="line">			ax[r,c].matshow(first_n_img[gird_size*r+c].reshape(img_size,img_size))</span><br><span class="line">			plt.xticks(np.array([]))</span><br><span class="line">			plt.yticks(np.array([]))</span><br></pre></td></tr></table></figure>
+
+<p>如果没有上面reshape的预处理，得到的图像如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200814135608.png" alt></p>
+<p>此时的图像没有摆正，不利于后续观察</p>
+<h3 id="用pca进行人脸识别"><a href="#用pca进行人脸识别" class="headerlink" title="用pca进行人脸识别"></a>用pca进行人脸识别</h3><p>待续</p>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+        <tag>无监督学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>聚类算法KMeans算法</title>
     <url>/blogs/tfKMeans/</url>
-    <content><![CDATA[<h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>聚类算法用于无监督学习，KMeans算法是聚类算法的一种，当给定训练集{x1,x2,….,xm }，找到这些无标签数据中的结构。聚类问题就是给定一组未加标签的数据集，将数据分为有紧密关系的子集成簇。</p><h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>输入：（1）从数据中聚类的簇的个数K</p><p>（2）训练数据集（无标签数据）</p><p>利用scioy.io库下的函数loadmat导入mat文件，数据中有两个特征，没有标签；</p><a id="more"></a>
+    <content><![CDATA[<h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>聚类算法用于无监督学习，KMeans算法是聚类算法的一种，当给定训练集{x1,x2,….,xm }，找到这些无标签数据中的结构。聚类问题就是给定一组未加标签的数据集，将数据分为有紧密关系的子集成簇。</p><h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>输入：</p><p>（1）从数据中聚类的簇的个数K</p><p>（2）训练数据集（无标签数据）</p><p>利用scioy.io库下的函数loadmat导入mat文件，数据中有两个特征，没有标签；</p><a id="more"></a>
+
 
 
 
@@ -13,7 +122,8 @@
 <p>数据展示可以看出是三个簇的样子，但是数据都没有标签，每个数据点目前都是一样的</p>
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200810155815.png" alt></p>
 <hr>
-<p>算法：（0）随机初始化K个簇的中心：μ1，μ2，…，μk</p>
+<p>算法：</p>
+<p>（0）随机初始化K个簇的中心：μ1，μ2，…，μk</p>
 <p>利用pandas库下的DataFrame数据的sample来进行随机取几个样本点作为初始的簇中心</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#随机初始化族中心</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">random_init</span><span class="params">(data,k)</span>:</span></span><br><span class="line">	<span class="keyword">return</span> np.array(data.sample(k))<span class="comment">#表格中的采样方法</span></span><br></pre></td></tr></table></figure>
 
