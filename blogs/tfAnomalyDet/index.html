@@ -56,18 +56,23 @@
   };
 </script>
 
-  <meta name="description" content="正交化正交化在数学中是垂直的含义，每个方法单独影响一个功能。一个监督学习系统（1）训练集当训练集拟合不佳时，采用更大的网络或者优化的算法（如Adam算法），这些措施单一的影响训练集训练的效果，这样能方便对模型修改。（2）开发集当开发集错误率高，说明存在较大的方差，可能是训练集过拟合了，可以采用正则化或者获取更多的训练数据，这些事正交化措施。如果使用早停的方法，虽然可以抑制过拟合，但是可能会导致训练">
-<meta name="keywords" content="神经网络">
+  <meta name="description" content="异常检测是指给定一个数据，放入原有模型中判断该点是否异常。算法描述（1）构造数据集：选择与异常数据相关的特征训练集和验证集由原始数据集通过scipy.io下的loadmat导入1234567891011#1.导入数据def load_data(path):	data=sio.loadmat(path)	print(data.keys())	x=data.get(&amp;apos;X&amp;apos;)	xval=data.get">
+<meta name="keywords" content="机器学习">
 <meta property="og:type" content="article">
-<meta property="og:title" content="结构化机器学习项目——第一周学习笔记">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;struLearning1&#x2F;index.html">
+<meta property="og:title" content="异常检测">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;tfAnomalyDet&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="正交化正交化在数学中是垂直的含义，每个方法单独影响一个功能。一个监督学习系统（1）训练集当训练集拟合不佳时，采用更大的网络或者优化的算法（如Adam算法），这些措施单一的影响训练集训练的效果，这样能方便对模型修改。（2）开发集当开发集错误率高，说明存在较大的方差，可能是训练集过拟合了，可以采用正则化或者获取更多的训练数据，这些事正交化措施。如果使用早停的方法，虽然可以抑制过拟合，但是可能会导致训练">
+<meta property="og:description" content="异常检测是指给定一个数据，放入原有模型中判断该点是否异常。算法描述（1）构造数据集：选择与异常数据相关的特征训练集和验证集由原始数据集通过scipy.io下的loadmat导入1234567891011#1.导入数据def load_data(path):	data=sio.loadmat(path)	print(data.keys())	x=data.get(&amp;apos;X&amp;apos;)	xval=data.get">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-05-21T08:39:20.931Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200907162738.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200907155412.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200907163035.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200907163041.png">
+<meta property="og:updated_time" content="2020-09-07T08:52:32.533Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200907162738.png">
 
-<link rel="canonical" href="https://www.xiapf.com/blogs/struLearning1/">
+<link rel="canonical" href="https://www.xiapf.com/blogs/tfAnomalyDet/">
 
 
 <script id="page-configurations">
@@ -81,7 +86,7 @@
   };
 </script>
 
-  <title>结构化机器学习项目——第一周学习笔记 | 八戒大强攻</title>
+  <title>异常检测 | 八戒大强攻</title>
   
 
 
@@ -233,7 +238,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/struLearning1/">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/tfAnomalyDet/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
@@ -246,7 +251,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          结构化机器学习项目——第一周学习笔记
+          异常检测
         </h2>
 
         <div class="post-meta">
@@ -257,7 +262,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-05-21 16:38:04 / 修改时间：16:39:20" itemprop="dateCreated datePublished" datetime="2020-05-21T16:38:04+08:00">2020-05-21</time>
+              <time title="创建时间：2020-09-07 16:51:38 / 修改时间：16:52:32" itemprop="dateCreated datePublished" datetime="2020-09-07T16:51:38+08:00">2020-09-07</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -265,14 +270,14 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
-                    <span itemprop="name">神经网络</span>
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
                   </a>
                 </span>
             </span>
 
           
-            <span id="/blogs/struLearning1/" class="post-meta-item leancloud_visitors" data-flag-title="结构化机器学习项目——第一周学习笔记" title="阅读次数">
+            <span id="/blogs/tfAnomalyDet/" class="post-meta-item leancloud_visitors" data-flag-title="异常检测" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -287,8 +292,8 @@
       </span>
       <span class="post-meta-item-text">评论数：</span>
     
-    <a title="valine" href="/blogs/struLearning1/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/blogs/struLearning1/" itemprop="commentCount"></span>
+    <a title="valine" href="/blogs/tfAnomalyDet/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/tfAnomalyDet/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -298,14 +303,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
+              <span>3.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 		  
 			
@@ -319,42 +324,50 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="正交化"><a href="#正交化" class="headerlink" title="正交化"></a>正交化</h2><p>正交化在数学中是垂直的含义，每个方法单独影响一个功能。</p><p>一个监督学习系统</p><p>（1）训练集</p><p>当训练集拟合不佳时，采用更大的网络或者优化的算法（如Adam算法），这些措施单一的影响训练集训练的效果，这样能方便对模型修改。</p><p>（2）开发集</p><p>当开发集错误率高，说明存在较大的方差，可能是训练集过拟合了，可以采用正则化或者获取更多的训练数据，这些事正交化措施。如果使用早停的方法，虽然可以抑制过拟合，但是可能会导致训练集训练不完全，这种非正交化的措施不建议使用。</p><a id="more"></a>
+        <p>异常检测是指给定一个数据，放入原有模型中判断该点是否异常。</p><p>算法描述</p><p>（1）构造数据集：选择与异常数据相关的特征</p><p>训练集和验证集由原始数据集通过scipy.io下的loadmat导入</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.导入数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data</span><span class="params">(path)</span>:</span></span><br><span class="line">	data=sio.loadmat(path)</span><br><span class="line">	print(data.keys())</span><br><span class="line">	x=data.get(<span class="string">'X'</span>)</span><br><span class="line">	xval=data.get(<span class="string">'Xval'</span>)</span><br><span class="line">	yval=data.get(<span class="string">'yval'</span>)</span><br><span class="line">	<span class="keyword">return</span> x,xval,yval</span><br><span class="line">x,xval,yval=load_data(<span class="string">'./data/ex8data2.mat'</span>)</span><br><span class="line"><span class="comment">#划分验证集和测试集数据</span></span><br><span class="line">xval,xtest,yval,ytest=model_selection.train_test_split(xval,yval,test_size=<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure><a id="more"></a>
 
 
 
 
 
-<p>（3）测试集</p>
-<p>当测试集错误率高，说明在开发集上效果良好的模型没有很好的推广到测试集，说明开发集可能过拟合了，这时就需要更多的开发集数据，这也是正交化措施，只单独影响测试集。</p>
-<p>（4）用户体验（即成本函数）</p>
-<p>根据原有的成本函数生成的模型效果好，但是在实际应用中效果不好，说明可能是成本函数的评价标准发生错误，这时就需要重新定义成本函数，或者改变验证集。</p>
-<p>总结：因此，在搭建模型的时候，需要采用正交化的方法，以便以方便的解决问题。</p>
-<p>正交化步骤：</p>
-<p>（1）首先设定一个目标来衡量想做的事</p>
-<p>（2）调试算法表现：分开考虑改善系统在指标上的表现</p>
-<h2 id="单一实数指标"><a href="#单一实数指标" class="headerlink" title="单一实数指标"></a>单一实数指标</h2><p>单一的实数指标能很方便的判断众多模型中最优的那个。</p>
-<p>一般评估模型常用查准率P，即模型标记为真的数据中有多少确实是真；指标查全率T，即在真的数据中模型标记出了多少。然而这两个指标具有平衡性，所以常采用F1分数评估模型，即F和P的调和平均数：F1=2/(1/P+1/T)</p>
-<p>总结：通过设置开发集和单一实数指标能够快速判断模型的好坏，加快迭代速度。</p>
-<p>注：当指标不能很好的衡量模型的好坏时，需要更换新的指标。例如对于假阳的例子，对其设置惩罚权重，提高其错误率。</p>
-<h2 id="满足指标和优化指标"><a href="#满足指标和优化指标" class="headerlink" title="满足指标和优化指标"></a>满足指标和优化指标</h2><p>单一的实数指标不一定能够满足模型的所有条件，当需要符合N个条件时，选择一个作为优化指标，剩余的N-1个作为满足指标。</p>
-<p>优化指标：尽可能优化，即精度越高，数值越大即可</p>
-<p>满足指标：设定一个阈值，在阈值线以内即可，不要求最优</p>
-<p>这样模型就转换为尽可能优化设定的优化指标即可，满足指标只要达到条件就行。</p>
-<h2 id="如何设定训练集，开发集，测试集"><a href="#如何设定训练集，开发集，测试集" class="headerlink" title="如何设定训练集，开发集，测试集"></a>如何设定训练集，开发集，测试集</h2><p>（1）三者分别作用</p>
-<p>训练集作用：根据不同思路训练出不同模型</p>
-<p>开发集作用：用于评估不同模型中最好的模型</p>
-<p>测试集作用：系统开发之后评估性能（评估成本函数），能否满足用户需求</p>
-<p>（2）大小如何设置</p>
-<p>数据量很大的情况，训练集占98%以上，开发集和测试集占很少部分（1%左右）。</p>
-<p>（3）设置注意点</p>
-<p>为了让算法集中于想要的目标数据，开发集和测试集的数据分布要相同。</p>
-<p>为了让在开发集上运行的模型能很好的推广到测试集上。</p>
-<h2 id="人的表现"><a href="#人的表现" class="headerlink" title="人的表现"></a>人的表现</h2><p>（1）估计bayes error</p>
-<p>人的表现误差可以用来贝叶斯最优误差，贝叶斯最优误差时理论上最小的误差</p>
-<p>（2）制定算法的策略</p>
-<p>假定hunman error(约等于bayes error)=a%，training eror=b%，dev error=c%</p>
-<p>则可避免偏差为b%-a%，方差为c%-b%，以此可以可以根据不同的场景确定不同的策略。当可避免偏差大时，采取训练更大的网络或者训练时间更长，当方差大时，可以采取正则化或者选取更多的训练集数据。</p>
+<p>训练集：此时导入的x数据为（307，2）即307个样本，每个样本的特征为2个，训练集没有标签y，仅用于训练模型</p>
+<p>验证集和测试集：将导入的验证集通过sklearn下的model_selection库的train_test_split函数，输入验证集和划分比列test_size，得到验证集和测试集，其中验证集的x数据为（153，2），标签y为（153，1）对应153个样本是否存在异常，y=0说明异常，y=1说明正常。测试集的x数据为（154，2），标签y为（154，1）对应154个样本是否存在异常。</p>
+<p>训练集数据如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200907162738.png" alt></p>
+<p>（2）<strong><u>使用测试集训练模型</u></strong>：使用训练集数据拟合模型的参数，根据参数得到概率密度函数p，即需要求得的模型</p>
+<p>1°模型由均值和方差确定，根据如下公式求出模型</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200907155412.png" alt></p>
+<p>利用numpy数组对象的mean()，val()方法求出训练数据的均值和方差</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#2.参数估计</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parameter_estimate</span><span class="params">(x)</span>:</span></span><br><span class="line">	mean=x.mean(axis=<span class="number">0</span>)</span><br><span class="line">	var=x.var(axis=<span class="number">0</span>)</span><br><span class="line">	<span class="comment"># cov=np.cov(x.T)</span></span><br><span class="line">	<span class="keyword">return</span> mean,var</span><br><span class="line">mean,var=parameter_estimate(x)</span><br></pre></td></tr></table></figure>
+
+<p>得到的均值和方差如下，即得到了每个特征的均值和方差：</p>
+<blockquote>
+<p>[14.11222578 14.99771051]<br>[1.83263141 1.70974533]</p>
+</blockquote>
+<p>2°根据训练集数据和求得的均值、方差得出概率密度函数</p>
+<p>根据scipy库下的stats统计函数中的norm.pdf方法得到对应数据、均值、方差的概率密度函数，其中scipy.stats表示生产指定分布，norm表示正态分布，pdf表示求正态分布在x处的概率密度函数的函数值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#3.应用参数得到概率密度函数(使用训练集)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">norm_data</span><span class="params">(x,mean,var)</span>:</span></span><br><span class="line">	m,n=x.shape</span><br><span class="line">	p=np.zeros((m,n))</span><br><span class="line"></span><br><span class="line">	<span class="comment">#第i个特征的概率密度p(x)</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">		tmp=stats.norm(mean[i],var[i])</span><br><span class="line">		p[:,i]=tmp.pdf(x[:,i])</span><br><span class="line">	<span class="keyword">return</span> p</span><br><span class="line">p=norm_data(x,mean,var)</span><br></pre></td></tr></table></figure>
+
+<p>得到每个样本的每个特征的概率密度函数值，大小为（307，2）</p>
+<p>（）<u><strong>使用验证集确定模型的阈值</strong></u>：当概率密度函数值大于阈值则认定为正常，当小于阈值则是异常值</p>
+<p>1°计算当前模型下验证集经过概率密度函数后的函数值</p>
+<p>2°确定阈值的区间，根据当前概率密度函数值最小和最大值之间，利用np.arange取1000个步长</p>
+<p>3°循环读取不同的阈值，利用概率密度值小于阈值得到所有样本的预测值，从而利用numpy下的判断表达式真的函数logical_and判断预测值和实际标签是否一致</p>
+<p>4°计算当前阈值下的召回率和准确率，从而求出F1分数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#4.选择合适的阈值(使用验证集)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_threshold</span><span class="params">(pval,yval)</span>:</span></span><br><span class="line">	best_f1score=<span class="number">0</span></span><br><span class="line">	best_threshold=<span class="number">0</span></span><br><span class="line">	step=(pval.max()-pval.min())/<span class="number">1000</span></span><br><span class="line"></span><br><span class="line">	thresholds=np.arange(pval.min(),pval.max(),step)</span><br><span class="line">	<span class="keyword">for</span> threshold <span class="keyword">in</span> thresholds:</span><br><span class="line">		tp=np.sum(np.logical_and(phat==<span class="number">1</span>,yval==<span class="number">1</span>))</span><br><span class="line">		fp=np.sum(np.logical_and(phat==<span class="number">1</span>,yval==<span class="number">0</span>))</span><br><span class="line">		fn=np.sum(np.logical_and(phat==<span class="number">0</span>,yval==<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">		precision=tp/(tp+fp)</span><br><span class="line">		recall=tp/(tp+fn)</span><br><span class="line">		f1score=(<span class="number">2</span>*precision*recall)/(precision+recall)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(f1score&gt;best_f1score): <span class="comment">#f1分数越大越好</span></span><br><span class="line">			best_f1score=f1score</span><br><span class="line">			best_threshold=threshold</span><br><span class="line">	<span class="keyword">return</span> best_threshold,best_f1score</span><br><span class="line"></span><br><span class="line">pval=norm_data(xval,mean,var)</span><br><span class="line">best_threshold,best_f1score=select_threshold(pval,yval)</span><br><span class="line">print(best_threshold,best_f1score)</span><br></pre></td></tr></table></figure>
+
+<p>最终选择的阈值为：0.009566706005956842</p>
+<p>根据得到的最优阈值和训练集的概率值，利用np.where找到满足（p&lt;阈值）的样本点的索引，将异常值用红色的点标注出来。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">output=np.where(p&lt;best_threshold)</span><br><span class="line">print(output)</span><br><span class="line">fig,ax=plt.subplots(figsize=(<span class="number">8</span>,<span class="number">8</span>))</span><br><span class="line">ax.scatter(x[:,<span class="number">0</span>],x[:,<span class="number">1</span>])</span><br><span class="line">ax.scatter(x[output[<span class="number">0</span>],<span class="number">0</span>],x[output[<span class="number">0</span>],<span class="number">1</span>],c=<span class="string">'r'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200907163035.png" alt></p>
+<p>（4）使用测试集测试得到的异常检测的模型</p>
+<p>根据训练集得到的概率密度函数计算概率值，同时利用得到的最优阈值，得到每个样本每个特征的预测值，与实际值比对，并将异常点用红色标注出来，计算模型的F1分数为0.6666666666666666</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用新的测试数据(使用测试集)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict</span><span class="params">(xtest,ytest,ptest,threshold)</span>:</span></span><br><span class="line">	output=np.where(ptest&lt;threshold)</span><br><span class="line"></span><br><span class="line">	phat=ptest&lt;threshold</span><br><span class="line">	tp=np.sum(np.logical_and(phat==<span class="number">1</span>,ytest==<span class="number">1</span>))</span><br><span class="line">	fp=np.sum(np.logical_and(phat==<span class="number">1</span>,ytest==<span class="number">0</span>))</span><br><span class="line">	fn=np.sum(np.logical_and(phat==<span class="number">0</span>,ytest==<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">	precision=tp/(tp+fp)</span><br><span class="line">	recall=tp/(tp+fn)</span><br><span class="line">	f1score=(<span class="number">2</span>*precision*recall)/(precision+recall)</span><br><span class="line">	fig,ax=plt.subplots(figsize=(<span class="number">8</span>,<span class="number">8</span>))</span><br><span class="line">	ax.scatter(xtest[:,<span class="number">0</span>],xtest[:,<span class="number">1</span>])</span><br><span class="line">	ax.scatter(xtest[output[<span class="number">0</span>],<span class="number">0</span>],xtest[output[<span class="number">0</span>],<span class="number">1</span>],c=<span class="string">'r'</span>)</span><br><span class="line">	<span class="keyword">return</span> f1score</span><br><span class="line"></span><br><span class="line">ptest=norm_data(xtest,mean,var)</span><br><span class="line">f1score=predict(xtest,ytest,ptest,best_threshold)</span><br><span class="line">print(f1score)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200907163041.png" alt></p>
+<p>（附）对高维度的数据</p>
+<p>待续。。。</p>
 
     </div>
 
@@ -395,24 +408,21 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 神经网络</a>
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/blogs/ipvNNet3/" rel="next" title="改善深层神经网络——识别手势图片">
-                  <i class="fa fa-chevron-left"></i> 改善深层神经网络——识别手势图片
+                <a href="/blogs/tfPCA/" rel="next" title="降维算法PCA算法">
+                  <i class="fa fa-chevron-left"></i> 降维算法PCA算法
                 </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/blogs/struLearning2/" rel="prev" title="结构化机器学习项目——第二周学习笔记">
-                  结构化机器学习项目——第二周学习笔记 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -452,7 +462,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#正交化"><span class="nav-number">1.</span> <span class="nav-text">正交化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单一实数指标"><span class="nav-number">2.</span> <span class="nav-text">单一实数指标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#满足指标和优化指标"><span class="nav-number">3.</span> <span class="nav-text">满足指标和优化指标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何设定训练集，开发集，测试集"><span class="nav-number">4.</span> <span class="nav-text">如何设定训练集，开发集，测试集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#人的表现"><span class="nav-number">5.</span> <span class="nav-text">人的表现</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

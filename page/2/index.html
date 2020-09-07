@@ -167,7 +167,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">59</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">60</span></a>
 
   </li>
         <li class="menu-item menu-item-sitemap">
@@ -228,6 +228,130 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/annotation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blogs/annotation/" class="post-title-link" itemprop="url">自定义注解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-16 10:00:05" itemprop="dateCreated datePublished" datetime="2020-07-16T10:00:05+08:00">2020-07-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-20 17:15:08" itemprop="dateModified" datetime="2020-07-20T17:15:08+08:00">2020-07-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/annotation/" class="post-meta-item leancloud_visitors" data-flag-title="自定义注解" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/annotation/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/annotation/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>自定义注解说明：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(&#123;ElementType.METHOD, ElementType.TYPE&#125;)<span class="comment">//可以作用在类上和方法上  </span></span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)<span class="comment">//可以通过反射读取注解  </span></span><br><span class="line"><span class="meta">@Inherited</span><span class="comment">//可以被子类继承  </span></span><br><span class="line"><span class="meta">@Documented</span><span class="comment">//javadoc生成文件档时，包含本注解信息  </span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyAnnotation &#123;  </span><br><span class="line">    <span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;<span class="comment">//使用时没有指定key,值默认赋给value,如：MyAnnotation("abc")  </span></span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.SOURCE)  </span><br><span class="line"><span class="comment">//作用是不将注解保存在class文件中，也就是说象“//”一样在编译时被过滤掉了。  </span></span><br><span class="line">  </span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.CLASS)  </span><br><span class="line"><span class="comment">//作用是只将注解保存在class文件中，而使用反射读取注解时忽略这些注解。  </span></span><br><span class="line">  </span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)  </span><br><span class="line"><span class="comment">//作用是即将注解保存在class文件中，也可以通过反射读取注解。这也是最常用的值</span></span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blogs/annotation/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+</div>
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -1302,124 +1426,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/convNet5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
-      <meta itemprop="name" content="Xiapf">
-      <meta itemprop="description" content="好好学习，天天向上">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="八戒大强攻">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blogs/convNet5/" class="post-title-link" itemprop="url">卷积神经网络——神经风格转换</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-10 11:10:55 / 修改时间：11:11:44" itemprop="dateCreated datePublished" datetime="2020-06-10T11:10:55+08:00">2020-06-10</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index">
-                    <span itemprop="name">神经网络</span>
-                  </a>
-                </span>
-            </span>
-
-          
-            <span id="/blogs/convNet5/" class="post-meta-item leancloud_visitors" data-flag-title="卷积神经网络——神经风格转换" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">评论数：</span>
-    
-    <a title="valine" href="/blogs/convNet5/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/blogs/convNet5/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-		  
-			
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>将一个图像作为内容图像，另一幅图作为风格图像，两个图像经过神经网络生辰一个新的图像，该图像既有前一个图像的内容，又有后一个图像的风格，这称为神经风格转换。</p><h2 id="损失函数的确定"><a href="#损失函数的确定" class="headerlink" title="损失函数的确定"></a>损失函数的确定</h2><p>神经网络浅层学习图片的点、线或者颜色等基础特征，深层学习图片中物体或者更具体的特征。</p><p>神经风格转换是让合成的图片中的内容更接近内容图片，风格更接近风格图片，即让合成的图片中的内容和内容图片相比损失更小，让合成的图片中的风格和风格图片相比损失更小，最终得到的总成本最小，通过成本函数调整网络的参数。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blogs/convNet5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <div>
-  
-</div>
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1469,7 +1475,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-count">60</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1549,13 +1555,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">264k</span>
+    <span title="站点总字数">268k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">4:01</span>
+    <span title="站点阅读时长">4:03</span>
 </div>
   <div class="addthis_inline_share_toolbox">
     <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
