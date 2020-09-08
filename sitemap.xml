@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.xiapf.com/blogs/tfAnomalyDet/</loc>
+    
+    <lastmod>2020-09-08T07:05:16.353Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.xiapf.com/blogs/LC1/</loc>
     
     <lastmod>2020-09-08T04:51:17.275Z</lastmod>
@@ -12,13 +19,6 @@
     <loc>https://www.xiapf.com/blogs/LC2/</loc>
     
     <lastmod>2020-09-08T04:49:29.279Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.xiapf.com/blogs/tfAnomalyDet/</loc>
-    
-    <lastmod>2020-09-07T08:52:32.533Z</lastmod>
     
   </url>
   
@@ -429,14 +429,14 @@
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/categories/index.html</loc>
+    <loc>https://www.xiapf.com/about/index.html</loc>
     
     <lastmod>2019-12-13T12:52:51.112Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/about/index.html</loc>
+    <loc>https://www.xiapf.com/categories/index.html</loc>
     
     <lastmod>2019-12-13T12:52:51.112Z</lastmod>
     
