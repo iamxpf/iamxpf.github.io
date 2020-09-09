@@ -49,7 +49,7 @@ https://www.xiapf.com/blogs/kMeans/
 https://www.xiapf.com/blogs/bayes/
 https://www.xiapf.com/blogs/svm/
 https://www.xiapf.com/blogs/movStateNote/
-https://www.xiapf.com/blogs/useMVE/
+https://www.xiapf.com/blogs/mve/
 https://www.xiapf.com/blogs/listbNote/
 https://www.xiapf.com/blogs/backTrackNote/
 https://www.xiapf.com/blogs/treeNote/

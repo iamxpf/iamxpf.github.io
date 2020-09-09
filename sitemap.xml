@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.xiapf.com/blogs/mve/</loc>
+    
+    <lastmod>2020-09-09T04:34:49.957Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.xiapf.com/blogs/tfAnomalyDet/</loc>
     
     <lastmod>2020-09-08T07:05:16.353Z</lastmod>
@@ -366,13 +373,6 @@
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/blogs/useMVE/</loc>
-    
-    <lastmod>2020-03-06T08:31:26.870Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.xiapf.com/blogs/backTrackNote/</loc>
     
     <lastmod>2020-03-04T04:56:30.496Z</lastmod>
@@ -450,14 +450,14 @@
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/blogs/future-futuretask/</loc>
+    <loc>https://www.xiapf.com/blogs/hello-world/</loc>
     
     <lastmod>2019-12-13T12:52:51.111Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.xiapf.com/blogs/hello-world/</loc>
+    <loc>https://www.xiapf.com/blogs/future-futuretask/</loc>
     
     <lastmod>2019-12-13T12:52:51.111Z</lastmod>
     
