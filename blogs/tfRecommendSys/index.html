@@ -69,7 +69,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200911155633.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200911155655.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200911153057.png">
-<meta property="og:updated_time" content="2020-09-11T08:37:50.930Z">
+<meta property="og:updated_time" content="2020-09-11T08:42:32.662Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200911145904.png">
 
@@ -174,7 +174,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">62</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">63</span></a>
 
   </li>
         <li class="menu-item menu-item-sitemap">
@@ -263,7 +263,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-09-11 16:37:10 / 修改时间：16:37:50" itemprop="dateCreated datePublished" datetime="2020-09-11T16:37:10+08:00">2020-09-11</time>
+              <time title="创建时间：2020-09-11 16:37:10 / 修改时间：16:42:32" itemprop="dateCreated datePublished" datetime="2020-09-11T16:37:10+08:00">2020-09-11</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -304,7 +304,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5.2k</span>
+              <span>5.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -386,34 +386,33 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r=np.insert(r,<span class="number">0</span>,ratings!=<span class="number">0</span>,axis=<span class="number">1</span>)</span><br><span class="line">y=np.insert(y,<span class="number">0</span>,ratings,axis=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
 
 <p>得到现在新的r,y的大小为(1682, 944)</p>
-<p>（2）求得最优的电影特征向量和用户参数向量</p>
+<p>（2）求得最优的电影特征向量和用户参数向量进行预测</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">res=opt.minimize(fun=regular_cost,x0=param,args=(y_mena,r,n_features,l),jac=regular_grad,method=<span class="string">'TNC'</span>)</span><br><span class="line">param_train=res.x</span><br></pre></td></tr></table></figure>
+
 <p>运行模型res，得到</p>
 <blockquote>
 <p>fun: 64721.49781506245<br>     jac: array([-1.08020837e-07, -1.29065977e-07, -1.57187711e-07, …,<br>        7.27238394e-08,  5.33163536e-08,  3.41754532e-07])<br> message: ‘Converged (|f_n-f_(n-1)| ~= 0)’<br>    nfev: 2272<br>     nit: 73<br>  status: 1<br> success: True<br>       x: array([-0.23955828,  0.16407661,  0.29655461, …, -0.25011702,<br>       -0.05913302, -0.37323785])</p>
 </blockquote>
-<p>（3）得到的res.x即为得到电影特征向量和用户参数向量，即x,θ</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">res=opt.minimize(fun=regular_cost,x0=param,args=(y_mena,r,n_features,l),jac=regular_grad,method=<span class="string">'TNC'</span>)</span><br><span class="line">param_train=res.x</span><br></pre></td></tr></table></figure>
-
-<p>（4）使用x * θ得到所有用户的预测值，取第0列代表第0个用户，再加上评价矩阵y的均值，最终得到实际的预测值</p>
+<p>得到的res.x即为得到电影特征向量和用户参数向量，即x,θ（4）使用x * θ得到所有用户的预测值，取第0列代表第0个用户，再加上评价矩阵y的均值，最终得到实际的预测值</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">predict=np.dot(x_train,theta_train.T)</span><br><span class="line"><span class="comment">#找到第0个用户</span></span><br><span class="line">real_predict=predict[:,<span class="number">0</span>]+y.mean()</span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p>[[3.43489966 4.31346413 3.62320829 … 4.0002449  4.17788315 3.62404608]<br> [2.29870271 2.862435   2.55152555 … 2.51846228 3.51772075 3.55448165]<br> [2.07116718 3.23831192 1.93001552 … 2.21423696 2.8404734  2.3667349 ]<br> …<br> [0.28474721 0.35122272 0.27118557 … 0.30820796 0.29570489 0.33098931]<br> [0.35362524 0.44858761 0.46314461 … 0.3805095  0.56209768 0.51186381]<br> [0.43396907 0.87167246 0.60553899 … 0.55149309 0.64343062 0.61699602]]</p>
 </blockquote>
-<p>大小为（1682，944），得到用户j对电影i的预测评分，最后需要需要的第0用户</p>
-<p>（5）将得到的预测值使用numpy下的argsort，利用[::-1]按照降序排列得到前几个的索引值，利用实际预测值中取索引前几个作为预测的电影</p>
+<p>大小为（1682，944），得到用户j对电影i的预测评分，最后需要需要的第0用户即第0列，加上评价矩阵y的均值</p>
+<p>（3）将得到的预测值使用numpy下的argsort，利用[::-1]按照降序排列得到前几个的索引值，利用实际预测值中取索引前几个作为预测的电影</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#以降序形式排列</span></span><br><span class="line">idx=np.argsort(real_predict)[::<span class="number">-1</span>]</span><br><span class="line">print(real_predict[idx][:<span class="number">10</span>])<span class="comment">#输出前10个索引对应的行的评分</span></span><br></pre></td></tr></table></figure>
 
 <p>取预测值的前十个预测的评分，其对应的电影即为最可能推荐给该用户的</p>
 <blockquote>
 <p>[4.12535237 4.04413113 3.99324234 3.9190281  3.81690478 3.8155606<br> 3.76602376 3.76322594 3.75904683 3.75077914]</p>
 </blockquote>
-<p>（6）读入电影列表，将y评分对应的电影读入，并按照得到的预测值取前几个的索引作为推荐的电影</p>
+<p>（4）读入电影列表，将y评分对应的电影读入，并按照得到的预测值取前几个的索引作为推荐的电影</p>
 <p>读入电影名称文件，去除每行中的空格分割，并将每行的电影名字以空格连接（使用’  ‘.join(str)，用空格练剑字符串str）</p>
 <p>注：latin-1编码能读难解码的文件</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#读入电影的名称</span></span><br><span class="line">movie_txt=<span class="string">'./data/movie_ids.txt'</span></span><br><span class="line">movie_list=[]</span><br><span class="line">file=open(movie_txt,encoding=<span class="string">'latin-1'</span>)</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> file.readlines():</span><br><span class="line">	cur=line.strip().split(<span class="string">' '</span>)</span><br><span class="line">	movie_list.append(<span class="string">' '</span>.join(cur[<span class="number">1</span>:])) </span><br><span class="line">movie_list=np.array(movie_list)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> movie_list[idx][:<span class="number">10</span>]:</span><br><span class="line">	print(i)</span><br></pre></td></tr></table></figure>
 
-<p>最终输出的最有可能推荐给0用户的电影为：</p>
+<p>最终输出的最有可能推荐给0用户的c电影为：</p>
 <blockquote>
 <p>Titanic (1997)<br>Star Wars (1977)<br>Shawshank Redemption, The (1994)<br>Forrest Gump (1994)<br>Raiders of the Lost Ark (1981)<br>Braveheart (1995)<br>Return of the Jedi (1983)<br>Usual Suspects, The (1995)<br>Godfather, The (1972)<br>Schindler’s List (1993)<br>[Finished in 152.6s]</p>
 </blockquote>
@@ -472,6 +471,9 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
+                <a href="/blogs/tfLargeData/" rel="prev" title="大规模机器学习——处理大数据的算法">
+                  大规模机器学习——处理大数据的算法 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
       </footer>
@@ -526,7 +528,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-count">63</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -606,13 +608,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">283k</span>
+    <span title="站点总字数">284k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">4:17</span>
+    <span title="站点阅读时长">4:18</span>
 </div>
   <div class="addthis_inline_share_toolbox">
     <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
