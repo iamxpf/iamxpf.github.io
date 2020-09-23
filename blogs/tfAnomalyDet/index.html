@@ -73,7 +73,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200907163041.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200908140059.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200908140124.png">
-<meta property="og:updated_time" content="2020-09-14T05:56:32.595Z">
+<meta property="og:updated_time" content="2020-09-14T06:04:30.157Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200914135110.png">
 
@@ -178,7 +178,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">63</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">65</span></a>
 
   </li>
         <li class="menu-item menu-item-sitemap">
@@ -273,7 +273,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-14 13:56:32" itemprop="dateModified" datetime="2020-09-14T13:56:32+08:00">2020-09-14</time>
+                <time title="修改时间：2020-09-14 14:04:30" itemprop="dateModified" datetime="2020-09-14T14:04:30+08:00">2020-09-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -314,7 +314,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5.2k</span>
+              <span>5.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -380,7 +380,11 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#用新的测试数据(使用测试集)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict</span><span class="params">(xtest,ytest,ptest,threshold)</span>:</span></span><br><span class="line">	output=np.where(ptest&lt;threshold)</span><br><span class="line"></span><br><span class="line">	phat=ptest&lt;threshold</span><br><span class="line">	tp=np.sum(np.logical_and(phat==<span class="number">1</span>,ytest==<span class="number">1</span>))</span><br><span class="line">	fp=np.sum(np.logical_and(phat==<span class="number">1</span>,ytest==<span class="number">0</span>))</span><br><span class="line">	fn=np.sum(np.logical_and(phat==<span class="number">0</span>,ytest==<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">	precision=tp/(tp+fp)</span><br><span class="line">	recall=tp/(tp+fn)</span><br><span class="line">	f1score=(<span class="number">2</span>*precision*recall)/(precision+recall)</span><br><span class="line">	fig,ax=plt.subplots(figsize=(<span class="number">8</span>,<span class="number">8</span>))</span><br><span class="line">	ax.scatter(xtest[:,<span class="number">0</span>],xtest[:,<span class="number">1</span>])</span><br><span class="line">	ax.scatter(xtest[output[<span class="number">0</span>],<span class="number">0</span>],xtest[output[<span class="number">0</span>],<span class="number">1</span>],c=<span class="string">'r'</span>)</span><br><span class="line">	<span class="keyword">return</span> f1score</span><br><span class="line"></span><br><span class="line">ptest=norm_data(xtest,mean,var)</span><br><span class="line">f1score=predict(xtest,ytest,ptest,best_threshold)</span><br><span class="line">print(f1score)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200907163041.png" alt></p>
-<h3 id="（附）对高维度的数据"><a href="#（附）对高维度的数据" class="headerlink" title="（附）对高维度的数据"></a>（附）对高维度的数据</h3><p>应用场景：当有多个数据特征与异常点相关的，此时需要用高维度的高斯分布</p>
+<h3 id="（附）对高维度的数据"><a href="#（附）对高维度的数据" class="headerlink" title="（附）对高维度的数据"></a>（附）对高维度的数据</h3><p>应用场景：</p>
+<p>1°描述2个特征变量之间的正相关负相关的情况，也可以给高度相关的变量建立模型</p>
+<p>2°x属于n * n的向量（n&gt;2），对所有p(x)建立统一的模型</p>
+<p>3°能自动捕捉不同特征之间的关系（正负样本之间的特征联系）</p>
+<p>4°协方差矩阵需要是奇异的，样本数量要大于特征数据（m&gt;n）</p>
 <p>（1）模型中的均值和方差计算公式</p>
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200908140059.png" alt></p>
 <p>利用numpy数组的mean属性得到均值，利用numpy.var得到协方差矩阵</p>
@@ -534,7 +538,7 @@ accuracy                           0.92        50</code></pre></blockquote>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -614,13 +618,13 @@ accuracy                           0.92        50</code></pre></blockquote>
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">284k</span>
+    <span title="站点总字数">302k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">4:18</span>
+    <span title="站点阅读时长">4:34</span>
 </div>
   <div class="addthis_inline_share_toolbox">
     <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>

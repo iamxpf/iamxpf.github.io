@@ -2,9 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.xiapf.com/blogs/decisionTree/</loc>
+    
+    <lastmod>2020-09-23T07:19:35.133Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.xiapf.com/blogs/LC3/</loc>
+    
+    <lastmod>2020-09-23T07:18:31.197Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.xiapf.com/blogs/tfAnomalyDet/</loc>
     
-    <lastmod>2020-09-14T05:56:32.595Z</lastmod>
+    <lastmod>2020-09-14T06:04:30.157Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.xiapf.com/blogs/tfRecommendSys/</loc>
+    
+    <lastmod>2020-09-14T06:00:11.557Z</lastmod>
     
   </url>
   
@@ -12,13 +33,6 @@
     <loc>https://www.xiapf.com/blogs/tfLargeData/</loc>
     
     <lastmod>2020-09-14T05:33:07.183Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.xiapf.com/blogs/tfRecommendSys/</loc>
-    
-    <lastmod>2020-09-11T08:42:32.662Z</lastmod>
     
   </url>
   
