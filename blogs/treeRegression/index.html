@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="当遇到非线性的数据的时候可以使用树回归，树回归可用于分类和回归回归树和模型树回归树回归树的叶节点的模型使用的是分段常数模型树模型树的叶节点的模型使用的是线性回归方程总结两种树的构建方式都相同，只需要定义两种叶子节点的模型，根据情况进行修改即可。树的构建（CART）算法流程决策树（ID3算法）每次用最佳特征来划分树，并且只能处理离散的特征，而树回归中（CART算法）可以处理连续的特征，当特征值大于定">
+<meta name="keywords" content="回归,机器学习,分类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="树回归">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;treeRegression&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="当遇到非线性的数据的时候可以使用树回归，树回归可用于分类和回归回归树和模型树回归树回归树的叶节点的模型使用的是分段常数模型树模型树的叶节点的模型使用的是线性回归方程总结两种树的构建方式都相同，只需要定义两种叶子节点的模型，根据情况进行修改即可。树的构建（CART）算法流程决策树（ID3算法）每次用最佳特征来划分树，并且只能处理离散的特征，而树回归中（CART算法）可以处理连续的特征，当特征值大于定">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201013160749.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201013160807.png">
+<meta property="og:updated_time" content="2020-10-14T06:56:05.425Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201013160749.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/treeRegression/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>树回归 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">38</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">11</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">66</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/treeRegression/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          树回归
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-10-14 14:55:11 / 修改时间：14:56:05" itemprop="dateCreated datePublished" datetime="2020-10-14T14:55:11+08:00">2020-10-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/treeRegression/" class="post-meta-item leancloud_visitors" data-flag-title="树回归" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/treeRegression/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/treeRegression/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>当遇到非线性的数据的时候可以使用树回归，树回归可用于分类和回归</p><h2 id="回归树和模型树"><a href="#回归树和模型树" class="headerlink" title="回归树和模型树"></a>回归树和模型树</h2><h3 id="回归树"><a href="#回归树" class="headerlink" title="回归树"></a>回归树</h3><p>回归树的叶节点的模型使用的是分段常数</p><h3 id="模型树"><a href="#模型树" class="headerlink" title="模型树"></a>模型树</h3><p>模型树的叶节点的模型使用的是线性回归方程</p><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>两种树的构建方式都相同，只需要定义两种叶子节点的模型，根据情况进行修改即可。</p><h2 id="树的构建（CART）"><a href="#树的构建（CART）" class="headerlink" title="树的构建（CART）"></a>树的构建（CART）</h2><h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>决策树（ID3算法）每次用最佳特征来划分树，并且只能处理离散的特征，而树回归中（CART算法）可以处理连续的特征，当特征值大于定值就走左子树，反之走右子树</p><a id="more"></a>
+
+
+
+
+<p><u><strong>回归树和模型树的区别在于划分函数中叶子模型的设置以及误差的计算</strong></u></p>
+<p>（1）根据定值选择数据哪条子树</p>
+<p>找到小于当前特征的所有样本（即所在行），将这些样本作为左子树的值，反之作为右子树的值 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">splitTwoData</span><span class="params">(dataSet,feature,value)</span>:</span></span><br><span class="line">	<span class="comment">#np.nonzero返回非0元素所在的行和列</span></span><br><span class="line">	mat0=dataSet[np.nonzero(dataSet[:,feature]&gt;value)[<span class="number">0</span>],:]</span><br><span class="line">	mat1=dataSet[np.nonzero(dataSet[:,feature]&lt;=value)[<span class="number">0</span>],:]</span><br><span class="line">	<span class="keyword">return</span> mat0,mat1</span><br></pre></td></tr></table></figure>
+
+<p>（2）切分函数，选择最佳定值来进行切分</p>
+<p>1.对每个特征的每个特征值，计算以当前特征的特征值划分的误差</p>
+<p>2.如果该误差小于最小误差，则更新当前的误差以及特征和对应的特征值，如果划分的样本数量不符合设置，则继续重新划分</p>
+<p>3.最终，得到最佳划分的特征和特征值时，需要检查是否满足前提设置（tols表示允许的误差下降值，toln最小分割的样本数）</p>
+<p>计算总的误差，当其与最优划分时的误差值不满足设置，则按照整体作为一棵树进行返回，，如果划分的样本数量不符合设置，则继续重新划分</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">chooseBestSplit</span><span class="params">(dataSet,leaf=regLeaf,error=regError,ops=<span class="params">(<span class="number">1</span>,<span class="number">4</span>)</span>)</span>:</span></span><br><span class="line">	<span class="keyword">if</span> len(set(dataSet[:,<span class="number">-1</span>].T.tolist()[<span class="number">0</span>]))==<span class="number">1</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">None</span>,leaf(dataSet)</span><br><span class="line">	tole=ops[<span class="number">0</span>]</span><br><span class="line">	totm=ops[<span class="number">1</span>]</span><br><span class="line">	bestfeature=<span class="number">-1</span></span><br><span class="line">	bestvalues=<span class="number">-1</span></span><br><span class="line">	bestS=float(<span class="string">'inf'</span>)</span><br><span class="line">	S=error(dataSet)</span><br><span class="line"></span><br><span class="line">	m,n=np.shape(dataSet)</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(n<span class="number">-1</span>):</span><br><span class="line">		<span class="keyword">for</span> v <span class="keyword">in</span> set(dataSet[:,i].T.tolist()[<span class="number">0</span>]):</span><br><span class="line">			mat0,mat1=splitTwoData(dataSet,i,v)</span><br><span class="line">			<span class="keyword">if</span>(np.shape(mat0)[<span class="number">0</span>]&lt;totm <span class="keyword">or</span> np.shape(mat1)[<span class="number">0</span>]&lt;totm):</span><br><span class="line">				<span class="keyword">continue</span></span><br><span class="line">			newS=error(mat0)+error(mat1)</span><br><span class="line">			<span class="keyword">if</span>(bestS&gt;newS):</span><br><span class="line">				bestS=newS</span><br><span class="line">				bestfeature=i</span><br><span class="line">				bestvalues=v</span><br><span class="line">	<span class="keyword">if</span>((S-bestS)&lt;tole):</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">None</span>,leaf(dataSet)</span><br><span class="line">	mat0,mat1=splitTwoData(dataSet,bestfeature,bestvalues)</span><br><span class="line">	<span class="keyword">if</span>(np.shape(mat0)[<span class="number">0</span>]&lt;totm <span class="keyword">or</span> np.shape(mat1)[<span class="number">0</span>]&lt;totm):</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">None</span>,leaf(dataSet)</span><br><span class="line">	<span class="keyword">return</span> bestfeature,bestvalues</span><br></pre></td></tr></table></figure>
+
+<p>（3）构建树</p>
+<p>1.当没有要构建的特征的时候</p>
+<p>​    直接返回叶子节点的值</p>
+<p>2.当有特征的时候</p>
+<p>​    选择最佳切分时的特征和对应的节点的定值，并构建为当前节点</p>
+<p>3.构建左右子树</p>
+<p>​    根据当前节点的定值，分别将小于该值的作为左子树，大于该值的作为右子树。继续递归构建左右子树</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">createTree</span><span class="params">(dataSet,leaf=regLeaf,error=regError,ops=<span class="params">(<span class="number">1</span>,<span class="number">4</span>)</span>)</span>:</span></span><br><span class="line">	<span class="comment">#将数据集分为两部分</span></span><br><span class="line">	feature,value=chooseBestSplit(dataSet,leaf,error,ops)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#树构建到末尾的时候</span></span><br><span class="line">	<span class="keyword">if</span>(feature==<span class="literal">None</span>):</span><br><span class="line">		<span class="keyword">return</span> value</span><br><span class="line">	tree=&#123;&#125;</span><br><span class="line">	tree[<span class="string">'feature'</span>]=feature</span><br><span class="line">	tree[<span class="string">'value'</span>]=value</span><br><span class="line"></span><br><span class="line">	<span class="comment">#左子树，右子树</span></span><br><span class="line">	left,right=splitTwoData(dataSet,feature,value)</span><br><span class="line">	tree[<span class="string">'left'</span>]=createTree(left,leaf,error,ops)</span><br><span class="line">	tree[<span class="string">'right'</span>]=createTree(right,leaf,error,ops)</span><br><span class="line">	<span class="keyword">return</span> tree</span><br></pre></td></tr></table></figure>
+
+<h3 id="回归树-1"><a href="#回归树-1" class="headerlink" title="回归树"></a>回归树</h3><p>（1）叶子节点</p>
+<p>用当前子树下的所有数据的均值作为叶子节点</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#返回叶子节点的值</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regLeaf</span><span class="params">(dataSet)</span>:</span></span><br><span class="line">	<span class="keyword">return</span> np.mean(dataSet[:,<span class="number">-1</span>])</span><br></pre></td></tr></table></figure>
+
+<p>（2）误差</p>
+<p>使用数据的总方差，即平方误差的总值来计算连续型数值的混乱度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#返回所有节点的均值</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regError</span><span class="params">(dataSet)</span>:</span></span><br><span class="line">	<span class="keyword">return</span> np.var(dataSet[:,<span class="number">-1</span>])*np.shape(dataSet)[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+
+<h3 id="模型树-1"><a href="#模型树-1" class="headerlink" title="模型树"></a>模型树</h3><p>（1）叶子节点</p>
+<p>叶子节点使用线性回归方程：利用ws=(xTx)-1 * x.T * y公式求得回归方程的参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">linearRes</span><span class="params">(dataSet)</span>:</span></span><br><span class="line">	m,n=np.shape(dataSet)</span><br><span class="line">	x=np.mat(np.ones((m,n)))</span><br><span class="line">	y=np.mat(np.ones((m,<span class="number">1</span>)))</span><br><span class="line">	x[:,<span class="number">1</span>:n]=dataSet[:,<span class="number">0</span>:n<span class="number">-1</span>]</span><br><span class="line">	y=dataSet[:,<span class="number">-1</span>]</span><br><span class="line"></span><br><span class="line">	xtx=x.T*x</span><br><span class="line">	<span class="keyword">if</span>(np.linalg.det(xtx)==<span class="number">0</span>):</span><br><span class="line">		<span class="keyword">raise</span> NameError(<span class="string">'Matrix is not invertible'</span>)</span><br><span class="line">	ws=np.linalg.inv(xtx)*(x.T*y)</span><br><span class="line">	<span class="keyword">return</span> ws,x,y</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">modelLeaf</span><span class="params">(dataSet)</span>:</span></span><br><span class="line">	ws,x,y=linearRes(dataSet)</span><br><span class="line">	<span class="keyword">return</span> ws</span><br></pre></td></tr></table></figure>
+
+<p>（2）误差</p>
+<p>使用数据的总方差，即平方误差的总值来计算连续型数值的混乱度：这里需要通过叶子节点的回归方程计算预测值和实际值的差值来计算方差</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">modelErr</span><span class="params">(dataSet)</span>:</span></span><br><span class="line">	ws,x,y=linearRes(dataSet)</span><br><span class="line">	yhat=x*ws</span><br><span class="line">	<span class="keyword">return</span> np.sum(np.power(y-yhat,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+
+<h2 id="树的预测"><a href="#树的预测" class="headerlink" title="树的预测"></a>树的预测</h2><p>预测的流程：自顶向下遍历整棵树，当到达叶子节点的时候调用对应叶子节点的模型进行预测</p>
+<h3 id="遍历整棵树"><a href="#遍历整棵树" class="headerlink" title="遍历整棵树"></a>遍历整棵树</h3><p>（1）遍历结束的条件</p>
+<p>当到达叶子节点，则调用对应叶子节点预测函数进行预测</p>
+<p>（2）遍历左子树</p>
+<p>当需要预测的特征的值小于构建模型的特征值，则当左子树有数据时继续遍历左子树，反之则利用构建模型的左子树进行预测</p>
+<p>（3）遍历右子树</p>
+<p>当需要预测的特征的值大于构建模型的特征值，则当右子树有数据时继续遍历右子树，反之则利用构建模型的右子树进行预测</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#遍历整棵树，在叶子节点上进行预测</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">treeEval</span><span class="params">(tree,indata,modelEval=regTreeEval)</span>:</span></span><br><span class="line">	<span class="keyword">if</span> <span class="keyword">not</span> isTree(tree):</span><br><span class="line">		<span class="keyword">return</span> modelEval(tree,indata)</span><br><span class="line">	<span class="keyword">if</span>(indata[tree[<span class="string">'feature'</span>]]&gt;tree[<span class="string">'value'</span>]):</span><br><span class="line">		<span class="keyword">if</span>(isTree(tree[<span class="string">'left'</span>])):</span><br><span class="line">			<span class="keyword">return</span> treeEval(tree[<span class="string">'left'</span>],indata,modelEval)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			<span class="keyword">return</span> modelEval(tree[<span class="string">'left'</span>],indata)</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">if</span>(isTree(tree[<span class="string">'right'</span>])):</span><br><span class="line">			<span class="keyword">return</span> treeEval(tree[<span class="string">'right'</span>],indata,modelEval)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			<span class="keyword">return</span> modelEval(tree[<span class="string">'right'</span>],indata)</span><br></pre></td></tr></table></figure>
+
+<h3 id="在叶子节点上预测"><a href="#在叶子节点上预测" class="headerlink" title="在叶子节点上预测"></a>在叶子节点上预测</h3><p>（1）回归树</p>
+<p>因为回归树的叶子节点就是一个分段数值，所以直接返回当前叶子节点的值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#对回归树叶子节点进行预测</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regTreeEval</span><span class="params">(model,indata)</span>:</span></span><br><span class="line">	<span class="keyword">return</span> float(model)</span><br></pre></td></tr></table></figure>
+
+<p>（2）模型树</p>
+<p>因为模型树的叶子节点时一个回归方程模型的参数，所以使用预测的数值乘以该参数得到预测值进行返回</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#对模型树叶子节点进行预测</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">modelTreeEval</span><span class="params">(model,indata)</span>:</span></span><br><span class="line">	m,n=np.shape(indata)</span><br><span class="line">	x=np.mat(np.ones((<span class="number">1</span>,n+<span class="number">1</span>)))</span><br><span class="line">	x[:,<span class="number">1</span>:n+<span class="number">1</span>]=indata</span><br><span class="line">	<span class="keyword">return</span> float(x*model)</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>对每一个输入的测试数据调用之前训练好的树的模型进行预测，并记录每个样本的预测值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#对预测数据返回预测值</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">createTreeEval</span><span class="params">(tree,testData,modelEval=regTreeEval)</span>:</span></span><br><span class="line">	m=len(testData)</span><br><span class="line">	yhat=np.mat(np.zeros((m,<span class="number">1</span>)))</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">		yhat[i,<span class="number">0</span>]=treeEval(tree,np.mat(testData[i]),modelEval)</span><br><span class="line">	<span class="keyword">return</span> yhat</span><br></pre></td></tr></table></figure>
+
+<p>使用相关系数来衡量模型的好坏</p>
+<p>调用r=np.corrcoef(yhat,testMat[:,1],rowvar=0)[0,1]，利用numpy下的corrcoef函数，输入预测值和实际值，得到相关系数为：</p>
+<p>0.9640852318222141<br>0.9760412191380623<br>0.9434684235674758</p>
+<p>依次为回归树、模型树、线性回归，可见使用模型树的效果最好</p>
+<h2 id="剪枝"><a href="#剪枝" class="headerlink" title="剪枝"></a>剪枝</h2><h3 id="预剪枝"><a href="#预剪枝" class="headerlink" title="预剪枝"></a>预剪枝</h3><p>通过被切分的最小样本数和允许下降的最小误差是对树进行了一个预剪枝，但是树的构建对这两个参数的设置非常敏感</p>
+<h3 id="后剪枝"><a href="#后剪枝" class="headerlink" title="后剪枝"></a>后剪枝</h3><p>（1）将数据集分为训练集和测试集</p>
+<p>（2）使用训练集来构建足够复杂的树</p>
+<p>（3）利用测试集进行剪枝</p>
+<p>对已有的树来切分测试数据</p>
+<p>1.当没有测试数据时，返回树中节点的平均值</p>
+<p>2.当存在左子树或者右子树时</p>
+<p>切分数据：按照已有树的特征和特征值切分测试数据为左子树数据和右子树数据</p>
+<p>3.构造左子树</p>
+<p>输入当前已有树的左子树和切分的左子树数据递归构建树</p>
+<p>4.构造右子树</p>
+<p>输入当前已有树的右子树和切分的右子树数据递归构建树</p>
+<p>5.当到达叶子节点的时候</p>
+<p>切分数据：按照已有树的特征和特征值切分测试数据为左节点数据和右节点数据</p>
+<p>计算不合并左右节点的误差：即使用划分的左节点的值减去已有树的左节点，用划分的右节点的值减去已有树的右节点，得到不合并节点的误差</p>
+<p>计算合并左右节点的误差：用当前的测试数据值减去合并已有树的左右节点的均值得到误差</p>
+<p>如果合并误差小于不合并误差则返回合并已有树节点的值，反之返回来的树</p>
+<p>不断递归对树进行剪枝</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># #切分测试数据来剪枝</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">prune</span><span class="params">(tree,testData)</span>:</span></span><br><span class="line">	<span class="keyword">if</span> np.shape(testData)[<span class="number">0</span>]==<span class="number">0</span>:</span><br><span class="line">		<span class="keyword">return</span> getMean(tree)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> isTree(tree[<span class="string">'left'</span>]) <span class="keyword">or</span> isTree(tree[<span class="string">'right'</span>]):</span><br><span class="line">		lset,rset=splitTwoData(testData,tree[<span class="string">'feature'</span>],tree[<span class="string">'value'</span>])		</span><br><span class="line">	<span class="comment">#如果没有到叶子节点，则继续寻找</span></span><br><span class="line">	<span class="keyword">if</span> isTree(tree[<span class="string">'left'</span>]):</span><br><span class="line">		tree[<span class="string">'left'</span>]=prune(tree[<span class="string">'left'</span>],lset)</span><br><span class="line">	<span class="keyword">if</span> isTree(tree[<span class="string">'right'</span>]):</span><br><span class="line">		tree[<span class="string">'right'</span>]=prune(tree[<span class="string">'right'</span>],rset)</span><br><span class="line"></span><br><span class="line">	<span class="comment">#当到达了叶子节点,计算合并和非合并的误差</span></span><br><span class="line">	<span class="keyword">if</span> <span class="keyword">not</span> isTree(tree[<span class="string">'left'</span>]) <span class="keyword">and</span> <span class="keyword">not</span> isTree(tree[<span class="string">'right'</span>]):</span><br><span class="line">		lset,rset=splitTwoData(testData,tree[<span class="string">'feature'</span>],tree[<span class="string">'value'</span>])</span><br><span class="line">		nomergeErr=np.sum(np.power(lset[:,<span class="number">-1</span>]-tree[<span class="string">'left'</span>],<span class="number">2</span>))+np.sum(np.power(rset[:,<span class="number">-1</span>]-tree[<span class="string">'right'</span>],<span class="number">2</span>))</span><br><span class="line">		treeMean=(tree[<span class="string">'left'</span>]+tree[<span class="string">'right'</span>])/<span class="number">2</span></span><br><span class="line">		mergeErr=np.sum(np.power(testData[:,<span class="number">-1</span>]-treeMean,<span class="number">2</span>))</span><br><span class="line">		<span class="keyword">if</span> mergeErr&lt;nomergeErr:</span><br><span class="line">			print(<span class="string">'merge'</span>)</span><br><span class="line">			<span class="keyword">return</span> treeMean</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			<span class="keyword">return</span> tree</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">return</span> tree</span><br></pre></td></tr></table></figure>
+
+<h2 id="matplotlib画图-tkinter构建GUI"><a href="#matplotlib画图-tkinter构建GUI" class="headerlink" title="matplotlib画图+tkinter构建GUI"></a>matplotlib画图+tkinter构建GUI</h2><h3 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h3><p>（1）构建窗口GUI</p>
+<p>使用tkinter下的Tk()构建一个窗口，窗口中可以设置相关组件，最后加上窗口的消息循环mainloop()，这样就构建了一个tkinter窗口</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> *</span><br><span class="line">root=Tk()</span><br><span class="line"><span class="comment">#填充组件</span></span><br><span class="line">...</span><br><span class="line">root.mainloop()</span><br></pre></td></tr></table></figure>
+
+<p>（2）填充组件</p>
+<p>Label组件：用于显示文本，传入需要填充的窗口root，需要显示的文本，最后利用grid()，输入需要填充的位置（行和列）</p>
+<p>Button组件：按钮，传入需要填充的窗口root，需要显示的文本，点击按钮触发的事件（command），最后利用grid()，输入需要填充的位置（行和列）</p>
+<p>Checkbutton组件：复选框，传入需要填充的窗口root，需要显示的文本，按钮的整数值（variable），最后利用grid()，输入需要填充的位置（行和列）</p>
+<p>Entry组件：用于输入文本，传入需要填充的窗口root，最后利用grid()，输入需要填充的位置（行和列）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Label(root,text=<span class="string">'tolN'</span>).grid(row=<span class="number">1</span>,column=<span class="number">0</span>)</span><br><span class="line">entryN=Entry(root)</span><br><span class="line">entryN.grid(row=<span class="number">1</span>,column=<span class="number">1</span>)</span><br><span class="line">entryN.insert(<span class="number">0</span>,<span class="string">'10'</span>)</span><br><span class="line"></span><br><span class="line">Label(root,text=<span class="string">'tolS'</span>).grid(row=<span class="number">2</span>,column=<span class="number">0</span>)</span><br><span class="line">entryS=Entry(root)</span><br><span class="line">entryS.grid(row=<span class="number">2</span>,column=<span class="number">1</span>)</span><br><span class="line">entryS.insert(<span class="number">0</span>,<span class="string">'1.0'</span>)</span><br><span class="line"></span><br><span class="line">Button(root,text=<span class="string">'ReDraw'</span>,command=drawNewTree).grid(row=<span class="number">1</span>,column=<span class="number">2</span>,rowspan=<span class="number">3</span>)</span><br><span class="line">Button(root,text=<span class="string">'Quit'</span>,fg=<span class="string">'black'</span>,command=root.quit).grid(row=<span class="number">1</span>,column=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">var=IntVar()<span class="comment">#按钮整数值</span></span><br><span class="line">check=Checkbutton(root,text=<span class="string">'model tree'</span></span><br></pre></td></tr></table></figure>
+
+<p>（3）结合matplotlib画图</p>
+<p>为了让matplotlib在tkinter创建的GUI上画图，需要修改matplotlib的后端，并且在Tk上放一个画布用于画图</p>
+<p>1.修改matplotlib的后端</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line">matplotlib.use(<span class="string">'TkAgg'</span>)</span><br><span class="line"><span class="keyword">from</span> matplotlib.backends.backend_tkagg <span class="keyword">import</span> FigureCanvasTkAgg</span><br><span class="line"><span class="keyword">from</span> matplotlib.figure <span class="keyword">import</span> Figure</span><br></pre></td></tr></table></figure>
+
+<p>2.在Tk上放一个画布，使用grid来控制位置</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">reDraw.f=Figure(figsize=(<span class="number">5</span>,<span class="number">4</span>),dpi=<span class="number">100</span>)</span><br><span class="line">reDraw.canvas=FigureCanvasTkAgg(reDraw.f,master=root)</span><br><span class="line">reDraw.canvas.draw()</span><br><span class="line">reDraw.canvas.get_tk_widget().grid(row=<span class="number">0</span>,columnspan=<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="可视化结果"><a href="#可视化结果" class="headerlink" title="可视化结果"></a>可视化结果</h3><p>（1）定义画图的函数</p>
+<p>定义画图函数的全局变量：传入的原始数据集以及测试数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#创建与reDraw相关的全局变量</span></span><br><span class="line">reDraw.rawDat=np.mat(regTrees.createDataset(<span class="string">'./sine.txt'</span>))</span><br><span class="line">reDraw.testDat=np.arange(min(reDraw.rawDat[:,<span class="number">0</span>]),max(reDraw.rawDat[:,<span class="number">0</span>]),<span class="number">0.01</span>)</span><br></pre></td></tr></table></figure>
+
+<p>清除原始图，重新构建新的子图（防止画图过程中图的重叠）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reDraw.f.clf()</span><br><span class="line">reDraw.a=reDraw.f.add_subplot(<span class="number">111</span>)</span><br></pre></td></tr></table></figure>
+
+<p>利用scatter画散点图，plot画线，draw()用于图像的显示</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">reDraw.a.scatter(np.array(reDraw.rawDat[:,<span class="number">0</span>]),np.array(reDraw.rawDat[:,<span class="number">1</span>]),s=<span class="number">5</span>)</span><br><span class="line">reDraw.a.plot(reDraw.testDat,yhat,linewidth=<span class="number">2</span>)</span><br><span class="line">reDraw.canvas.draw()</span><br></pre></td></tr></table></figure>
+
+<p>（2）结果显示</p>
+<p>当勾选选择模型树的复选框的时候，调用模型树，反之调用回归树</p>
+<p>输入最小分割的样本数为10，允许的误差下降值为1.0</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201013160749.png" alt></p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201013160807.png" alt></p>
+<p>从结果可以看出当使用模型树拟合效果更好些</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag"><i class="fa fa-tag"></i> 回归</a>
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+              <a href="/tags/%E5%88%86%E7%B1%BB/" rel="tag"><i class="fa fa-tag"></i> 分类</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/decisionTree/" rel="next" title="决策树">
+                  <i class="fa fa-chevron-left"></i> 决策树
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#回归树和模型树"><span class="nav-number">1.</span> <span class="nav-text">回归树和模型树</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#回归树"><span class="nav-number">1.1.</span> <span class="nav-text">回归树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型树"><span class="nav-number">1.2.</span> <span class="nav-text">模型树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#树的构建（CART）"><span class="nav-number">2.</span> <span class="nav-text">树的构建（CART）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法流程"><span class="nav-number">2.1.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#回归树-1"><span class="nav-number">2.2.</span> <span class="nav-text">回归树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型树-1"><span class="nav-number">2.3.</span> <span class="nav-text">模型树</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#树的预测"><span class="nav-number">3.</span> <span class="nav-text">树的预测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#遍历整棵树"><span class="nav-number">3.1.</span> <span class="nav-text">遍历整棵树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在叶子节点上预测"><span class="nav-number">3.2.</span> <span class="nav-text">在叶子节点上预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">3.3.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#剪枝"><span class="nav-number">4.</span> <span class="nav-text">剪枝</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#预剪枝"><span class="nav-number">4.1.</span> <span class="nav-text">预剪枝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后剪枝"><span class="nav-number">4.2.</span> <span class="nav-text">后剪枝</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#matplotlib画图-tkinter构建GUI"><span class="nav-number">5.</span> <span class="nav-text">matplotlib画图+tkinter构建GUI</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#整体流程"><span class="nav-number">5.1.</span> <span class="nav-text">整体流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可视化结果"><span class="nav-number">5.2.</span> <span class="nav-text">可视化结果</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">38</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">309k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">4:41</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
