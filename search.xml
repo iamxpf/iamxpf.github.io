@@ -1,6 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>其他工具——使用svd简化数据</title>
+    <url>/blogs/svd/</url>
+    <content><![CDATA[<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>（1）svd可以用于简化数据，减少噪声</p><p>（2）svd将原始数据分解为三个矩阵U，∑，VT，假设原始数据维度为（m,n），这三个矩阵维度分别为（m,m）,（n,）,（n,n）,其中∑是对角矩阵，对角元素从大到小排列，即为奇异值（奇异值=原始矩阵 * 原始矩阵的转置的特征值的平方根）</p><h2 id="推荐系统——基于协同过滤"><a href="#推荐系统——基于协同过滤" class="headerlink" title="推荐系统——基于协同过滤"></a>推荐系统——基于协同过滤</h2><a id="more"></a>
+
+<p>协同过滤是通过将用户和其他用户的数据进行对比来实现推荐的</p>
+<p>则需要知道两个用户或者物品之间的相似度，用已有的数据来预测未来的喜好，则需要对相似度的计算进行定义</p>
+<p><u><strong>以给定一个用户，返回给该用户推荐的N个菜为例：</strong></u></p>
+<p><u><strong>需要得到评级最高的N个商品进行推荐，但是用户不可能对所有商品都评级，则此时需要将未评级的商品利用已有数据计算相似度作为评级依据</strong></u></p>
+<h3 id="相似度的计算（输入的数据均为列向量）"><a href="#相似度的计算（输入的数据均为列向量）" class="headerlink" title="相似度的计算（输入的数据均为列向量）"></a>相似度的计算（输入的数据均为列向量）</h3><p>常用的similarity计算有欧式距离，皮尔逊系数，余弦系数，为了比较这三个系数，将其都控制在0 ~ 1之间</p>
+<p>（1）欧式距离（即二阶范数）</p>
+<p>利用numpy下的linalg库下的norm</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#欧式距离</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edSim</span><span class="params">(inA,inB)</span>:</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>/(<span class="number">1</span>+np.linalg.norm(inA-inB)) <span class="comment">#norm 二阶范数</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）皮尔逊系数</p>
+<p>利用numpy下的corrcoef</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#皮尔逊系数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pearSim</span><span class="params">(inA,inB)</span>:</span></span><br><span class="line">	<span class="keyword">if</span>(len(inA)&lt;<span class="number">3</span>):</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span> <span class="comment">#不存在三个或者更多的点，说明两个向量完全相关</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0.5</span>+<span class="number">0.5</span>*np.corrcoef(inA,inB,rowvar=<span class="number">0</span>)[<span class="number">0</span>][<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+
+<p>（3）余弦系数</p>
+<p>利用公式</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201021131645.png" alt></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#余弦相似度</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cosSim</span><span class="params">(inA,inB)</span>:</span></span><br><span class="line">	num=inA.T*inB</span><br><span class="line">	norm=np.linalg.norm(inA)*np.linalg.norm(inB)</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0.5</span>+<span class="number">0.5</span>*(num/norm)</span><br></pre></td></tr></table></figure>
+
+<p>讨论：基于什么的相似度？</p>
+<p>基于用户的相似度（行与行）、基于商品的相似度（列与列），取决于哪个数量少就基于哪个的相似度</p>
+<h3 id="评级估计方法"><a href="#评级估计方法" class="headerlink" title="评级估计方法"></a>评级估计方法</h3><p>（a）标准方法</p>
+<p>输入用户、未评级的物品、相似度的计算、原数据</p>
+<p>（1）遍历所有的物品</p>
+<p>（2）得到用户对当前遍历物品的评级</p>
+<p>如果评级为0或者该物品就是要求的物品，则跳过，继续找下一个物品</p>
+<p>找到未评级物品和当前物品重叠部分，即有用户对这两个物品都评级了（这样可以计算相似度）</p>
+<p>将得到的相似度累加，并且用相似度乘以当前的评分，用乘积除以相似度总和（归一化操作），得到最终的评级</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#估计方法</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">standEst</span><span class="params">(dataset,user,SimMethod,item)</span>:</span></span><br><span class="line">	m,n=np.shape(dataset)</span><br><span class="line"></span><br><span class="line">	simTotal=<span class="number">0</span>;</span><br><span class="line">	rateSimTotal=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#遍历每个已经评级的物品</span></span><br><span class="line">	<span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">		usrRate=dataset[user,j]</span><br><span class="line">		<span class="keyword">if</span> usrRate==<span class="number">0</span> <span class="keyword">or</span> j==item:</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		overlap=np.nonzero(np.logical_and(dataset[:,item]&gt;<span class="number">0</span>,dataset[:,j]&gt;<span class="number">0</span>))[<span class="number">0</span>]  <span class="comment">#找到评级过的两个物品</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> len(overlap)==<span class="number">0</span>:</span><br><span class="line">			similarity=<span class="number">0</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			similarity=SimMethod(dataset[overlap,item],dataset[overlap,j])</span><br><span class="line">		simTotal+=similarity</span><br><span class="line">		rateSimTotal+=similarity*usrRate</span><br><span class="line">	<span class="keyword">if</span> simTotal==<span class="number">0</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">return</span> rateSimTotal/simTotal</span><br></pre></td></tr></table></figure>
+
+<p>（b）应用svd</p>
+<p>因为原始数据会存在很多0，则需要对原始数据进行降维操作，这里使用svd，但是又要保证准确率，需要对保留的特征向量的k进行设置，这里使用保留下的数据是原始数据方差的90%</p>
+<p>在标准方法前增加对原始数据的降维：</p>
+<p>（1）使用svd分解原始数据为U,sigema,VT，计奇异值矩阵中的和，即主对角线元素相加，随着i的增加，分别取对应行的主对角元素，当满足上述式子后得到的i值就是能够保留90%的方差的k的取值。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">U,sigma,VT=np.linalg.svd(dataset)</span><br><span class="line">	sig2=sigma**<span class="number">2</span></span><br><span class="line">	m=np.shape(sigma)[<span class="number">0</span>]</span><br><span class="line">	k=<span class="number">0</span></span><br><span class="line">	tmp_s=[]</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">		<span class="keyword">if</span> np.sum(tmp_s)&gt;(np.sum(sig2)*<span class="number">0.9</span>):</span><br><span class="line">			k=i</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			tmp_s=sig2[:i]</span><br><span class="line">	print(k)</span><br></pre></td></tr></table></figure>
+
+<p>（2）因为这里的sigma不是用对角矩阵形式存储（以数组形式存储），因为取前k个sigma的值形成对角矩阵</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sig4=np.mat(np.eye(k)*sigma[:k])</span><br></pre></td></tr></table></figure>
+
+<p>（3）将数据映射到低维度空间</p>
+<p><strong>其中U矩阵可以将物品转换到低维空间，而V矩阵可以将用户转换到低维空间</strong></p>
+<p>原始数据的维度为（m,n）；特征向量即低维子空间向量的维度为（m,m），取前k个，维度为（m,k）,所以需要将原始矩阵转置乘以特征向量，再算上原来的奇异值。最终投影后的数据维度为（n,k）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">xtransform=dataset.T*U[:,:k]*sig4.I <span class="comment">#数据投影</span></span><br></pre></td></tr></table></figure>
+
+<p>（4）按照标准方法，遍历每个物品，计算投影后两个重叠物品的相似度</p>
+<p>因为相似度是输入的列向量，因此，需要把投影后的数据进行转置操作</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#指定用户对一些物品的评分</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">svdEst</span><span class="params">(dataset,user,SimMethod,item)</span>:</span></span><br><span class="line">	<span class="comment">#遍历已经评级的物品</span></span><br><span class="line">	m,n=np.shape(dataset)</span><br><span class="line">	</span><br><span class="line">	<span class="comment">#将原始数据映射到低维度空间</span></span><br><span class="line">	<span class="comment">#选择合适的特征保留下来</span></span><br><span class="line">	U,sigma,VT=np.linalg.svd(dataset)</span><br><span class="line">	sig2=sigma**<span class="number">2</span></span><br><span class="line">	m=np.shape(sigma)[<span class="number">0</span>]</span><br><span class="line">	k=<span class="number">0</span></span><br><span class="line">	tmp_s=[]</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">		<span class="keyword">if</span> np.sum(tmp_s)&gt;(np.sum(sig2)*<span class="number">0.9</span>):</span><br><span class="line">			k=i</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			tmp_s=sig2[:i]</span><br><span class="line">	print(k)</span><br><span class="line">	sig4=np.mat(np.eye(k)*sigma[:k])</span><br><span class="line">	xtransform=dataset.T*U[:,:k]*sig4.I <span class="comment">#数据投影</span></span><br><span class="line"></span><br><span class="line">	simTotal=<span class="number">0</span>;</span><br><span class="line">	rateSimTotal=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">		usrRate=dataset[user,j]</span><br><span class="line">		<span class="keyword">if</span> usrRate==<span class="number">0</span> <span class="keyword">or</span> j==item:</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		similarity=SimMethod(xtransform[item,:].T,xtransform[j,:].T)</span><br><span class="line">		print(<span class="string">"%d and %d similarity is:%f"</span> % (item,j,similarity))</span><br><span class="line">		simTotal+=similarity</span><br><span class="line">		rateSimTotal+=usrRate*similarity</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> simTotal==<span class="number">0</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">return</span> rateSimTotal/simTotal</span><br></pre></td></tr></table></figure>
+
+<h3 id="推荐商品"><a href="#推荐商品" class="headerlink" title="推荐商品"></a>推荐商品</h3><p>（1）得到该用户没有评级过的商品</p>
+<p>（2）如果所有商都评级过，则之间返回</p>
+<p>（3）对没有评级的每个商品，计算其在给定评级方法下的得分</p>
+<p>（4）最终，利用sorted对每个商品逆序排序，得到前n个</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#推荐系统</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recomend</span><span class="params">(dataset,user,N=<span class="number">3</span>,SimMethod=edSim,estMethod=standEst)</span>:</span></span><br><span class="line">	<span class="comment">#得到没有评级的物品</span></span><br><span class="line">	nonest=np.nonzero(dataset[user,:]==<span class="number">0</span>)[<span class="number">1</span>] <span class="comment">#[1]得到列向量</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(len(nonest)==<span class="number">0</span>):</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"you all rated"</span></span><br><span class="line">	<span class="comment">#将没有评级的物品按照给定估计方法进行评级</span></span><br><span class="line">	itemScore=[]</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> nonest:</span><br><span class="line">		score=estMethod(dataset,user,SimMethod,i)</span><br><span class="line">		itemScore.append((i,score))</span><br><span class="line"></span><br><span class="line">	<span class="comment">#得到前n个评级的物品</span></span><br><span class="line">	<span class="keyword">return</span> sorted(itemScore,key=<span class="keyword">lambda</span> j:j[<span class="number">1</span>],reverse=<span class="literal">True</span>)[:N]</span><br></pre></td></tr></table></figure>
+
+<h3 id="推荐效果"><a href="#推荐效果" class="headerlink" title="推荐效果"></a>推荐效果</h3><p>（1）原始数据为：</p>
+<blockquote>
+<p>​           [[0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 5],<br>​           [0, 0, 0, 3, 0, 4, 0, 0, 0, 0, 3],<br>​           [0, 0, 0, 0, 4, 0, 0, 1, 0, 4, 0],<br>​           [3, 3, 4, 0, 0, 0, 0, 2, 2, 0, 0],<br>​           [5, 4, 5, 0, 0, 0, 0, 5, 5, 0, 0],<br>​           [0, 0, 0, 0, 5, 0, 1, 0, 0, 5, 0],<br>​           [4, 3, 4, 0, 0, 0, 0, 5, 5, 0, 1],<br>​           [0, 0, 0, 4, 0, 4, 0, 0, 0, 0, 4],<br>​           [0, 0, 0, 2, 0, 2, 5, 0, 0, 1, 2],<br>​           [0, 0, 0, 0, 5, 0, 0, 0, 0, 4, 0],<br>​           [1, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0]]</p>
+</blockquote>
+<p>相似度计算方式均使用皮尔逊系数，一个评级方法使用svd，一个使用标准方法</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">r=recomend(mymat2,<span class="number">1</span>,SimMethod=pearSim,estMethod=svdEst)</span><br><span class="line">print(r)</span><br><span class="line">r=recomend(mymat2,<span class="number">1</span>,SimMethod=pearSim,estMethod=standEst)</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
+
+<p>两种不同方法下推荐的结果如下，同时打印出每次计算的相似度过程，可以看出使用svd方法相似度的度量更准确些，推荐结果也会更好些。</p>
+<blockquote>
+<p>0 and 3 similarity is:0.341942<br>0 and 5 similarity is:0.124132<br>0 and 10 similarity is:0.116698<br>1 and 3 similarity is:0.345560<br>1 and 5 similarity is:0.126456<br>1 and 10 similarity is:0.118892<br>2 and 3 similarity is:0.345149<br>2 and 5 similarity is:0.126190<br>2 and 10 similarity is:0.118640<br>4 and 3 similarity is:0.450126<br>4 and 5 similarity is:0.528504<br>4 and 10 similarity is:0.544647<br>6 and 3 similarity is:0.923822<br>6 and 5 similarity is:0.724840<br>6 and 10 similarity is:0.710896<br>7 and 3 similarity is:0.319482<br>7 and 5 similarity is:0.118324<br>7 and 10 similarity is:0.113370<br>8 and 3 similarity is:0.334910<br>8 and 5 similarity is:0.119673<br>8 and 10 similarity is:0.112497<br>9 and 3 similarity is:0.566918<br>9 and 5 similarity is:0.590049</p>
+<p>9 and 10 similarity is:0.602380</p>
+<p>[(4, 3.3469521867021728), (9, 3.33537965732747), (6, 3.3071930278130375)]<br>0 and 3 similarity is:0.000000<br>0 and 5 similarity is:0.000000<br>0 and 10 similarity is:1.000000<br>1 and 3 similarity is:0.000000<br>1 and 5 similarity is:0.000000<br>1 and 10 similarity is:1.000000<br>2 and 3 similarity is:0.000000<br>2 and 5 similarity is:0.000000<br>2 and 10 similarity is:1.000000<br>4 and 3 similarity is:0.000000<br>4 and 5 similarity is:0.000000<br>4 and 10 similarity is:0.000000<br>6 and 3 similarity is:1.000000<br>6 and 5 similarity is:1.000000<br>6 and 10 similarity is:1.000000<br>7 and 3 similarity is:0.000000<br>7 and 5 similarity is:0.000000<br>7 and 10 similarity is:1.000000<br>8 and 3 similarity is:0.000000<br>8 and 5 similarity is:0.000000<br>8 and 10 similarity is:1.000000<br>9 and 3 similarity is:1.000000<br>9 and 5 similarity is:1.000000</p>
+<p>9 and 10 similarity is:1.000000</p>
+<p>[(6, 3.3333333333333335), (9, 3.3333333333333335), (0, 3.0)]</p>
+</blockquote>
+<h2 id="图像压缩"><a href="#图像压缩" class="headerlink" title="图像压缩"></a>图像压缩</h2><h3 id="打印图像"><a href="#打印图像" class="headerlink" title="打印图像"></a>打印图像</h3><p>对图像中的数值按照阈值进行打印输出，小于阈值输出0，大于阈值输出1</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">printmat</span><span class="params">(mydata,threshold)</span>:</span></span><br><span class="line">	m,n=np.shape(mydata)</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">			<span class="keyword">if</span>(float(mydata[i,j])&lt;threshold):</span><br><span class="line">				print(<span class="string">'0'</span>,end=<span class="string">''</span>)<span class="comment">#去掉回车</span></span><br><span class="line">			<span class="keyword">else</span>:</span><br><span class="line">				print(<span class="string">'1'</span>,end=<span class="string">''</span>)</span><br><span class="line">		print(<span class="string">'\n'</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="使用svd降维"><a href="#使用svd降维" class="headerlink" title="使用svd降维"></a>使用svd降维</h3><p>（1）使用svd分解原始数据为U,sigema,VT</p>
+<p>（2）因为这里的sigma不是用对角矩阵形式存储（以数组形式存储），因为取前k个sigma的值形成对角矩阵</p>
+<p>（3）利用U,V矩阵同时进行降维</p>
+<p>xtransform=U[:,:numSVD]<em>sigcon</em>VT[:numSVD,:]</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#使用svd</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compressImg</span><span class="params">(filename,numSVD=<span class="number">3</span>,threshold=<span class="number">0.8</span>)</span>:</span></span><br><span class="line">	<span class="comment">#读入数据</span></span><br><span class="line">	fr=open(filename)</span><br><span class="line">	curpt=[]</span><br><span class="line">	<span class="keyword">for</span> line <span class="keyword">in</span> fr.readlines():</span><br><span class="line">		m=len(line)</span><br><span class="line">		newrow=[]</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> range(m<span class="number">-1</span>):<span class="comment">#去掉最后的回车</span></span><br><span class="line">			newrow.append(int(line[i]))</span><br><span class="line">		curpt.append(newrow)</span><br><span class="line">	print(curpt)</span><br><span class="line">	curpt=np.mat(curpt)</span><br><span class="line">	print(<span class="string">'origin mat'</span>)</span><br><span class="line">	printmat(curpt,threshold)</span><br><span class="line"></span><br><span class="line">	U,sigma,VT=np.linalg.svd(curpt)</span><br><span class="line">	</span><br><span class="line">	sigcon=np.zeros((numSVD,numSVD))</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(numSVD):</span><br><span class="line">		sigcon[i][i]=sigma[i]</span><br><span class="line">	xtransform=U[:,:numSVD]*sigcon*VT[:numSVD,:]</span><br><span class="line">	print(<span class="string">'svd mat'</span>)</span><br><span class="line">	printmat(xtransform,threshold)</span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+        <tag>降维</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pca</title>
+    <url>/blogs/pca/</url>
+    <content><![CDATA[<h2 id="应用背景"><a href="#应用背景" class="headerlink" title="应用背景"></a>应用背景</h2><p>（1）目的：对数据进行降维，即对输入的数据存在冗余，对输入的数目削减</p><p>（2）场景：当求协方差的特征值是，得出很多特征值为0，说明特征存在冗余</p><p>（3）实际使用：实际应用中，数据集中存在很多nan空值，则将nan值替换为平均值</p><p>遍历所有的特征，利用numpy下的isnan找到非nan值对应的行，取均值，赋值给该特征对应的空值中</p><a id="more"></a>
+
+
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#实际应用中，将nan值替换为平均值</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">replaceNan</span><span class="params">(filename)</span>:</span></span><br><span class="line">	dataset=loadDataset(filename,<span class="string">' '</span>)</span><br><span class="line">	m,n=np.shape(dataset)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">		meanVal=np.mean(dataset[np.nonzero(~np.isnan(dataset[:,i].A))[<span class="number">0</span>],i])</span><br><span class="line">		dataset[np.nonzero(np.isnan(dataset[:,i].A))[<span class="number">0</span>],i]=meanVal</span><br><span class="line">	<span class="keyword">return</span> dataset</span><br></pre></td></tr></table></figure>
+
+<h2 id="算法简介"><a href="#算法简介" class="headerlink" title="算法简介"></a>算法简介</h2><p>原始数据为n维</p>
+<p>（1）找到一个向量u属于Rn空间的向量，找该向量的原则就是数据投影的误差最小化的方向</p>
+<p>（2）将数据从n维-&gt;k维，找到k个方向的向量u(i),…u(k)，此时这些向量定义了一个低维度的平面</p>
+<p>（3）将数据投影到这k个向量展开的线性子空间上，即k维平面上</p>
+<p>总的来说，pca是找到一个低维度的空间，通过最小化投影距离的方法来对数据投影，以此实现数据的降维。投影就是两个向量的乘积</p>
+<h2 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h2><p>（1）计算均值：减少不同量纲之间的影响</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">meanData=np.mean(dataset,axis=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<p>使用归一化后的数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">subMeanData=dataset-meanData</span><br></pre></td></tr></table></figure>
+
+<p>（2）计算协方差：低维度平面的向量所对应的矩阵</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">covData=np.cov(subMeanData,rowvar=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<p>（3）计算特征值、特征向量：选择前K个特征向量即为低维度平面对应的向量</p>
+<p>利用numpy下的linalg.eig求得特征值和特征向量</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">feaVal,feaVec=np.linalg.eig(np.mat(covData))</span><br></pre></td></tr></table></figure>
+
+<p>（4）选择前K个来定义低维度空间</p>
+<p>利用numpy下的argsort对特征值进行排序，按照排序好的索引，取前k个，得到对应的特征向量</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sortIndex=np.argsort(feaVal)</span><br><span class="line">sortIndex=sortIndex[:-(topFeat+<span class="number">1</span>):<span class="number">-1</span>]</span><br><span class="line">sortVec=feaVec[:,sortIndex]</span><br></pre></td></tr></table></figure>
+
+<p>（5）公式计算：将数据投影到低维度空间上</p>
+<p>低维度空间对应的矩阵维度为n * k，待处理的数据对应的矩阵维度为m * n，将两者相乘，即得到了待处理数据投影到低维度空间的值，即投影后的数据维度为m * k</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">resData=subMeanData*sortVec</span><br></pre></td></tr></table></figure>
+
+<p>（6）将投影的数据还原在原来维度上显示</p>
+<p>用投影后的数据（维度为m * k）乘以 低维度空间对应的矩阵（维度为n * k）的转置，得到的即为原来的数据，再还原均值归一化得到还原的数据</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">returnData=resData*sortVec.T+meanData</span><br></pre></td></tr></table></figure>
+
+<p>注：上述求特征向量还可以使用numpy.linalg下的svd对协方差矩阵直接求得，此时的特征向量矩阵是已经按照降序排列的</p>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+        <tag>降维</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Leecode做题记录（四）</title>
     <url>/blogs/LC4/</url>
     <content><![CDATA[<h2 id="题目：461-汉明距离"><a href="#题目：461-汉明距离" class="headerlink" title="题目：461. 汉明距离"></a>题目：461. 汉明距离</h2><p>描述：两个整数之间的汉明距离指的是这两个数字对应二进制位不同的位置的数目。给出两个整数 x 和 y，计算它们之间的汉明距离。</p><p>思路：</p><p>两个数的二进制位不同即可以使用x&amp;1判断或者是x%2来判断数字的每一位</p><p>（1）对两个数对2取余来判断每一位的二进制数是否相同</p><p>（2）移动到下一位判断（使用除法或者是右移操作即可）</p><a id="more"></a>
@@ -959,7 +1102,7 @@ accuracy                           0.92        50</code></pre></blockquote>
       </categories>
       <tags>
         <tag>机器学习</tag>
-        <tag>无监督学习</tag>
+        <tag>降维</tag>
       </tags>
   </entry>
   <entry>
