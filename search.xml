@@ -3,9 +3,9 @@
   <entry>
     <title>其他工具——使用svd简化数据</title>
     <url>/blogs/svd/</url>
-    <content><![CDATA[<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>（1）svd可以用于简化数据，减少噪声</p><p>（2）svd将原始数据分解为三个矩阵U，∑，VT，假设原始数据维度为（m,n），这三个矩阵维度分别为（m,m）,（n,）,（n,n）,其中∑是对角矩阵，对角元素从大到小排列，即为奇异值（奇异值=原始矩阵 * 原始矩阵的转置的特征值的平方根）</p><h2 id="推荐系统——基于协同过滤"><a href="#推荐系统——基于协同过滤" class="headerlink" title="推荐系统——基于协同过滤"></a>推荐系统——基于协同过滤</h2><a id="more"></a>
+    <content><![CDATA[<h1 id="其他工具——使用svd简化数据"><a href="#其他工具——使用svd简化数据" class="headerlink" title="其他工具——使用svd简化数据"></a>其他工具——使用svd简化数据</h1><h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>（1）svd可以用于简化数据，减少噪声</p><p>（2）svd将原始数据分解为三个矩阵U，∑，VT，假设原始数据维度为（m,n），这三个矩阵维度分别为（m,m）,（n,）,（n,n）,其中∑是对角矩阵，对角元素从大到小排列，即为奇异值（奇异值=原始矩阵 * 原始矩阵的转置的特征值的平方根）</p><a id="more"></a>
 
-<p>协同过滤是通过将用户和其他用户的数据进行对比来实现推荐的</p>
+<h2 id="推荐系统——基于协同过滤"><a href="#推荐系统——基于协同过滤" class="headerlink" title="推荐系统——基于协同过滤"></a>推荐系统——基于协同过滤</h2><p>协同过滤是通过将用户和其他用户的数据进行对比来实现推荐的</p>
 <p>则需要知道两个用户或者物品之间的相似度，用已有的数据来预测未来的喜好，则需要对相似度的计算进行定义</p>
 <p><u><strong>以给定一个用户，返回给该用户推荐的N个菜为例：</strong></u></p>
 <p><u><strong>需要得到评级最高的N个商品进行推荐，但是用户不可能对所有商品都评级，则此时需要将未评级的商品利用已有数据计算相似度作为评级依据</strong></u></p>
@@ -25,7 +25,7 @@
 
 <p>讨论：基于什么的相似度？</p>
 <p>基于用户的相似度（行与行）、基于商品的相似度（列与列），取决于哪个数量少就基于哪个的相似度</p>
-<h3 id="评级估计方法"><a href="#评级估计方法" class="headerlink" title="评级估计方法"></a>评级估计方法</h3><p>（a）标准方法</p>
+<h3 id="评级估计方法"><a href="#评级估计方法" class="headerlink" title="评级估计方法"></a>评级估计方法</h3><p>a）标准方法</p>
 <p>输入用户、未评级的物品、相似度的计算、原数据</p>
 <p>（1）遍历所有的物品</p>
 <p>（2）得到用户对当前遍历物品的评级</p>
@@ -34,7 +34,7 @@
 <p>将得到的相似度累加，并且用相似度乘以当前的评分，用乘积除以相似度总和（归一化操作），得到最终的评级</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#估计方法</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">standEst</span><span class="params">(dataset,user,SimMethod,item)</span>:</span></span><br><span class="line">	m,n=np.shape(dataset)</span><br><span class="line"></span><br><span class="line">	simTotal=<span class="number">0</span>;</span><br><span class="line">	rateSimTotal=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">#遍历每个已经评级的物品</span></span><br><span class="line">	<span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">		usrRate=dataset[user,j]</span><br><span class="line">		<span class="keyword">if</span> usrRate==<span class="number">0</span> <span class="keyword">or</span> j==item:</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		overlap=np.nonzero(np.logical_and(dataset[:,item]&gt;<span class="number">0</span>,dataset[:,j]&gt;<span class="number">0</span>))[<span class="number">0</span>]  <span class="comment">#找到评级过的两个物品</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> len(overlap)==<span class="number">0</span>:</span><br><span class="line">			similarity=<span class="number">0</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			similarity=SimMethod(dataset[overlap,item],dataset[overlap,j])</span><br><span class="line">		simTotal+=similarity</span><br><span class="line">		rateSimTotal+=similarity*usrRate</span><br><span class="line">	<span class="keyword">if</span> simTotal==<span class="number">0</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">return</span> rateSimTotal/simTotal</span><br></pre></td></tr></table></figure>
 
-<p>（b）应用svd</p>
+<p>b）应用svd</p>
 <p>因为原始数据会存在很多0，则需要对原始数据进行降维操作，这里使用svd，但是又要保证准确率，需要对保留的特征向量的k进行设置，这里使用保留下的数据是原始数据方差的90%</p>
 <p>在标准方法前增加对原始数据的降维：</p>
 <p>（1）使用svd分解原始数据为U,sigema,VT，计奇异值矩阵中的和，即主对角线元素相加，随着i的增加，分别取对应行的主对角元素，当满足上述式子后得到的i值就是能够保留90%的方差的k的取值。</p>
@@ -67,10 +67,9 @@
 
 <p>两种不同方法下推荐的结果如下，同时打印出每次计算的相似度过程，可以看出使用svd方法相似度的度量更准确些，推荐结果也会更好些。</p>
 <blockquote>
-<p>0 and 3 similarity is:0.341942<br>0 and 5 similarity is:0.124132<br>0 and 10 similarity is:0.116698<br>1 and 3 similarity is:0.345560<br>1 and 5 similarity is:0.126456<br>1 and 10 similarity is:0.118892<br>2 and 3 similarity is:0.345149<br>2 and 5 similarity is:0.126190<br>2 and 10 similarity is:0.118640<br>4 and 3 similarity is:0.450126<br>4 and 5 similarity is:0.528504<br>4 and 10 similarity is:0.544647<br>6 and 3 similarity is:0.923822<br>6 and 5 similarity is:0.724840<br>6 and 10 similarity is:0.710896<br>7 and 3 similarity is:0.319482<br>7 and 5 similarity is:0.118324<br>7 and 10 similarity is:0.113370<br>8 and 3 similarity is:0.334910<br>8 and 5 similarity is:0.119673<br>8 and 10 similarity is:0.112497<br>9 and 3 similarity is:0.566918<br>9 and 5 similarity is:0.590049</p>
-<p>9 and 10 similarity is:0.602380</p>
-<p>[(4, 3.3469521867021728), (9, 3.33537965732747), (6, 3.3071930278130375)]<br>0 and 3 similarity is:0.000000<br>0 and 5 similarity is:0.000000<br>0 and 10 similarity is:1.000000<br>1 and 3 similarity is:0.000000<br>1 and 5 similarity is:0.000000<br>1 and 10 similarity is:1.000000<br>2 and 3 similarity is:0.000000<br>2 and 5 similarity is:0.000000<br>2 and 10 similarity is:1.000000<br>4 and 3 similarity is:0.000000<br>4 and 5 similarity is:0.000000<br>4 and 10 similarity is:0.000000<br>6 and 3 similarity is:1.000000<br>6 and 5 similarity is:1.000000<br>6 and 10 similarity is:1.000000<br>7 and 3 similarity is:0.000000<br>7 and 5 similarity is:0.000000<br>7 and 10 similarity is:1.000000<br>8 and 3 similarity is:0.000000<br>8 and 5 similarity is:0.000000<br>8 and 10 similarity is:1.000000<br>9 and 3 similarity is:1.000000<br>9 and 5 similarity is:1.000000</p>
-<p>9 and 10 similarity is:1.000000</p>
+<p>0 and 3 similarity is:0.341942<br>0 and 5 similarity is:0.124132<br>0 and 10 similarity is:0.116698<br>1 and 3 similarity is:0.345560<br>1 and 5 similarity is:0.126456<br>1 and 10 similarity is:0.118892<br>…</p>
+<p>[(4, 3.3469521867021728), (9, 3.33537965732747), (6, 3.3071930278130375)]</p>
+<p>0 and 3 similarity is:0.000000<br>0 and 5 similarity is:0.000000<br>0 and 10 similarity is:1.000000<br>1 and 3 similarity is:0.000000<br>1 and 5 similarity is:0.000000<br>1 and 10 similarity is:1.000000<br>…</p>
 <p>[(6, 3.3333333333333335), (9, 3.3333333333333335), (0, 3.0)]</p>
 </blockquote>
 <h2 id="图像压缩"><a href="#图像压缩" class="headerlink" title="图像压缩"></a>图像压缩</h2><h3 id="打印图像"><a href="#打印图像" class="headerlink" title="打印图像"></a>打印图像</h3><p>对图像中的数值按照阈值进行打印输出，小于阈值输出0，大于阈值输出1</p>
@@ -95,7 +94,7 @@
       </tags>
   </entry>
   <entry>
-    <title>pca</title>
+    <title>其他工具——使用pca简化数据</title>
     <url>/blogs/pca/</url>
     <content><![CDATA[<h2 id="应用背景"><a href="#应用背景" class="headerlink" title="应用背景"></a>应用背景</h2><p>（1）目的：对数据进行降维，即对输入的数据存在冗余，对输入的数目削减</p><p>（2）场景：当求协方差的特征值是，得出很多特征值为0，说明特征存在冗余</p><p>（3）实际使用：实际应用中，数据集中存在很多nan空值，则将nan值替换为平均值</p><p>遍历所有的特征，利用numpy下的isnan找到非nan值对应的行，取均值，赋值给该特征对应的空值中</p><a id="more"></a>
 
@@ -1776,11 +1775,11 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 
 ]]></content>
       <categories>
-        <category>tensorflow</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>tensorflow</tag>
-        <tag>NLP</tag>
+        <tag>深度学习</tag>
+        <tag>自然语言处理</tag>
       </tags>
   </entry>
   <entry>
@@ -1924,11 +1923,11 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200714201829.png" alt></p>
 ]]></content>
       <categories>
-        <category>tensorflow</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>tensorflow</tag>
-        <tag>NLP</tag>
+        <tag>深度学习</tag>
+        <tag>自然语言处理</tag>
       </tags>
   </entry>
   <entry>
@@ -2093,10 +2092,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>由网络预测的两个地方的触发词和峰鸣加入的地方比对，发现音频添加正确。（由于发音问题，录制的音频有时预测不准确）</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>循环神经网络</tag>
       </tags>
   </entry>
@@ -2201,10 +2200,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>从结果看出模型很好的翻译了人类日期。</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>循环神经网络</tag>
       </tags>
   </entry>
@@ -2376,10 +2375,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>（2）简单模型没有考虑词序，RNN模型考虑了词序，所以预测的时候回准确些。</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>循环神经网络</tag>
       </tags>
   </entry>
@@ -2440,10 +2439,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>可以利用在线midi转mp3工具：<a href="https://www.ofoct.com/audio-converter/convert-midi-to-mp3-or-wav-ogg-aac-wma.html" target="_blank" rel="external nofollow noopener noreferrer">https://www.ofoct.com/audio-converter/convert-midi-to-mp3-or-wav-ogg-aac-wma.html</a> 转换文件格式，并进行试听。</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>循环神经网络</tag>
       </tags>
   </entry>
@@ -2524,10 +2523,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 </blockquote>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>循环神经网络</tag>
       </tags>
   </entry>
@@ -2638,10 +2637,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>循环神经网络</tag>
       </tags>
   </entry>
@@ -2726,10 +2725,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>从合成图像可以看出，很好的保留了内容图像中内容，也很好的融合了风格图片中的风格。</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>卷积神经网络</tag>
       </tags>
   </entry>
@@ -2832,10 +2831,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>上述实验中使用的自己的图片需要转换为网络能识别的大小，即96 * 96</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>卷积神经网络</tag>
       </tags>
   </entry>
@@ -2907,10 +2906,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>说明：因为该种目标定位与识别是分两步进行，时间效率比yolo总体要低一些。</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>卷积神经网络</tag>
       </tags>
   </entry>
@@ -3031,10 +3030,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>说明：由于训练集中的手势图片不是自己拍摄的，所以预测的效果不一定很准确。</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>卷积神经网络</tag>
       </tags>
   </entry>
@@ -3140,10 +3139,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>实验中选择迭代50次，学习率为0.001，为取得更好的结果，可以将迭代次数增加或者修改学习率</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>卷积神经网络</tag>
       </tags>
   </entry>
@@ -3183,10 +3182,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p><a href="https://www.jianshu.com/p/778d78463028" target="_blank" rel="external nofollow noopener noreferrer">https://www.jianshu.com/p/778d78463028</a></p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -3283,9 +3282,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>子任务（1）、（2）数据量充足，划分之后任务简单也易训练模型。</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
+        <tag>深度学习</tag>
         <tag>神经网络</tag>
       </tags>
   </entry>
@@ -3330,9 +3330,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>则可避免偏差为b%-a%，方差为c%-b%，以此可以可以根据不同的场景确定不同的策略。当可避免偏差大时，采取训练更大的网络或者训练时间更长，当方差大时，可以采取正则化或者选取更多的训练集数据。</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
+        <tag>深度学习</tag>
         <tag>神经网络</tag>
       </tags>
   </entry>
@@ -3424,10 +3425,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>（深度学习框架学习待续…）</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -3496,10 +3497,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>（2）由于梯度下降时存在摆动，即噪声很大，此时学习率需要很小，即向最低点前进的步长小，这时也会导致网络训练速度减慢，这时候就需要使 用指数加权平均项来得到当前的梯度：每个梯度的变化前都加入了指数项，随着时间增加，梯度前的指数项衰减，即每次梯度的变化都参照了前面梯度的变化方向（越近的梯度权重越高），从而减少向最低点前进时的摆动。其中momentun算法和Adam算法能有效减少摆动，可以增加学习率，即加大每次参数变化的步长，从而加快了网络训练速度，其中Adam算法由于结合了结合Momentun和RMSprop算法，优化效果最好，并且分类准确率也高。</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -3609,10 +3610,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
       </tags>
   </entry>
   <entry>
@@ -3668,10 +3669,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>深层网络</tag>
       </tags>
   </entry>
@@ -4097,10 +4098,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>注：这里的隐藏层神经元个数选择了4个，可以选择不同的神经元查看效果。</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>浅层网络</tag>
       </tags>
   </entry>
@@ -4193,10 +4194,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>从结果可以看出，当学习率很小的时候，误差基本不怎么变化，即一直没到嘴有点，当学习率很大的时候，前面由于学习率大，所有误差变化快，出现陡降，当走到最优解之后，误差趋向平缓</p>
 ]]></content>
       <categories>
-        <category>神经网络</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
         <tag>回归</tag>
       </tags>
   </entry>
@@ -5469,11 +5470,10 @@ accuracy                           0.90      1000</code></pre><p>测试集总体
 <p>因实验所用的叶片有破损存在，直接用长边加上短边得到的叶片长度存在一定误差，因此使用BP算法时，识别结果略有下降.<br>使用标准BP算法和累积BP算法识别率都能达到100%，但是因数据量小，使用累积BP 算法训练时间更短。</p>
 ]]></content>
       <categories>
-        <category>机器学习</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>算法</tag>
-        <tag>神经网络</tag>
+        <tag>深度学习</tag>
       </tags>
   </entry>
 </search>
