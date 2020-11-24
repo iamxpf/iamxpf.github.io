@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://www.xiapf.com/"/>
-  <updated>2020-11-20T09:04:08.163Z</updated>
+  <updated>2020-11-24T08:17:56.801Z</updated>
   <id>https://www.xiapf.com/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>电影推荐系统项目实现（一）——web框架搭建及连接数据库</title>
+    <link href="https://www.xiapf.com/blogs/mvRecommendSys1/"/>
+    <id>https://www.xiapf.com/blogs/mvRecommendSys1/</id>
+    <published>2020-11-24T08:16:57.000Z</published>
+    <updated>2020-11-24T08:17:56.801Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="web框架搭建——django的使用"><a href="#web框架搭建——django的使用" class="headerlink" title="web框架搭建——django的使用"></a>web框架搭建——django的使用</h2><h3 id="django框架"><a href="#django框架" class="headerlink" title="django框架"></a>django框架</h3><p>采用MTV模型</p><p>M：模型，负责业务对象和数据库之间的映射</p><p>T模板，把页面展示给用户</p><p>V：视图，负责业务逻辑，可调用模型和模板</p><p>此外，还需要url分发器，将url请求分发给视图处理，视图再调用模型和模板</p><p>使用pycharm新建django项目如下：</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201124151653.png" alt></p><p>其中manage.py为项目入口（其中包含了项目设置从何处读入，即需要去setting下进行查找），templates文件夹下为模板，项目名字下的urls.py为url分发器，需要自行新建应用app，使用app下的model.py，设置数据库中表的名称和各列的数据类型。</p><a id="more"></a><h3 id="设置项目起始运行端口"><a href="#设置项目起始运行端口" class="headerlink" title="设置项目起始运行端口"></a>设置项目起始运行端口</h3><p>在edit configurations里设置程序运行的参数</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201124153212.jpg" alt></p><h2 id="连接数据库——django与数据库连接"><a href="#连接数据库——django与数据库连接" class="headerlink" title="连接数据库——django与数据库连接"></a>连接数据库——django与数据库连接</h2><h3 id="系统设置"><a href="#系统设置" class="headerlink" title="系统设置"></a>系统设置</h3><p>（1）导入依赖</p><p>与mysql数据库相连，需要导入pymysql依赖：pip3 install pymysql</p><p>同时在项目同名下的__ init __.py下设置导入pymysql及版本</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line">pymysql.version_info = (<span class="number">1</span>, <span class="number">4</span>, <span class="number">13</span>, <span class="string">"final"</span>, <span class="number">0</span>)</span><br><span class="line">pymysql.install_as_MySQLdb()</span><br></pre></td></tr></table></figure><p>（2）在项目同名的文件夹下的setting设置连接的数据库的名字、端口、用户名、密码，即连接上了clTest数据库</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#mysql数据库的名字，进入数据库的端口、用户名、密码等</span></span><br><span class="line">DATABASES = &#123;</span><br><span class="line">    <span class="string">'default'</span>: &#123;</span><br><span class="line">        <span class="string">'ENGINE'</span>: <span class="string">'django.db.backends.mysql'</span>,</span><br><span class="line">        <span class="comment">#'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),</span></span><br><span class="line">        <span class="string">'NAME'</span>: <span class="string">'clTest'</span>,</span><br><span class="line">        <span class="string">'USER'</span>: <span class="string">'root'</span>,</span><br><span class="line">        <span class="string">'PASSWORD'</span>: <span class="string">'xpf123321'</span>,</span><br><span class="line">        <span class="string">'HOST'</span>: <span class="string">'127.0.0.1'</span>,</span><br><span class="line">        <span class="string">'PORT'</span>: <span class="string">'3306'</span>,<span class="comment">#端口</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="如何与数据库连接"><a href="#如何与数据库连接" class="headerlink" title="如何与数据库连接"></a>如何与数据库连接</h3><p>（1）利用ORM（对象关系映射）</p><p>django模型使用自带的ORM（对象关系映射），ORM将python对象和sql语句互相转换，使得项目能够访问sql数据库，ORM中的models类对应数据库中的表，对象实例对应表中的一条记录，属性对应表中的字段，对应关系如下：</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201124154431.png" alt></p><p>（2）建立app</p><p>django中要使用模型就需要创建app</p><p>在终端输入python3 manage.py startapp bajie，同时在系统设置setting下加入app的名字，则创建了应用程序为bajie的app</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201124153930.png" alt></p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201124154031.png" alt></p><p>（3）通过模型在数据库中创建表</p><p>利用app下的models.py创建类（对应就会在数据库中创建表）:设置user表，其中有对象有两个属性（对应两个字段），长度分别为20，10，都是字符类型</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">user</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    name=models.CharField(max_length=<span class="number">20</span>)</span><br><span class="line">    sex=models.CharField(max_length=<span class="number">10</span>)</span><br></pre></td></tr></table></figure><p>通过：python3 manage.py makemigrations 让django知道模型的变化</p><p>通过：python3 manage.py migrate 创建表结构（项目会根据model.py下设置的表结构在对应数据库下创建表）</p><p>打开数据库clTest，可以看到使用该应用程序创建的表（其余的都是系统表）</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201124161200.png" alt></p><p>以上就是使用django框架搭建web应用，同时连接数据库，主要使用了django框架下的MTV模型中的M，即模型，下一个笔记主要记录如何使用V，即视图，使用数据库中的数据，并应用相关推荐算法得到推荐内容，并将结果通过T，即模板展示出来。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;web框架搭建——django的使用&quot;&gt;&lt;a href=&quot;#web框架搭建——django的使用&quot; class=&quot;headerlink&quot; title=&quot;web框架搭建——django的使用&quot;&gt;&lt;/a&gt;web框架搭建——django的使用&lt;/h2&gt;&lt;h3 id=&quot;django框架&quot;&gt;&lt;a href=&quot;#django框架&quot; class=&quot;headerlink&quot; title=&quot;django框架&quot;&gt;&lt;/a&gt;django框架&lt;/h3&gt;&lt;p&gt;采用MTV模型&lt;/p&gt;&lt;p&gt;M：模型，负责业务对象和数据库之间的映射&lt;/p&gt;&lt;p&gt;T模板，把页面展示给用户&lt;/p&gt;&lt;p&gt;V：视图，负责业务逻辑，可调用模型和模板&lt;/p&gt;&lt;p&gt;此外，还需要url分发器，将url请求分发给视图处理，视图再调用模型和模板&lt;/p&gt;&lt;p&gt;使用pycharm新建django项目如下：&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201124151653.png&quot; alt&gt;&lt;/p&gt;&lt;p&gt;其中manage.py为项目入口（其中包含了项目设置从何处读入，即需要去setting下进行查找），templates文件夹下为模板，项目名字下的urls.py为url分发器，需要自行新建应用app，使用app下的model.py，设置数据库中表的名称和各列的数据类型。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="机器学习" scheme="https://www.xiapf.com/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+      <category term="机器学习" scheme="https://www.xiapf.com/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="推荐算法" scheme="https://www.xiapf.com/tags/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
   
   <entry>
     <title>Leecode做题记录（七）</title>
