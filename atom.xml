@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://www.xiapf.com/"/>
-  <updated>2020-11-24T08:17:56.801Z</updated>
+  <updated>2020-11-26T08:52:24.662Z</updated>
   <id>https://www.xiapf.com/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>电影推荐系统项目实现（二）——基于用户行为数据的电影推荐系统</title>
+    <link href="https://www.xiapf.com/blogs/mvRecommendSys2/"/>
+    <id>https://www.xiapf.com/blogs/mvRecommendSys2/</id>
+    <published>2020-11-26T08:51:44.000Z</published>
+    <updated>2020-11-26T08:52:24.662Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="项目目的"><a href="#项目目的" class="headerlink" title="项目目的"></a>项目目的</h2><p>对<a href="https://github.com/JaniceWuo/MovieRecommend" target="_blank" rel="external nofollow noopener noreferrer">https://github.com/JaniceWuo/MovieRecommend</a> 推荐系统的改进</p><p>1、增加隐语义模型和基于图的算法</p><p>2、同时增加评价指标准确率、召回率、覆盖度、新颖度来评估算法性能</p><p>3、针对冷启动问题采用最热门推荐</p><h2 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h2><h3 id="电影表（从网上搜集，自行导入）"><a href="#电影表（从网上搜集，自行导入）" class="headerlink" title="电影表（从网上搜集，自行导入）"></a>电影表（从网上搜集，自行导入）</h3><p>包含电影对应的编号（不是从1开始）、电影名称、电影海报的地址</p><a id="more"></a><h3 id="用户评分表（由django模型生成）"><a href="#用户评分表（由django模型生成）" class="headerlink" title="用户评分表（由django模型生成）"></a>用户评分表（由django模型生成）</h3><p>包含编号（主键），评分的用户id，电影对应的编号，打分</p><h3 id="用户表（（由django模型中注册页面自动生成）"><a href="#用户表（（由django模型中注册页面自动生成）" class="headerlink" title="用户表（（由django模型中注册页面自动生成）"></a>用户表（（由django模型中注册页面自动生成）</h3><p>包含编号（主键），密码，最后一次登录时间，用户名称，邮箱等其他信息</p><h2 id="实验设计"><a href="#实验设计" class="headerlink" title="实验设计"></a>实验设计</h2><h3 id="总体实验设计流程"><a href="#总体实验设计流程" class="headerlink" title="总体实验设计流程"></a>总体实验设计流程</h3><p>如下：</p><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201125110624.png" alt></p><p>（1）推荐系统的数据可以分为显性反馈数据（有用户的评分）和隐性反馈数据集（没有评分，只看用户的行为），项目的数据集为显性反馈数据</p><p>（2）划分数据集</p><p>在训练集上建立用户—兴趣模型，并在测试集上对用户行为进行预测，统计出相应的评测指标</p><p>（3）确定评价指标</p><h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><p>（1）准确率：描述最终的推荐列表中有多少比例是发生过的用户—物品评分记录</p><p>（2）召回率：描述有多少比例的用户—物品评分记录包含在最终的推荐列表中</p><p>（3）覆盖率：反映了推荐算法发掘长尾的能力，覆盖率越高，说明推荐算法越能够将长尾中的物品推荐给用户</p><p>（4）新颖度：列表中物品的平均流行度度量推荐结果的新颖度。如果推荐出的物品都很热门，说明推荐的新颖度较低，否则说明推荐结果比较新颖</p><h3 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h3><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201126162343.png" alt></p><p>（1）基于邻域的算法</p><p>基于领域的算法分为基于用户和基于物品，基于用户是给用户推荐和他兴趣相似的其他用户喜欢的物品，基于物品是给用户推荐和他之前喜欢的物品相似的物品</p><p>（2）隐语义模型</p><p>基于机器学习的方法，利用最终得到的电影特征和用户偏好进行预测</p><p>具体流程 <a href="https://www.xiapf.com/blogs/tfRecommendSys/">https://www.xiapf.com/blogs/tfRecommendSys/</a></p><p>（3）基于图的随机游走算法</p><p>算法中不区分user节点和item节点，这样一来问题就转化成：对与任意节点来说，其他节点的重要度各是多少，根据当前节点计算出其他节点的重要度来进行计算</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;项目目的&quot;&gt;&lt;a href=&quot;#项目目的&quot; class=&quot;headerlink&quot; title=&quot;项目目的&quot;&gt;&lt;/a&gt;项目目的&lt;/h2&gt;&lt;p&gt;对&lt;a href=&quot;https://github.com/JaniceWuo/MovieRecommend&quot; target=&quot;_blank&quot; rel=&quot;external nofollow noopener noreferrer&quot;&gt;https://github.com/JaniceWuo/MovieRecommend&lt;/a&gt; 推荐系统的改进&lt;/p&gt;&lt;p&gt;1、增加隐语义模型和基于图的算法&lt;/p&gt;&lt;p&gt;2、同时增加评价指标准确率、召回率、覆盖度、新颖度来评估算法性能&lt;/p&gt;&lt;p&gt;3、针对冷启动问题采用最热门推荐&lt;/p&gt;&lt;h2 id=&quot;数据集&quot;&gt;&lt;a href=&quot;#数据集&quot; class=&quot;headerlink&quot; title=&quot;数据集&quot;&gt;&lt;/a&gt;数据集&lt;/h2&gt;&lt;h3 id=&quot;电影表（从网上搜集，自行导入）&quot;&gt;&lt;a href=&quot;#电影表（从网上搜集，自行导入）&quot; class=&quot;headerlink&quot; title=&quot;电影表（从网上搜集，自行导入）&quot;&gt;&lt;/a&gt;电影表（从网上搜集，自行导入）&lt;/h3&gt;&lt;p&gt;包含电影对应的编号（不是从1开始）、电影名称、电影海报的地址&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="机器学习" scheme="https://www.xiapf.com/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+      <category term="机器学习" scheme="https://www.xiapf.com/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="推荐算法" scheme="https://www.xiapf.com/tags/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
   
   <entry>
     <title>电影推荐系统项目实现（一）——web框架搭建及连接数据库</title>
