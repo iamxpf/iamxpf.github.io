@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="整体设计前期设置接收页面回传的用户名1USERID = int(request.GET[&quot;userIdd&quot;])通过orm对象关系映射读取数据库内表并进行存储打开对应文件，用csv创建一个表格形式的文件对象，通过pymysql连接数据库，创建游标执行数据库查询语句，利用fetchall获取所有的结果，将查询的结果通过csv的writerow写入文件中">
+<meta name="keywords" content="机器学习,推荐算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="电影推荐系统项目实现（三）——协同过滤算法的实现">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;mvRecommendSys3&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="整体设计前期设置接收页面回传的用户名1USERID = int(request.GET[&quot;userIdd&quot;])通过orm对象关系映射读取数据库内表并进行存储打开对应文件，用csv创建一个表格形式的文件对象，通过pymysql连接数据库，创建游标执行数据库查询语句，利用fetchall获取所有的结果，将查询的结果通过csv的writerow写入文件中">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201201115654.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201201133725.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201201133638.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201201133939.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201201134007.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201201140407.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200911155633.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200911153057.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200911155655.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201201150236.png">
+<meta property="og:updated_time" content="2020-12-01T07:11:54.032Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201201115654.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/mvRecommendSys3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>电影推荐系统项目实现（三）——协同过滤算法的实现 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">39</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">9</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">75</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/mvRecommendSys3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          电影推荐系统项目实现（三）——协同过滤算法的实现
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-01 15:11:03 / 修改时间：15:11:54" itemprop="dateCreated datePublished" datetime="2020-12-01T15:11:03+08:00">2020-12-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/mvRecommendSys3/" class="post-meta-item leancloud_visitors" data-flag-title="电影推荐系统项目实现（三）——协同过滤算法的实现" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/mvRecommendSys3/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/mvRecommendSys3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="整体设计"><a href="#整体设计" class="headerlink" title="整体设计"></a>整体设计</h2><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201201115654.png" alt></p><h2 id="前期设置"><a href="#前期设置" class="headerlink" title="前期设置"></a>前期设置</h2><h3 id="接收页面回传的用户名"><a href="#接收页面回传的用户名" class="headerlink" title="接收页面回传的用户名"></a>接收页面回传的用户名</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">USERID = int(request.GET[<span class="string">"userIdd"</span>])</span><br></pre></td></tr></table></figure><h3 id="通过orm对象关系映射读取数据库内表并进行存储"><a href="#通过orm对象关系映射读取数据库内表并进行存储" class="headerlink" title="通过orm对象关系映射读取数据库内表并进行存储"></a>通过orm对象关系映射读取数据库内表并进行存储</h3><p>打开对应文件，用csv创建一个表格形式的文件对象，通过pymysql连接数据库，创建游标执行数据库查询语句，利用fetchall获取所有的结果，将查询的结果通过csv的writerow写入文件中</p><a id="more"></a>
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#连接mysql数据库</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_conn</span><span class="params">()</span>:</span></span><br><span class="line">    conn = pymysql.connect(host=<span class="string">'127.0.0.1'</span>, port=<span class="number">3306</span>, user=<span class="string">'root'</span>, passwd=<span class="string">'xpf123321'</span>, db=<span class="string">'moviesys'</span>, charset=<span class="string">'utf8'</span>)</span><br><span class="line">    <span class="keyword">return</span> conn</span><br><span class="line">  </span><br><span class="line"><span class="comment">#将数据库内所有用户的评分写入excel文件中</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_mysql_to_csv</span><span class="params">(filename,filecsv)</span>:</span></span><br><span class="line">    file=filename+<span class="string">"/"</span>+filecsv+<span class="string">'.csv'</span></span><br><span class="line">    print(file)</span><br><span class="line">    <span class="keyword">with</span> codecs.open(filename=file, mode=<span class="string">'w'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        write = csv.writer(f, dialect=<span class="string">'excel'</span>)</span><br><span class="line">        conn = get_conn()</span><br><span class="line">        cur = conn.cursor()</span><br><span class="line">        cur.execute(<span class="string">'select * from '</span>+filecsv)</span><br><span class="line">        <span class="comment">#sql = ('select * from users_resulttable WHERE userId = 1001')</span></span><br><span class="line">        rr = cur.fetchall()</span><br><span class="line">        <span class="comment">#results = query_all(cur=cur, sql=sql, args=None)</span></span><br><span class="line">        <span class="keyword">for</span> result <span class="keyword">in</span> rr:</span><br><span class="line">            <span class="comment">#print(result)</span></span><br><span class="line">            write.writerow(result[:])</span><br></pre></td></tr></table></figure>
+
+<h3 id="初始化数据集"><a href="#初始化数据集" class="headerlink" title="初始化数据集"></a>初始化数据集</h3><p>根据文件名读入用户-电影-评分，按照随机数取值划分训练集和测试集</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#导入数据</span></span><br><span class="line"><span class="meta">@staticmethod</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loadfile</span><span class="params">(filename)</span>:</span></span><br><span class="line">    fr=open(filename,<span class="string">'r'</span>,encoding=<span class="string">'UTF-8'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i ,line <span class="keyword">in</span> enumerate(fr):</span><br><span class="line">        <span class="keyword">yield</span> line.strip(<span class="string">'\r\n'</span>)</span><br><span class="line"></span><br><span class="line">    fr.close()</span><br><span class="line">    print(<span class="string">"load %s sucess"</span> % filename,file=sys.stderr)</span><br><span class="line"></span><br><span class="line"><span class="comment">#划分训练集和测试集</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">splitDataset</span><span class="params">(self,filename,seed,m,k)</span>:</span></span><br><span class="line">    random.seed(seed)</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> self.loadfile(filename):</span><br><span class="line">        id,user,movie,rating=line.split(<span class="string">','</span>)</span><br><span class="line">        <span class="keyword">if</span> random.randint(<span class="number">0</span>,m)==k:</span><br><span class="line">            self.testset.setdefault(user,&#123;&#125;)</span><br><span class="line">            self.testset[user][movie]=rating</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.trainset.setdefault(user, &#123;&#125;)</span><br><span class="line">            self.trainset[user][movie] = rating</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#初始数据集</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initial_dataset</span><span class="params">(self,filename1)</span>:</span></span><br><span class="line">    initialset_len=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> lines <span class="keyword">in</span> self.loadfile(filename1):</span><br><span class="line">        id,users,movies,ratings=lines.split(<span class="string">','</span>)</span><br><span class="line">        <span class="comment"># print(users,movies,ratings)</span></span><br><span class="line">        self.initialset.setdefault(users,&#123;&#125;)</span><br><span class="line">        self.initialset[users][movies]=(ratings)</span><br><span class="line">        initialset_len+=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># print(self.initialset)</span></span><br><span class="line">    print(<span class="string">"load data set sucess"</span> , file=sys.stderr)</span><br><span class="line">    print(<span class="string">'datase=%s'</span> % initialset_len,file=sys.stderr)</span><br></pre></td></tr></table></figure>
+
+<h3 id="构建用户-电影矩阵、电影-用户矩阵、电影-用户-评分矩阵"><a href="#构建用户-电影矩阵、电影-用户矩阵、电影-用户-评分矩阵" class="headerlink" title="构建用户-电影矩阵、电影-用户矩阵、电影-用户-评分矩阵"></a>构建用户-电影矩阵、电影-用户矩阵、电影-用户-评分矩阵</h3><p>（1）根据电影表，得到所有电影id数组、电影id和标题的对应数组、用户id数组</p>
+<p>（2）按照电影和用户在原始数组中的位置索引构造用户-电影矩阵及电影用户矩阵</p>
+<p>（3）同样按照每个电影对应每个用户的位置的评分构建电影-用户-评分矩阵</p>
+<p>（4）构建图</p>
+<p>遍历用户-电影矩阵，当当前用户与电影有评分即有连线，则两者直接的重要度加1，得到每个节点与其他节点重要度矩阵</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 得到用户-电影矩阵</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bulid_users_movies_matrix</span><span class="params">(self, filename1, filename2)</span>:</span></span><br><span class="line">    movie_len = <span class="number">0</span></span><br><span class="line">    user_len = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> lines <span class="keyword">in</span> self.loadfile(filename2):</span><br><span class="line">        imdbid = lines.split(<span class="string">','</span>)[<span class="number">0</span>]</span><br><span class="line">        title = lines.split(<span class="string">','</span>)[<span class="number">1</span>]  <span class="comment"># 读入电影名称</span></span><br><span class="line">        self.movie_matrix.append(imdbid)<span class="comment">#所有电影id</span></span><br><span class="line">        self.movie_list.append(title)</span><br><span class="line">        self.movie_tltle[imdbid]=title</span><br><span class="line">        movie_len += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> lines <span class="keyword">in</span> self.loadfile(filename1):</span><br><span class="line">        id = lines.split(<span class="string">','</span>)[<span class="number">0</span>]</span><br><span class="line">        self.user_matrix.append(id)<span class="comment">#所有用户id</span></span><br><span class="line">        user_len += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">"user:%d,movie:%d"</span> % (user_len, movie_len), file=sys.stderr)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># self.user_movie_matrix=np.zeros((user_len,movie_len))</span></span><br><span class="line">    dataset=self.trainset</span><br><span class="line"></span><br><span class="line">    self.r = np.zeros((movie_len, user_len))</span><br><span class="line">    self.y = np.zeros((movie_len, user_len))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> key, value <span class="keyword">in</span> dataset.items():</span><br><span class="line">        self.user_movie_matrix.setdefault(int(key)- <span class="number">1</span>, &#123;&#125;)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> value:</span><br><span class="line">            <span class="keyword">for</span> k <span class="keyword">in</span> range(len(self.movie_matrix)):  <span class="comment"># 找到电影在原数组中的对应位置</span></span><br><span class="line">                <span class="keyword">if</span> (self.movie_matrix[k] == i):</span><br><span class="line">                    mvid = k</span><br><span class="line">                    self.user_movie_matrix[int(key)- <span class="number">1</span>].setdefault(mvid, <span class="number">0</span>)</span><br><span class="line">                    self.movie_user_matrix.setdefault(mvid,&#123;&#125;)</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">            self.movie_user_matrix[mvid].setdefault(int(key)<span class="number">-1</span>,<span class="number">0</span>)</span><br><span class="line">            self.user_movie_matrix[int(key)- <span class="number">1</span>][mvid] = float(dataset[key][i])</span><br><span class="line">            self.movie_user_matrix[mvid][int(key)- <span class="number">1</span>] = float(dataset[key][i])</span><br><span class="line"></span><br><span class="line">            self.r[mvid][int(key)- <span class="number">1</span>] = self.initialset[key][i]</span><br><span class="line">            self.y[mvid][int(key)- <span class="number">1</span>]=<span class="number">1</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">#构建图矩阵 利用初始数据</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">construct_graph</span><span class="params">(self)</span>:</span></span><br><span class="line">    user_movie_matrix=self.user_movie_matrix</span><br><span class="line">    <span class="keyword">for</span> user,related_mv <span class="keyword">in</span> user_movie_matrix.items():</span><br><span class="line">        self.graph.setdefault(user,&#123;&#125;)</span><br><span class="line">        <span class="keyword">for</span> movie,rating <span class="keyword">in</span> related_mv.items():</span><br><span class="line">            self.graph[user].setdefault(movie, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">            self.graph.setdefault(movie, &#123;&#125;)</span><br><span class="line">            self.graph[movie].setdefault(user, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">            self.graph[user][movie]+=<span class="number">1</span></span><br><span class="line">            self.graph[movie][user]+=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="判断有无冷启动"><a href="#判断有无冷启动" class="headerlink" title="判断有无冷启动"></a>判断有无冷启动</h3><p>遍历用户-电影矩阵，当该用户给电影评分过，返回true，否则返回false。返回true说明不存在冷启动，直接按照历史数据应用协同过滤算法得到推荐结果，反之，则推荐最热门的电影（遍历用户-电影矩阵，对每个被评分的矩阵进行计数，找到计数次数最多的前n个电影的位置，再根据电影表找到对应电影返回推荐结果）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#冷启动</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cold_start</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="comment"># 获取当前最热门的电影</span></span><br><span class="line">    N =&#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> user, related_mv <span class="keyword">in</span> self.user_movie_matrix.items():</span><br><span class="line">        <span class="keyword">for</span> mv, rating <span class="keyword">in</span> related_mv.items():</span><br><span class="line">            N.setdefault(mv,<span class="number">0</span>)</span><br><span class="line">            N[mv] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    rankN=sorted(N.items(),key=<span class="keyword">lambda</span> j:j[<span class="number">1</span>],reverse=<span class="literal">True</span>)[:self.n_rec_movie]</span><br><span class="line">    print(rankN)</span><br><span class="line"></span><br><span class="line">    rec_list=[]</span><br><span class="line">    <span class="keyword">for</span> i,rating <span class="keyword">in</span> rankN:</span><br><span class="line">        rec_list.append(self.movie_matrix[i])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> rec_list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 判断是否评价过电影，即新用户</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">evaluate</span><span class="params">(self, id)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> user, mv <span class="keyword">in</span> self.user_movie_matrix.items():</span><br><span class="line">        <span class="keyword">if</span> id == user:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure>
+
+<p>当不存在冷启动的时候，应用下面三种算法进行推荐，并评估推荐的结果</p>
+<h2 id="基于邻域的算法"><a href="#基于邻域的算法" class="headerlink" title="基于邻域的算法"></a>基于邻域的算法</h2><h3 id="基于用户的协同过滤算法"><a href="#基于用户的协同过滤算法" class="headerlink" title="基于用户的协同过滤算法"></a>基于用户的协同过滤算法</h3><p>（1）计算用户之间的相似度（应用余弦相似度）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201201133725.png" alt></p>
+<p>改进相似度的计算：两个用户对冷门物品采取过相同行为说明他们之间相似度更高，惩罚共同兴趣列表中饿热门物品</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201201133638.png" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#建立用户相似度表</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_users_sim_matrix</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="comment">#建立电影用户倒排表</span></span><br><span class="line">    buy=&#123;&#125;</span><br><span class="line">    user2user = &#123;&#125;</span><br><span class="line">    movie_user_matrix = self.movie_user_matrix</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> movie,user <span class="keyword">in</span> movie_user_matrix.items():</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> user.keys():</span><br><span class="line">            buy.setdefault(i,<span class="number">0</span>)</span><br><span class="line">            buy[i]+=<span class="number">1</span></span><br><span class="line">            user2user.setdefault(i,&#123;&#125;)</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> user.keys():</span><br><span class="line">                <span class="keyword">if</span>(i==j):</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                user2user[i].setdefault(j,<span class="number">0</span>)</span><br><span class="line">                user2user[i][j]+=<span class="number">1</span></span><br><span class="line">                <span class="comment"># user_user_sim[i][j]+=np.log(1/(1+len(user))) #对用户相似度的改进</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> u1,related_u <span class="keyword">in</span> user2user.items():</span><br><span class="line">        self.user_sim.setdefault(u1,&#123;&#125;)</span><br><span class="line">        <span class="keyword">for</span> u2,cij <span class="keyword">in</span> related_u.items():</span><br><span class="line">            self.user_sim[u1][u2]=cij/(np.sqrt(buy[u1])*np.sqrt(buy[u2])) <span class="comment">#余弦相似度</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）推荐</p>
+<p>根据用户之间的相似度，找到与当前用户最近的k个用户，从他们评分的电影中找到该用户未看过的进行推荐，推荐理由=相似度 * 评分</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 推荐</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recommend_linyu_users</span><span class="params">(self, userid)</span>:</span></span><br><span class="line">    K=self.k_sim_user</span><br><span class="line">    N=self.n_rec_movie</span><br><span class="line">    user_user_sim=self.user_sim</span><br><span class="line"></span><br><span class="line">    watched_movie = self.user_movie_matrix[userid]</span><br><span class="line">    rankSim = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> v, sim <span class="keyword">in</span> sorted(user_user_sim[userid].items(), key=<span class="keyword">lambda</span> j: j[<span class="number">1</span>], reverse=<span class="literal">True</span>)[:K]:</span><br><span class="line">        <span class="keyword">for</span> mv, rating <span class="keyword">in</span> self.user_movie_matrix[v].items():</span><br><span class="line">            <span class="keyword">if</span> mv <span class="keyword">in</span> watched_movie:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            rankSim.setdefault(mv,<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">            rankSim[mv] += sim * rating</span><br><span class="line"></span><br><span class="line">    rankN = sorted(rankSim.items(), key=<span class="keyword">lambda</span> j: j[<span class="number">1</span>], reverse=<span class="literal">True</span>)[:N]  <span class="comment"># 得到了推荐的n个电影</span></span><br><span class="line"></span><br><span class="line">    rec_list=[]</span><br><span class="line">    <span class="keyword">for</span> i,rating <span class="keyword">in</span> rankN:</span><br><span class="line">        rec_list.append(self.movie_matrix[i])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> rec_list</span><br></pre></td></tr></table></figure>
+
+<h3 id="基于物品的协同过滤算法"><a href="#基于物品的协同过滤算法" class="headerlink" title="基于物品的协同过滤算法"></a>基于物品的协同过滤算法</h3><p>（1）计算物品之间的相似度（应用余弦相似度）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201201133939.png" alt></p>
+<p>改进相似度的计算：活跃用户的贡献度应小于不活跃用户，惩罚活跃用户</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201201134007.png" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#计算任意两个物品之间的相似度</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_movies_sim_matrix</span><span class="params">(self)</span>:</span></span><br><span class="line">    buy=&#123;&#125;</span><br><span class="line">    movie2movie=&#123;&#125;</span><br><span class="line">    user_movie_matrix=self.user_movie_matrix</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> user,movie <span class="keyword">in</span> user_movie_matrix.items():</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> movie.keys():</span><br><span class="line">            buy.setdefault(i,<span class="number">0</span>)</span><br><span class="line">            buy[i]+=<span class="number">1</span></span><br><span class="line">            movie2movie.setdefault(i,&#123;&#125;)</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> movie.keys():</span><br><span class="line">                <span class="keyword">if</span>(i==j):</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                movie2movie[i].setdefault(j, <span class="number">0</span>)</span><br><span class="line">                movie2movie[i][j]+=<span class="number">1</span></span><br><span class="line">                <span class="comment"># movie2movie[i][j]+=1/(np.log(1+len(movie))) #用户活跃度对物品相似度的影响</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> m1,relateM <span class="keyword">in</span> movie2movie.items():</span><br><span class="line">        self.movie_sim.setdefault(m1,&#123;&#125;)</span><br><span class="line">        <span class="keyword">for</span> m2,score <span class="keyword">in</span> relateM.items():</span><br><span class="line">            self.movie_sim[m1][m2]=score/(np.sqrt(buy[m1])*np.sqrt(buy[m2]))</span><br><span class="line">            <span class="comment"># self.movie_sim[m1][m2]/=max(self.movie_movie_sim[m1][m2]) #物品相似度的归一化</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）推荐</p>
+<p>在当前用户看过的电影中，根据物品之间的相似度，找到与看过电影最近的k个用户，从中找到该用户未看过的进行推荐，推荐理由=相似度 * 评分</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recommend_linyu_items</span><span class="params">(self,user)</span>:</span></span><br><span class="line">    K=self.k_sim_movie</span><br><span class="line">    N=self.n_rec_movie</span><br><span class="line"></span><br><span class="line">    movie_movie_sim=self.movie_sim</span><br><span class="line"></span><br><span class="line">    watched_movie=self.user_movie_matrix[user]</span><br><span class="line">    rankSim=&#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> movie,rating <span class="keyword">in</span> watched_movie.items():</span><br><span class="line">        <span class="keyword">for</span> related_movie,sim <span class="keyword">in</span> sorted(movie_movie_sim[movie].items(),key=<span class="keyword">lambda</span> j:j[<span class="number">1</span>],reverse=<span class="literal">True</span>)[:K]:</span><br><span class="line">            <span class="keyword">if</span>(related_movie <span class="keyword">in</span> watched_movie):</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            <span class="comment">#因数据集太小，将上一句删除</span></span><br><span class="line">            rankSim.setdefault(related_movie,<span class="number">0</span>)</span><br><span class="line">            rankSim[related_movie]+=sim*rating</span><br><span class="line">            <span class="comment"># rankSim[related_movie].reason[movie]=sim*rating #对推荐该电影的解释</span></span><br><span class="line"></span><br><span class="line">    rankN=sorted(rankSim.items(),key=<span class="keyword">lambda</span> j:j[<span class="number">1</span>],reverse=<span class="literal">True</span>)[:N] <span class="comment">#得到推荐电影的索引</span></span><br><span class="line">    print(rankN)</span><br><span class="line"></span><br><span class="line">    rec_list=[]</span><br><span class="line">    <span class="keyword">for</span> i,rating <span class="keyword">in</span> rankN:</span><br><span class="line">        rec_list.append(self.movie_matrix[i])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> rec_list</span><br></pre></td></tr></table></figure>
+
+<h2 id="隐语义模型"><a href="#隐语义模型" class="headerlink" title="隐语义模型"></a>隐语义模型</h2><p>（对于某个用户，首先得到他的兴趣分类，然后从分类中挑选他可能喜欢的物品。）</p>
+<p>将电影按照类别进行分类，通过用户u的兴趣和电影第k个隐类之间的关系，以及电影第k个隐类和物品i之间的关系来计算用户u对物品i的兴趣</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201201140407.png" alt></p>
+<p>总体思路是对每个用户应用一个不同的线性回归的方程，使用用户的参数向量乘以电影的特征向量就是当前的预测，将预测减去实际值，目标是缩小预测和实际之间的误差，同时加上使得特征向量和参数向量最小的正则项</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200911155633.png" alt></p>
+<p>r（i，j）：表示用户j评价了电影i</p>
+<p>y（i，j）：用户j对电影i的评价等级（如果用户评价过该电影）</p>
+<p>θ（j）：用户j对电影评价的参数</p>
+<p>x（i）：电影i的特征向量</p>
+<p>整体流程</p>
+<p>（1）数据预处理，导入数据的评分矩阵和用户评价矩阵，并将评分矩阵进行均值化</p>
+<p>由于有用户没有评分任何一个电影，则该用户的参数向量为0，则不管算法如何运行，最终的参数向量仍为0，最终预测也都是0，这样的预测没有意义。</p>
+<p>因此，需要对电影评分Y矩阵进行均值归一化，将Y=Y-Y.mean()（Y的均值），这样保证了没有任何评分的用户最终预测也不是0。</p>
+<p>预处理后的数据在模型训练后如何进行预测：将预测值θ * x再加上Y的均值Y.mean()，因为一开始的预处理把所有评分都减去了均值，最后的预测需要加上</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200911153057.png" alt></p>
+<p>将电影-用户=评分表进行均值归一化：y_mean=y-y.mean()</p>
+<p>（2）随机初始化电影的特征向量和用户的参数向量：使用正态分布函数进行初始化</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x_origin = np.random.standard_normal((n_movies, n_features))</span><br><span class="line">theta_origin = np.random.standard_normal((n_users, n_features))</span><br></pre></td></tr></table></figure>
+
+<p>（3）建立优化目标函数（如上）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 2.计算损失</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cost</span><span class="params">(self,param, y, r, n_features)</span>:</span></span><br><span class="line">    n_movies, n_users = y.shape  <span class="comment"># y的大小是电影乘以用户</span></span><br><span class="line">    x, theta = self.separate(param, n_movies, n_users, n_features)</span><br><span class="line"></span><br><span class="line">    inner = np.multiply(np.dot(x, theta.T) - y, r)  <span class="comment"># 为什么要乘以r</span></span><br><span class="line">    inner_cost = (<span class="number">1</span> / <span class="number">2</span>) * np.sum(np.power(inner, <span class="number">2</span>))</span><br><span class="line">    <span class="keyword">return</span> inner_cost</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加上正则化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regular_cost</span><span class="params">(self,param, y, r, n_features, l=<span class="number">1</span>)</span>:</span></span><br><span class="line">    n_movies, n_users = y.shape</span><br><span class="line">    x, theta = self.separate(param, n_movies, n_users, n_features)</span><br><span class="line"></span><br><span class="line">    inner_cost = self.cost(param, y, r, n_features)</span><br><span class="line"></span><br><span class="line">    regular = (l / <span class="number">2</span>) * np.sum(np.power(param, <span class="number">2</span>))</span><br><span class="line">    <span class="keyword">return</span> inner_cost + regular</span><br></pre></td></tr></table></figure>
+
+<p>（4）计算函数梯度</p>
+<p>分别更新特征向量和参数向量</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200911155655.png" alt></p>
+<p>（5）使用优化算法，按照梯度下降的方向求得优化函数最小的参数值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 3.计算梯度</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">grad</span><span class="params">(self,param, y, r, n_features)</span>:</span></span><br><span class="line">    n_movies, n_users = y.shape</span><br><span class="line">    x, theta = self.separate(param, n_movies, n_users, n_features)</span><br><span class="line"></span><br><span class="line">    inner = np.multiply(np.dot(x, theta.T) - y, r)</span><br><span class="line">    x_grad = np.dot(inner, theta)</span><br><span class="line"></span><br><span class="line">    theta_grad = np.dot(inner.T, x)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> self.merge(x_grad, theta_grad)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加上正则化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regular_grad</span><span class="params">(self,param, y, r, n_features, l=<span class="number">1</span>)</span>:</span></span><br><span class="line">    inner_grad = self.grad(param, y, r, n_features)</span><br><span class="line">    regular = l * param  <span class="comment"># param是x和theta的连接</span></span><br><span class="line">    <span class="keyword">return</span> inner_grad + regular</span><br><span class="line"><span class="comment"># 对梯度进行优化</span></span><br><span class="line">res = opt.minimize(fun=self.regular_cost, x0=param, args=(y_mean, r, n_features, l), jac=self.regular_grad, method=<span class="string">'TNC'</span>)</span><br><span class="line">param_train = res.x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用得到的电影特征和用户偏好进行预测</span></span><br><span class="line">x_train, theta_train = self.separate(param_train, n_movies, n_users, n_features)</span><br></pre></td></tr></table></figure>
+
+<p>（6）得到要求的用户的参数矩阵，乘以所有电影的特征向量，再加上预处理中减去的评分矩阵的均值，按照排序的方法，取前几个电影即为需要推荐的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">real_predict=predict[:,userid]+y.mean()</span><br><span class="line"><span class="comment"># 以降序形式排列</span></span><br><span class="line">idx = np.argsort(real_predict)[::<span class="number">-1</span>]</span><br><span class="line"></span><br><span class="line">print(<span class="string">'推荐的电影为：'</span>)</span><br><span class="line"><span class="comment">#获得推荐的电影的名称</span></span><br><span class="line">movie_list=np.array(movie_list)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> movie_list[idx][:N]:</span><br><span class="line">    rec_list.append(i)</span><br><span class="line">    print(i)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> imdbid,title <span class="keyword">in</span> self.movie_tltle.items():</span><br><span class="line">    <span class="keyword">if</span> title <span class="keyword">in</span> rec_list:</span><br><span class="line">        rec_id.append(imdbid)</span><br><span class="line">        print(rec_id)</span><br></pre></td></tr></table></figure>
+
+<h2 id="基于图的随机游走算法"><a href="#基于图的随机游走算法" class="headerlink" title="基于图的随机游走算法"></a>基于图的随机游走算法</h2><p>（用户行为很容易用二分图表示）</p>
+<p>之前已经将用户的行为表示为二分图模型，根据用户顶点直接有无边连接来确定节点的相关性。</p>
+<p>对用户u进行推荐，则从该点对应的节点开始随机游走，游走到任意节点，根据参数alpha决定是否继续游走，如果继续，从当前节点指向的节点中随机选一个作为下一个走的节点，停止游走则从根节点重新走，多次之后，每个节点被访问的概率会收敛，最终推荐的权重就是节点访问的概率。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201201150236.png" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#pk算法 计算图定点的相关性</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">recommend_personalrank</span><span class="params">(self,root,alpha=<span class="number">0.5</span>,max_step=<span class="number">50</span>)</span>:</span></span><br><span class="line">    Graph=self.graph</span><br><span class="line">    rank=dict()</span><br><span class="line">    rank=&#123;x:<span class="number">0</span> <span class="keyword">for</span> x <span class="keyword">in</span> Graph.keys()&#125;</span><br><span class="line">    rank[root]=<span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> range(max_step):</span><br><span class="line">        tmp=&#123;x:<span class="number">0</span> <span class="keyword">for</span> x <span class="keyword">in</span> Graph.keys()&#125;</span><br><span class="line">        <span class="keyword">for</span> u,ev <span class="keyword">in</span> Graph.items():</span><br><span class="line">            <span class="keyword">for</span> v,e <span class="keyword">in</span> ev.items():</span><br><span class="line">                <span class="keyword">if</span> v <span class="keyword">not</span> <span class="keyword">in</span> tmp:</span><br><span class="line">                    tmp[v]=<span class="number">0</span></span><br><span class="line">                tmp[v]+=alpha*rank[u]/len(ev)  <span class="comment">#ev:u的出度</span></span><br><span class="line">                <span class="keyword">if</span> v==root:</span><br><span class="line">                    tmp[root]+=<span class="number">1</span>-alpha</span><br><span class="line">            rank=tmp</span><br><span class="line">    <span class="comment">#得到从root走的所有节点的权重</span></span><br><span class="line">    <span class="keyword">for</span> v,e <span class="keyword">in</span> Graph[root].items():</span><br><span class="line">        <span class="keyword">for</span> item,weight <span class="keyword">in</span> rank.items():</span><br><span class="line">            <span class="keyword">if</span> v==item <span class="keyword">or</span> item==root:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            self.rank_list[item]=weight</span><br><span class="line"></span><br><span class="line">    <span class="comment">#返回没有和root产生行为的节点中，最优的几个节点</span></span><br><span class="line">    self.rank_list=sorted(self.rank_list.items(),key=<span class="keyword">lambda</span> j:j[<span class="number">1</span>],reverse=<span class="literal">True</span>)[:self.n_rec_movie]</span><br><span class="line">    print(self.rank_list)</span><br><span class="line">    rec_list = []</span><br><span class="line">    <span class="keyword">for</span> item, weight <span class="keyword">in</span> self.rank_list:</span><br><span class="line">        rec_list.append(self.movie_matrix[item])</span><br></pre></td></tr></table></figure>
+
+<h2 id="评价指标（结果待续）"><a href="#评价指标（结果待续）" class="headerlink" title="评价指标（结果待续）"></a>评价指标（结果待续）</h2><p>（1）准确率：描述最终的推荐列表中有多少比例是发生过的用户—物品评分记录</p>
+<p>（2）召回率：描述有多少比例的用户—物品评分记录包含在最终的推荐列表中</p>
+<p>（3）覆盖率：反映了推荐算法发掘长尾的能力，覆盖率越高，说明推荐算法越能够将长尾中的物品推荐给用户</p>
+<p>（4）新颖度：列表中物品的平均流行度度量推荐结果的新颖度。如果推荐出的物品都很热门，说明推荐的新颖度较低，否则说明推荐结果比较新颖</p>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>准确率</th>
+<th>召回率</th>
+<th>覆盖率</th>
+<th>新颖度</th>
+<th>运行时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>基于邻域的协同过滤（用户）</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>基于邻域的协同过滤（物品）</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>隐语义模型</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>基于图的随机游走</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>结论：当网站是物品较多，则适用于基于邻域的协同过滤（用户），当网站用户较多，则适用于基于邻域的协同过滤（物品），物品的相似度相对于用户的兴趣一般比较稳定，基于邻域的协同过滤（物品）效果更好</p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+              <a href="/tags/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 推荐算法</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/mvRecommendSys2/" rel="next" title="电影推荐系统项目实现（二）——基于用户行为数据的电影推荐系统">
+                  <i class="fa fa-chevron-left"></i> 电影推荐系统项目实现（二）——基于用户行为数据的电影推荐系统
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#整体设计"><span class="nav-number">1.</span> <span class="nav-text">整体设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前期设置"><span class="nav-number">2.</span> <span class="nav-text">前期设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#接收页面回传的用户名"><span class="nav-number">2.1.</span> <span class="nav-text">接收页面回传的用户名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过orm对象关系映射读取数据库内表并进行存储"><span class="nav-number">2.2.</span> <span class="nav-text">通过orm对象关系映射读取数据库内表并进行存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化数据集"><span class="nav-number">2.3.</span> <span class="nav-text">初始化数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建用户-电影矩阵、电影-用户矩阵、电影-用户-评分矩阵"><span class="nav-number">2.4.</span> <span class="nav-text">构建用户-电影矩阵、电影-用户矩阵、电影-用户-评分矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#判断有无冷启动"><span class="nav-number">2.5.</span> <span class="nav-text">判断有无冷启动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于邻域的算法"><span class="nav-number">3.</span> <span class="nav-text">基于邻域的算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于用户的协同过滤算法"><span class="nav-number">3.1.</span> <span class="nav-text">基于用户的协同过滤算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于物品的协同过滤算法"><span class="nav-number">3.2.</span> <span class="nav-text">基于物品的协同过滤算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐语义模型"><span class="nav-number">4.</span> <span class="nav-text">隐语义模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于图的随机游走算法"><span class="nav-number">5.</span> <span class="nav-text">基于图的随机游走算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#评价指标（结果待续）"><span class="nav-number">6.</span> <span class="nav-text">评价指标（结果待续）</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">387k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">5:51</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
