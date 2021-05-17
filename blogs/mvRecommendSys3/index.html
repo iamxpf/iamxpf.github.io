@@ -56,13 +56,13 @@
   };
 </script>
 
-  <meta name="description" content="整体设计前期设置接收页面回传的用户名1USERID = int(request.GET[&quot;userIdd&quot;])通过orm对象关系映射读取数据库内表并进行存储打开对应文件，用csv创建一个表格形式的文件对象，通过pymysql连接数据库，创建游标执行数据库查询语句，利用fetchall获取所有的结果，将查询的结果通过csv的writerow写入文件中">
+  <meta name="description" content="电影推荐系统项目实现（三）——协同过滤算法的实现整体设计前期设置接收页面回传的用户名1USERID = int(request.GET[&quot;userIdd&quot;])通过orm对象关系映射读取数据库内表并进行存储打开对应文件，用csv创建一个表格形式的文件对象，通过pymysql连接数据库，创建游标执行数据库查询语句，利用fetchall获取所有的结果，将查询的结果通过csv的writerow写入文件中">
 <meta name="keywords" content="机器学习,推荐算法">
 <meta property="og:type" content="article">
 <meta property="og:title" content="电影推荐系统项目实现（三）——协同过滤算法的实现">
 <meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;mvRecommendSys3&#x2F;index.html">
 <meta property="og:site_name" content="八戒大强攻">
-<meta property="og:description" content="整体设计前期设置接收页面回传的用户名1USERID = int(request.GET[&quot;userIdd&quot;])通过orm对象关系映射读取数据库内表并进行存储打开对应文件，用csv创建一个表格形式的文件对象，通过pymysql连接数据库，创建游标执行数据库查询语句，利用fetchall获取所有的结果，将查询的结果通过csv的writerow写入文件中">
+<meta property="og:description" content="电影推荐系统项目实现（三）——协同过滤算法的实现整体设计前期设置接收页面回传的用户名1USERID = int(request.GET[&quot;userIdd&quot;])通过orm对象关系映射读取数据库内表并进行存储打开对应文件，用csv创建一个表格形式的文件对象，通过pymysql连接数据库，创建游标执行数据库查询语句，利用fetchall获取所有的结果，将查询的结果通过csv的writerow写入文件中">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201201115654.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201201133725.png">
@@ -74,7 +74,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200911153057.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20200911155655.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201201150236.png">
-<meta property="og:updated_time" content="2020-12-01T07:11:54.032Z">
+<meta property="og:updated_time" content="2020-12-01T07:43:14.795Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20201201115654.png">
 
@@ -169,7 +169,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">39</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">40</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -179,7 +179,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">75</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">76</span></a>
 
   </li>
         <li class="menu-item menu-item-sitemap">
@@ -268,7 +268,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-12-01 15:11:03 / 修改时间：15:11:54" itemprop="dateCreated datePublished" datetime="2020-12-01T15:11:03+08:00">2020-12-01</time>
+              <time title="创建时间：2020-12-01 15:11:03 / 修改时间：15:43:14" itemprop="dateCreated datePublished" datetime="2020-12-01T15:11:03+08:00">2020-12-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -330,7 +330,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="整体设计"><a href="#整体设计" class="headerlink" title="整体设计"></a>整体设计</h2><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201201115654.png" alt></p><h2 id="前期设置"><a href="#前期设置" class="headerlink" title="前期设置"></a>前期设置</h2><h3 id="接收页面回传的用户名"><a href="#接收页面回传的用户名" class="headerlink" title="接收页面回传的用户名"></a>接收页面回传的用户名</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">USERID = int(request.GET[<span class="string">"userIdd"</span>])</span><br></pre></td></tr></table></figure><h3 id="通过orm对象关系映射读取数据库内表并进行存储"><a href="#通过orm对象关系映射读取数据库内表并进行存储" class="headerlink" title="通过orm对象关系映射读取数据库内表并进行存储"></a>通过orm对象关系映射读取数据库内表并进行存储</h3><p>打开对应文件，用csv创建一个表格形式的文件对象，通过pymysql连接数据库，创建游标执行数据库查询语句，利用fetchall获取所有的结果，将查询的结果通过csv的writerow写入文件中</p><a id="more"></a>
+        <h1 id="电影推荐系统项目实现（三）——协同过滤算法的实现"><a href="#电影推荐系统项目实现（三）——协同过滤算法的实现" class="headerlink" title="电影推荐系统项目实现（三）——协同过滤算法的实现"></a>电影推荐系统项目实现（三）——协同过滤算法的实现</h1><h2 id="整体设计"><a href="#整体设计" class="headerlink" title="整体设计"></a>整体设计</h2><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201201115654.png" alt></p><h2 id="前期设置"><a href="#前期设置" class="headerlink" title="前期设置"></a>前期设置</h2><h3 id="接收页面回传的用户名"><a href="#接收页面回传的用户名" class="headerlink" title="接收页面回传的用户名"></a>接收页面回传的用户名</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">USERID = int(request.GET[<span class="string">"userIdd"</span>])</span><br></pre></td></tr></table></figure><h3 id="通过orm对象关系映射读取数据库内表并进行存储"><a href="#通过orm对象关系映射读取数据库内表并进行存储" class="headerlink" title="通过orm对象关系映射读取数据库内表并进行存储"></a>通过orm对象关系映射读取数据库内表并进行存储</h3><p>打开对应文件，用csv创建一个表格形式的文件对象，通过pymysql连接数据库，创建游标执行数据库查询语句，利用fetchall获取所有的结果，将查询的结果通过csv的writerow写入文件中</p><a id="more"></a>
 
 
 
@@ -373,33 +373,26 @@
 <h2 id="隐语义模型"><a href="#隐语义模型" class="headerlink" title="隐语义模型"></a>隐语义模型</h2><p>（对于某个用户，首先得到他的兴趣分类，然后从分类中挑选他可能喜欢的物品。）</p>
 <p>将电影按照类别进行分类，通过用户u的兴趣和电影第k个隐类之间的关系，以及电影第k个隐类和物品i之间的关系来计算用户u对物品i的兴趣</p>
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20201201140407.png" alt></p>
-<p>总体思路是对每个用户应用一个不同的线性回归的方程，使用用户的参数向量乘以电影的特征向量就是当前的预测，将预测减去实际值，目标是缩小预测和实际之间的误差，同时加上使得特征向量和参数向量最小的正则项</p>
+<h3 id="总体思路"><a href="#总体思路" class="headerlink" title="总体思路"></a>总体思路</h3><p>对每个用户应用一个不同的线性回归的方程，使用用户的参数向量乘以电影的特征向量就是当前的预测，将预测减去实际值，目标是缩小预测和实际之间的误差，同时加上使得特征向量和参数向量最小的正则项</p>
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200911155633.png" alt></p>
 <p>r（i，j）：表示用户j评价了电影i</p>
 <p>y（i，j）：用户j对电影i的评价等级（如果用户评价过该电影）</p>
 <p>θ（j）：用户j对电影评价的参数</p>
 <p>x（i）：电影i的特征向量</p>
-<p>整体流程</p>
-<p>（1）数据预处理，导入数据的评分矩阵和用户评价矩阵，并将评分矩阵进行均值化</p>
-<p>由于有用户没有评分任何一个电影，则该用户的参数向量为0，则不管算法如何运行，最终的参数向量仍为0，最终预测也都是0，这样的预测没有意义。</p>
+<h3 id="数据预处理，导入数据的评分矩阵和用户评价矩阵，并将评分矩阵进行均值化"><a href="#数据预处理，导入数据的评分矩阵和用户评价矩阵，并将评分矩阵进行均值化" class="headerlink" title="数据预处理，导入数据的评分矩阵和用户评价矩阵，并将评分矩阵进行均值化"></a>数据预处理，导入数据的评分矩阵和用户评价矩阵，并将评分矩阵进行均值化</h3><p>由于有用户没有评分任何一个电影，则该用户的参数向量为0，则不管算法如何运行，最终的参数向量仍为0，最终预测也都是0，这样的预测没有意义。</p>
 <p>因此，需要对电影评分Y矩阵进行均值归一化，将Y=Y-Y.mean()（Y的均值），这样保证了没有任何评分的用户最终预测也不是0。</p>
 <p>预处理后的数据在模型训练后如何进行预测：将预测值θ * x再加上Y的均值Y.mean()，因为一开始的预处理把所有评分都减去了均值，最后的预测需要加上</p>
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200911153057.png" alt></p>
 <p>将电影-用户=评分表进行均值归一化：y_mean=y-y.mean()</p>
-<p>（2）随机初始化电影的特征向量和用户的参数向量：使用正态分布函数进行初始化</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x_origin = np.random.standard_normal((n_movies, n_features))</span><br><span class="line">theta_origin = np.random.standard_normal((n_users, n_features))</span><br></pre></td></tr></table></figure>
+<h3 id="随机初始化电影的特征向量和用户的参数向量：使用正态分布函数进行初始化"><a href="#随机初始化电影的特征向量和用户的参数向量：使用正态分布函数进行初始化" class="headerlink" title="随机初始化电影的特征向量和用户的参数向量：使用正态分布函数进行初始化"></a>随机初始化电影的特征向量和用户的参数向量：使用正态分布函数进行初始化</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x_origin = np.random.standard_normal((n_movies, n_features))</span><br><span class="line">theta_origin = np.random.standard_normal((n_users, n_features))</span><br></pre></td></tr></table></figure>
 
-<p>（3）建立优化目标函数（如上）</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 2.计算损失</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cost</span><span class="params">(self,param, y, r, n_features)</span>:</span></span><br><span class="line">    n_movies, n_users = y.shape  <span class="comment"># y的大小是电影乘以用户</span></span><br><span class="line">    x, theta = self.separate(param, n_movies, n_users, n_features)</span><br><span class="line"></span><br><span class="line">    inner = np.multiply(np.dot(x, theta.T) - y, r)  <span class="comment"># 为什么要乘以r</span></span><br><span class="line">    inner_cost = (<span class="number">1</span> / <span class="number">2</span>) * np.sum(np.power(inner, <span class="number">2</span>))</span><br><span class="line">    <span class="keyword">return</span> inner_cost</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加上正则化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regular_cost</span><span class="params">(self,param, y, r, n_features, l=<span class="number">1</span>)</span>:</span></span><br><span class="line">    n_movies, n_users = y.shape</span><br><span class="line">    x, theta = self.separate(param, n_movies, n_users, n_features)</span><br><span class="line"></span><br><span class="line">    inner_cost = self.cost(param, y, r, n_features)</span><br><span class="line"></span><br><span class="line">    regular = (l / <span class="number">2</span>) * np.sum(np.power(param, <span class="number">2</span>))</span><br><span class="line">    <span class="keyword">return</span> inner_cost + regular</span><br></pre></td></tr></table></figure>
+<h3 id="建立优化目标函数（如上）"><a href="#建立优化目标函数（如上）" class="headerlink" title="建立优化目标函数（如上）"></a>建立优化目标函数（如上）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 2.计算损失</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cost</span><span class="params">(self,param, y, r, n_features)</span>:</span></span><br><span class="line">    n_movies, n_users = y.shape  <span class="comment"># y的大小是电影乘以用户</span></span><br><span class="line">    x, theta = self.separate(param, n_movies, n_users, n_features)</span><br><span class="line"></span><br><span class="line">    inner = np.multiply(np.dot(x, theta.T) - y, r)  <span class="comment"># 为什么要乘以r</span></span><br><span class="line">    inner_cost = (<span class="number">1</span> / <span class="number">2</span>) * np.sum(np.power(inner, <span class="number">2</span>))</span><br><span class="line">    <span class="keyword">return</span> inner_cost</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加上正则化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regular_cost</span><span class="params">(self,param, y, r, n_features, l=<span class="number">1</span>)</span>:</span></span><br><span class="line">    n_movies, n_users = y.shape</span><br><span class="line">    x, theta = self.separate(param, n_movies, n_users, n_features)</span><br><span class="line"></span><br><span class="line">    inner_cost = self.cost(param, y, r, n_features)</span><br><span class="line"></span><br><span class="line">    regular = (l / <span class="number">2</span>) * np.sum(np.power(param, <span class="number">2</span>))</span><br><span class="line">    <span class="keyword">return</span> inner_cost + regular</span><br></pre></td></tr></table></figure>
 
-<p>（4）计算函数梯度</p>
-<p>分别更新特征向量和参数向量</p>
+<h3 id="计算函数梯度"><a href="#计算函数梯度" class="headerlink" title="计算函数梯度"></a>计算函数梯度</h3><p>分别更新特征向量和参数向量</p>
 <p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20200911155655.png" alt></p>
-<p>（5）使用优化算法，按照梯度下降的方向求得优化函数最小的参数值</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 3.计算梯度</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">grad</span><span class="params">(self,param, y, r, n_features)</span>:</span></span><br><span class="line">    n_movies, n_users = y.shape</span><br><span class="line">    x, theta = self.separate(param, n_movies, n_users, n_features)</span><br><span class="line"></span><br><span class="line">    inner = np.multiply(np.dot(x, theta.T) - y, r)</span><br><span class="line">    x_grad = np.dot(inner, theta)</span><br><span class="line"></span><br><span class="line">    theta_grad = np.dot(inner.T, x)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> self.merge(x_grad, theta_grad)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加上正则化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regular_grad</span><span class="params">(self,param, y, r, n_features, l=<span class="number">1</span>)</span>:</span></span><br><span class="line">    inner_grad = self.grad(param, y, r, n_features)</span><br><span class="line">    regular = l * param  <span class="comment"># param是x和theta的连接</span></span><br><span class="line">    <span class="keyword">return</span> inner_grad + regular</span><br><span class="line"><span class="comment"># 对梯度进行优化</span></span><br><span class="line">res = opt.minimize(fun=self.regular_cost, x0=param, args=(y_mean, r, n_features, l), jac=self.regular_grad, method=<span class="string">'TNC'</span>)</span><br><span class="line">param_train = res.x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用得到的电影特征和用户偏好进行预测</span></span><br><span class="line">x_train, theta_train = self.separate(param_train, n_movies, n_users, n_features)</span><br></pre></td></tr></table></figure>
+<h3 id="使用优化算法，按照梯度下降的方向求得优化函数最小的参数值"><a href="#使用优化算法，按照梯度下降的方向求得优化函数最小的参数值" class="headerlink" title="使用优化算法，按照梯度下降的方向求得优化函数最小的参数值"></a>使用优化算法，按照梯度下降的方向求得优化函数最小的参数值</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 3.计算梯度</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">grad</span><span class="params">(self,param, y, r, n_features)</span>:</span></span><br><span class="line">    n_movies, n_users = y.shape</span><br><span class="line">    x, theta = self.separate(param, n_movies, n_users, n_features)</span><br><span class="line"></span><br><span class="line">    inner = np.multiply(np.dot(x, theta.T) - y, r)</span><br><span class="line">    x_grad = np.dot(inner, theta)</span><br><span class="line"></span><br><span class="line">    theta_grad = np.dot(inner.T, x)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> self.merge(x_grad, theta_grad)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加上正则化</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regular_grad</span><span class="params">(self,param, y, r, n_features, l=<span class="number">1</span>)</span>:</span></span><br><span class="line">    inner_grad = self.grad(param, y, r, n_features)</span><br><span class="line">    regular = l * param  <span class="comment"># param是x和theta的连接</span></span><br><span class="line">    <span class="keyword">return</span> inner_grad + regular</span><br><span class="line"><span class="comment"># 对梯度进行优化</span></span><br><span class="line">res = opt.minimize(fun=self.regular_cost, x0=param, args=(y_mean, r, n_features, l), jac=self.regular_grad, method=<span class="string">'TNC'</span>)</span><br><span class="line">param_train = res.x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用得到的电影特征和用户偏好进行预测</span></span><br><span class="line">x_train, theta_train = self.separate(param_train, n_movies, n_users, n_features)</span><br></pre></td></tr></table></figure>
 
-<p>（6）得到要求的用户的参数矩阵，乘以所有电影的特征向量，再加上预处理中减去的评分矩阵的均值，按照排序的方法，取前几个电影即为需要推荐的</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">real_predict=predict[:,userid]+y.mean()</span><br><span class="line"><span class="comment"># 以降序形式排列</span></span><br><span class="line">idx = np.argsort(real_predict)[::<span class="number">-1</span>]</span><br><span class="line"></span><br><span class="line">print(<span class="string">'推荐的电影为：'</span>)</span><br><span class="line"><span class="comment">#获得推荐的电影的名称</span></span><br><span class="line">movie_list=np.array(movie_list)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> movie_list[idx][:N]:</span><br><span class="line">    rec_list.append(i)</span><br><span class="line">    print(i)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> imdbid,title <span class="keyword">in</span> self.movie_tltle.items():</span><br><span class="line">    <span class="keyword">if</span> title <span class="keyword">in</span> rec_list:</span><br><span class="line">        rec_id.append(imdbid)</span><br><span class="line">        print(rec_id)</span><br></pre></td></tr></table></figure>
+<h3 id="得到要求的用户的参数矩阵，乘以所有电影的特征向量，再加上预处理中减去的评分矩阵的均值，按照排序的方法，取前几个电影即为需要推荐的"><a href="#得到要求的用户的参数矩阵，乘以所有电影的特征向量，再加上预处理中减去的评分矩阵的均值，按照排序的方法，取前几个电影即为需要推荐的" class="headerlink" title="得到要求的用户的参数矩阵，乘以所有电影的特征向量，再加上预处理中减去的评分矩阵的均值，按照排序的方法，取前几个电影即为需要推荐的"></a>得到要求的用户的参数矩阵，乘以所有电影的特征向量，再加上预处理中减去的评分矩阵的均值，按照排序的方法，取前几个电影即为需要推荐的</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">real_predict=predict[:,userid]+y.mean()</span><br><span class="line"><span class="comment"># 以降序形式排列</span></span><br><span class="line">idx = np.argsort(real_predict)[::<span class="number">-1</span>]</span><br><span class="line"></span><br><span class="line">print(<span class="string">'推荐的电影为：'</span>)</span><br><span class="line"><span class="comment">#获得推荐的电影的名称</span></span><br><span class="line">movie_list=np.array(movie_list)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> movie_list[idx][:N]:</span><br><span class="line">    rec_list.append(i)</span><br><span class="line">    print(i)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> imdbid,title <span class="keyword">in</span> self.movie_tltle.items():</span><br><span class="line">    <span class="keyword">if</span> title <span class="keyword">in</span> rec_list:</span><br><span class="line">        rec_id.append(imdbid)</span><br><span class="line">        print(rec_id)</span><br></pre></td></tr></table></figure>
 
 <h2 id="基于图的随机游走算法"><a href="#基于图的随机游走算法" class="headerlink" title="基于图的随机游走算法"></a>基于图的随机游走算法</h2><p>（用户行为很容易用二分图表示）</p>
 <p>之前已经将用户的行为表示为二分图模型，根据用户顶点直接有无边连接来确定节点的相关性。</p>
@@ -411,6 +404,7 @@
 <p>（2）召回率：描述有多少比例的用户—物品评分记录包含在最终的推荐列表中</p>
 <p>（3）覆盖率：反映了推荐算法发掘长尾的能力，覆盖率越高，说明推荐算法越能够将长尾中的物品推荐给用户</p>
 <p>（4）新颖度：列表中物品的平均流行度度量推荐结果的新颖度。如果推荐出的物品都很热门，说明推荐的新颖度较低，否则说明推荐结果比较新颖</p>
+<p>user:673,movie:39514</p>
 <table>
 <thead>
 <tr>
@@ -424,19 +418,19 @@
 </thead>
 <tbody><tr>
 <td>基于邻域的协同过滤（用户）</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>4.941765770489811</td>
+<td>148.95515394210815</td>
 </tr>
 <tr>
 <td>基于邻域的协同过滤（物品）</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>4.843394485517513</td>
+<td>992.0291049480438</td>
 </tr>
 <tr>
 <td>隐语义模型</td>
@@ -512,6 +506,9 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
+                <a href="/blogs/tanXin1/" rel="prev" title="tanXin1">
+                  tanXin1 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
       </footer>
@@ -551,7 +548,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#整体设计"><span class="nav-number">1.</span> <span class="nav-text">整体设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前期设置"><span class="nav-number">2.</span> <span class="nav-text">前期设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#接收页面回传的用户名"><span class="nav-number">2.1.</span> <span class="nav-text">接收页面回传的用户名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过orm对象关系映射读取数据库内表并进行存储"><span class="nav-number">2.2.</span> <span class="nav-text">通过orm对象关系映射读取数据库内表并进行存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化数据集"><span class="nav-number">2.3.</span> <span class="nav-text">初始化数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建用户-电影矩阵、电影-用户矩阵、电影-用户-评分矩阵"><span class="nav-number">2.4.</span> <span class="nav-text">构建用户-电影矩阵、电影-用户矩阵、电影-用户-评分矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#判断有无冷启动"><span class="nav-number">2.5.</span> <span class="nav-text">判断有无冷启动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于邻域的算法"><span class="nav-number">3.</span> <span class="nav-text">基于邻域的算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于用户的协同过滤算法"><span class="nav-number">3.1.</span> <span class="nav-text">基于用户的协同过滤算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于物品的协同过滤算法"><span class="nav-number">3.2.</span> <span class="nav-text">基于物品的协同过滤算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐语义模型"><span class="nav-number">4.</span> <span class="nav-text">隐语义模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于图的随机游走算法"><span class="nav-number">5.</span> <span class="nav-text">基于图的随机游走算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#评价指标（结果待续）"><span class="nav-number">6.</span> <span class="nav-text">评价指标（结果待续）</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#电影推荐系统项目实现（三）——协同过滤算法的实现"><span class="nav-number">1.</span> <span class="nav-text">电影推荐系统项目实现（三）——协同过滤算法的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#整体设计"><span class="nav-number">1.1.</span> <span class="nav-text">整体设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前期设置"><span class="nav-number">1.2.</span> <span class="nav-text">前期设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#接收页面回传的用户名"><span class="nav-number">1.2.1.</span> <span class="nav-text">接收页面回传的用户名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过orm对象关系映射读取数据库内表并进行存储"><span class="nav-number">1.2.2.</span> <span class="nav-text">通过orm对象关系映射读取数据库内表并进行存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化数据集"><span class="nav-number">1.2.3.</span> <span class="nav-text">初始化数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建用户-电影矩阵、电影-用户矩阵、电影-用户-评分矩阵"><span class="nav-number">1.2.4.</span> <span class="nav-text">构建用户-电影矩阵、电影-用户矩阵、电影-用户-评分矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#判断有无冷启动"><span class="nav-number">1.2.5.</span> <span class="nav-text">判断有无冷启动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于邻域的算法"><span class="nav-number">1.3.</span> <span class="nav-text">基于邻域的算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于用户的协同过滤算法"><span class="nav-number">1.3.1.</span> <span class="nav-text">基于用户的协同过滤算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于物品的协同过滤算法"><span class="nav-number">1.3.2.</span> <span class="nav-text">基于物品的协同过滤算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐语义模型"><span class="nav-number">1.4.</span> <span class="nav-text">隐语义模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#总体思路"><span class="nav-number">1.4.1.</span> <span class="nav-text">总体思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据预处理，导入数据的评分矩阵和用户评价矩阵，并将评分矩阵进行均值化"><span class="nav-number">1.4.2.</span> <span class="nav-text">数据预处理，导入数据的评分矩阵和用户评价矩阵，并将评分矩阵进行均值化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#随机初始化电影的特征向量和用户的参数向量：使用正态分布函数进行初始化"><span class="nav-number">1.4.3.</span> <span class="nav-text">随机初始化电影的特征向量和用户的参数向量：使用正态分布函数进行初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#建立优化目标函数（如上）"><span class="nav-number">1.4.4.</span> <span class="nav-text">建立优化目标函数（如上）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算函数梯度"><span class="nav-number">1.4.5.</span> <span class="nav-text">计算函数梯度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用优化算法，按照梯度下降的方向求得优化函数最小的参数值"><span class="nav-number">1.4.6.</span> <span class="nav-text">使用优化算法，按照梯度下降的方向求得优化函数最小的参数值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#得到要求的用户的参数矩阵，乘以所有电影的特征向量，再加上预处理中减去的评分矩阵的均值，按照排序的方法，取前几个电影即为需要推荐的"><span class="nav-number">1.4.7.</span> <span class="nav-text">得到要求的用户的参数矩阵，乘以所有电影的特征向量，再加上预处理中减去的评分矩阵的均值，按照排序的方法，取前几个电影即为需要推荐的</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于图的随机游走算法"><span class="nav-number">1.5.</span> <span class="nav-text">基于图的随机游走算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#评价指标（结果待续）"><span class="nav-number">1.6.</span> <span class="nav-text">评价指标（结果待续）</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -566,7 +563,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-count">76</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -579,7 +576,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-count">40</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -636,7 +633,7 @@
 <div class="copyright">
   
   &copy; 2019 – 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -646,13 +643,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">387k</span>
+    <span title="站点总字数">388k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">5:51</span>
+    <span title="站点阅读时长">5:53</span>
 </div>
   <div class="addthis_inline_share_toolbox">
     <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
