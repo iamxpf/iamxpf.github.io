@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>tanXin1</title>
+    <title>贪心法——小区间并集覆盖大区间</title>
     <url>/blogs/tanXin1/</url>
-    <content><![CDATA[<h1 id="贪心法——小区间并集覆盖大区间"><a href="#贪心法——小区间并集覆盖大区间" class="headerlink" title="贪心法——小区间并集覆盖大区间"></a>贪心法——小区间并集覆盖大区间</h1><h2 id="题目内涵"><a href="#题目内涵" class="headerlink" title="题目内涵"></a>题目内涵</h2><p>给定数轴上的一个大区间 I 和 n 个小区间 i[0], i[1], …, i[n - 1]，问最少选择多少个小区间，使得这些小区间的并集可以覆盖整个大区间。</p><h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>45.跳跃游戏 II<a href="https://leetcode-cn.com/problems/jump-game-ii/" target="_blank" rel="external nofollow noopener noreferrer">https://leetcode-cn.com/problems/jump-game-ii/</a></p><a id="more"></a>
+    <content><![CDATA[<h2 id="题目内涵"><a href="#题目内涵" class="headerlink" title="题目内涵"></a>题目内涵</h2><p>给定数轴上的一个大区间 I 和 n 个小区间 i[0], i[1], …, i[n - 1]，问最少选择多少个小区间，使得这些小区间的并集可以覆盖整个大区间。</p><h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>45.跳跃游戏 II<a href="https://leetcode-cn.com/problems/jump-game-ii/" target="_blank" rel="external nofollow noopener noreferrer">https://leetcode-cn.com/problems/jump-game-ii/</a></p><p>1024.视频拼接 <a href="https://leetcode-cn.com/problems/video-stitching/" target="_blank" rel="external nofollow noopener noreferrer">https://leetcode-cn.com/problems/video-stitching/</a></p><a id="more"></a>
 
-<p>1024.视频拼接 <a href="https://leetcode-cn.com/problems/video-stitching/" target="_blank" rel="external nofollow noopener noreferrer">https://leetcode-cn.com/problems/video-stitching/</a></p>
+
 <p>1326.灌溉花园的最少水龙头数目 <a href="https://leetcode-cn.com/problems/minimum-number-of-taps-to-open-to-water-a-garden/" target="_blank" rel="external nofollow noopener noreferrer">https://leetcode-cn.com/problems/minimum-number-of-taps-to-open-to-water-a-garden/</a></p>
 <p>视野争夺 <a href="https://www.nowcoder.com/profile/431148314/test/44341853/830864#summary" target="_blank" rel="external nofollow noopener noreferrer">https://www.nowcoder.com/profile/431148314/test/44341853/830864#summary</a></p>
 <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>（1）预处理：得出当前位置能到的最远的距离（如果是给定小区间，则最远距离为右区间的值）</p>
