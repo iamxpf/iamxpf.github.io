@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="八戒大强攻" type="application/atom+xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="Tj66HjG9CPxGLh7uYasY8iP95HLgLgbff61lHXIZMJQ">
+  <meta name="baidu-site-verification" content="oKzS1ngP4YpcIQWZ">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="项目地址：https:&#x2F;&#x2F;github.com&#x2F;iambajie&#x2F;mq-cplusplus运行 step1:终端输入make生成服务端和客户端文件：通过makefile生成服务端和客户端文件： （1）按序生成mq_normal_producer mq_normal_consumer1 mq_normal_consumer2 mq_ack_producer mq_ack_consumer mq_mu">
+<meta name="keywords" content="mq">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用c++实现的一个简单消息中间件">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.xiapf.com&#x2F;blogs&#x2F;mqcplusplus&#x2F;index.html">
+<meta property="og:site_name" content="八戒大强攻">
+<meta property="og:description" content="项目地址：https:&#x2F;&#x2F;github.com&#x2F;iambajie&#x2F;mq-cplusplus运行 step1:终端输入make生成服务端和客户端文件：通过makefile生成服务端和客户端文件： （1）按序生成mq_normal_producer mq_normal_consumer1 mq_normal_consumer2 mq_ack_producer mq_ack_consumer mq_mu">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20210602162238.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20210524164800.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20210514152704.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20210514152721.png">
+<meta property="og:updated_time" content="2021-06-16T05:55:20.580Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;iamxpf&#x2F;pageImage&#x2F;images&#x2F;20210602162238.png">
+
+<link rel="canonical" href="https://www.xiapf.com/blogs/mqcplusplus/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>用c++实现的一个简单消息中间件 | 八戒大强攻</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">八戒大强攻</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">好久没吃人肉了</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">43</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">12</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">82</span></a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-fw fa-sitemap"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-heart">
+
+    <a href="/lover/" rel="section"><i class="fa fa-fw fa-heart"></i>heart</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/iamxpf" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="external nofollow noopener noreferrer" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xiapf.com/blogs/mqcplusplus/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+      <meta itemprop="name" content="Xiapf">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="八戒大强攻">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          用c++实现的一个简单消息中间件
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-16 13:25:15 / 修改时间：13:55:20" itemprop="dateCreated datePublished" datetime="2021-06-16T13:25:15+08:00">2021-06-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mq/" itemprop="url" rel="index">
+                    <span itemprop="name">mq</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span id="/blogs/mqcplusplus/" class="post-meta-item leancloud_visitors" data-flag-title="用c++实现的一个简单消息中间件" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论数：</span>
+    
+    <a title="valine" href="/blogs/mqcplusplus/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/blogs/mqcplusplus/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+		  
+			
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>项目地址：<a href="https://github.com/iambajie/mq-cplusplus" target="_blank" rel="external nofollow noopener noreferrer">https://github.com/iambajie/mq-cplusplus</a></p><h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><ul>
+<li>step1:终端输入<code>make</code>生成服务端和客户端文件：通过makefile生成服务端和客户端文件：</li>
+</ul><p>（1）按序生成mq_normal_producer mq_normal_consumer1 mq_normal_consumer2 mq_ack_producer mq_ack_consumer mq_multi_producer mq_priority_consumer mq_multi_consumer mq_priority_producer mq_pull_consumer mq_durable_producer mq_durable_consumer （客户端）</p><a id="more"></a>
+
+
+<p>（2）mq_conSrv mq_logicSrv mq_persisSrv（服务端）</p>
+<ul>
+<li>step2:通过shell脚本调用程序:</li>
+</ul>
+<p>服务端</p>
+<ul>
+<li>启动：输入<code>./mq_server.start.sh</code>启动服务端</li>
+<li>关闭：输入<code>./mq_server.stop.sh</code>+对应数字，关闭服务端</li>
+</ul>
+<p>数字含义同linux下kill命令的数字含义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1) SIGHUP 2) SIGINT 3) SIGQUIT 4) SIGILL</span><br><span class="line">5) SIGTRAP 6) SIGABRT 7) SIGEMT 8) SIGFPE</span><br><span class="line">9) SIGKILL 10) SIGBUS 11) SIGSEGV 12) SIGSYS</span><br><span class="line">13) SIGPIPE 14) SIGALRM 15) SIGTERM 16) SIGUSR1</span><br><span class="line">17) SIGUSR2 18) SIGCHLD 19) SIGPWR 20) SIGWINCH</span><br><span class="line">21) SIGURG 22) SIGIO 23) SIGSTOP 24) SIGTSTP</span><br><span class="line">25) SIGCONT 26) SIGTTIN 27) SIGTTOU 28) SIGVTALRM</span><br><span class="line">29) SIGPROF 30) SIGXCPU 31) SIGXFSZ 32) SIGWAITING</span><br><span class="line">33) SIGLWP 34) SIGFREEZE 35) SIGTHAW 36) SIGCANCEL</span><br><span class="line">37) SIGLOST 39) SIGRTMIN 40) SIGRTMIN+1 41) SIGRTMIN+2</span><br><span class="line">42) SIGRTMIN+3 43) SIGRTMAX-3 44) SIGRTMAX-2 45) SIGRTMAX-1</span><br><span class="line">46) SIGRTMAX</span><br></pre></td></tr></table></figure>
+
+<p>客户端</p>
+<ul>
+<li>一个生产者对一个消费者：输入<code>./mq_normal_producer  ./mq_normal_consumer</code>启动客户端的生产者和消费者</li>
+<li>一个生产者对多个消费者：工作队列（多个消费者同时处理，在多个工作人员之间分配耗时的任务）：输入<code>./multi_producer_start.sh 1 10</code>启动客户端，创建一个生产者，循环发送长度为10的消息</li>
+<li>持久化消息：输入<code>./mq_durable_producer  ./mq_duravle_consumer</code>启动客户端的生产者和消费者</li>
+</ul>
+<h2 id="功能实现"><a href="#功能实现" class="headerlink" title="功能实现"></a>功能实现</h2><ul>
+<li><p>服务器端是基于共享内存的队列，服务器端分为三部分，由接入层、逻辑层、持久化层构成</p>
+<p>接入层负责与客户端建立连接，接收客户端创建的消息包及回复相应的网络包</p>
+<p>逻辑层通过共享内存与接入层通信，主要负责消息处理与回复：接收接入层传入的订阅信息、出错信息、需要持久化信息等，将订阅的数据和需要回复的数据包回传给接入层</p>
+<p>持久化层接收逻辑层传入共享内存的信息，将需要持久化的数据按照类别顺序落地磁盘</p>
+</li>
+<li><p>服务器端服务端采用epoll I/O多路复用技术</p>
+<p>IO性能不会随着事件描述符的增大而线性减少，每轮处理数据，通过epoll_wait所有要处理的事件，如果是当前监听的套接字则添加到用户连接，接收数据</p>
+</li>
+<li><p>通过Compare &amp; Set实现无锁操作，避免多线程竞争</p>
+<p>服务器端通过共享内存读写数据，为避免竞争，将队列结构中国设置使用人数，每次轮询使用人数如果是0，则设置为1，即获得了队列的使用权，反之则有其他线程在进行操作，继续等待。</p>
+</li>
+<li><p>通过服务器端的持久化层将数据顺序落地磁盘，实现消息持久化减少随机读写的寻址开销</p>
+<p>当接收到需要持久化的数据包时，按照包的类型保存，同时保存每次写入的offsett提供下一次持久化写位置文件</p>
+<p>当宕机重启时，逻辑层负责从本地读取持久化文件来恢复数据</p>
+</li>
+<li><p>服务器和客户端通过tcp连接</p>
+</li>
+<li><p>客户端有两种：消息生产者，消息消费者</p>
+<p>可以实现三种exchange模式的处理，fanout，在绑定当前交换机的所有队列中广播消息，direct，转发给key匹配队列，topic，和每个key进行字符串匹配，匹配上的转发消息</p>
+</li>
+</ul>
+<h2 id="框架"><a href="#框架" class="headerlink" title="框架"></a>框架</h2><h3 id="整体框架"><a href="#整体框架" class="headerlink" title="整体框架"></a>整体框架</h3><p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20210602162238.png" alt></p>
+<h3 id="服务器：消息队列服务器"><a href="#服务器：消息队列服务器" class="headerlink" title="服务器：消息队列服务器"></a>服务器：消息队列服务器</h3><ol>
+<li><p>接入层ConnectServer.cpp</p>
+<p>（1）通过socket和客户端建立tcp连接，见“Connection:网络连接”部分</p>
+<p>（2）和业务逻辑层通信</p>
+<p>m_pQueueToLogicLayer(12345) enqueue方法：当出错时传输出错信息</p>
+<p>m_pQueueLogicToConnect(54321) deqeue方法：接收订阅的数据</p>
+</li>
+<li><p>业务逻辑层logicServer.cpp</p>
+<p>（1）和接入层通信</p>
+<p>m_pQueueFromConnect(12345) deqeue方法：处理共享内存的数据时接收业务逻辑层的数据<br>m_pQueueToConnect(54321)  enqueue方法：发送订阅的消息，以及需要回复的消息</p>
+<p>（2）和持久化层通信</p>
+<p>m_pQueueToPersis(65432) enqueue方法：发送需要持久化的数据</p>
+</li>
+<li><p>持久化层PersistenceServer.cpp</p>
+<p>和业务逻辑层通信：m_pQueueFromLogic(65432) deqeue方法将需要持久化数据出队并保存</p>
+</li>
+</ol>
+<p>通信通道：基于共享内存的队列</p>
+<ol>
+<li><p>初始化：创建信号量互斥锁，打开对应共享内存</p>
+<p>信号量互斥锁</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">m_iSemId=semget(m_iSemKey,<span class="number">1</span>,IPC_CREAT|<span class="number">0666</span>);<span class="comment">//创建一个新的信号量或获取一个已经存在的信号量的键值。 IPC_CREAT如果信号量不存在，则创建一个信号量，否则获取</span></span><br><span class="line">semun arg;</span><br><span class="line">semid_ds semDs;</span><br><span class="line">arg.buf=&amp;semDs;</span><br><span class="line"><span class="keyword">int</span> ret=semctl(m_iSemId,<span class="number">0</span>,IPC_STAT,arg);<span class="comment">//从关联于 semid 的内核数据结构复制数据到 arg.buf 指向的semid_ds 数据结构</span></span><br><span class="line"><span class="comment">//未曾使用或者上次op操作超过3分钟则释放锁</span></span><br><span class="line"><span class="keyword">if</span>(semDs.sem_otime==<span class="number">0</span>||((semDs.sem_otime&gt;<span class="number">0</span>)&amp;&amp;(time(<span class="literal">NULL</span>)-semDs.sem_otime&gt;<span class="number">3</span>*<span class="number">60</span>)))</span><br><span class="line">&#123;</span><br><span class="line">  semun arg;</span><br><span class="line">  arg.val=<span class="number">1</span>;</span><br><span class="line">  ret=semctl(m_iSemId,<span class="number">0</span>,SETVAL,arg);<span class="comment">//值设置为1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>基于共享内存的队列</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建或者打开共享内存</span></span><br><span class="line"><span class="keyword">int</span> shmId=shmget(iShmKey,<span class="keyword">sizeof</span>(QueueHead)+iQueueSize,IPC_CREAT|IPC_EXCL|<span class="number">0666</span>);</span><br><span class="line">m_pMemAddr=(<span class="keyword">char</span> *)shmat(shmId,<span class="literal">NULL</span>,<span class="number">0</span>);<span class="comment">//启动共享内存</span></span><br><span class="line"><span class="comment">//初始化队列头</span></span><br><span class="line"><span class="keyword">if</span>(isExist)<span class="comment">//共享内存之前存在</span></span><br><span class="line">&#123;</span><br><span class="line">  m_pQueueHead=(QueueHead *)(m_pMemAddr);<span class="comment">//队列头部重新指向</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">memset</span>(m_pMemAddr,<span class="number">0</span>,iQueueSize+<span class="keyword">sizeof</span>(QueueHead));</span><br><span class="line">  m_pQueueHead=(QueueHead *)(m_pMemAddr);</span><br><span class="line">  m_pQueueHead-&gt;m_iBlockNum=<span class="number">0</span>;</span><br><span class="line">  m_pQueueHead-&gt;m_iLen=iQueueSize;</span><br><span class="line">  m_pQueueHead-&gt;m_iHead=<span class="number">0</span>;</span><br><span class="line">  m_pQueueHead-&gt;m_iTail=<span class="number">0</span>;</span><br><span class="line">  m_pQueueHead-&gt;m_iUsedNum=<span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>多线程下的入队和出队操作</p>
+<p>（1）原因：多线程之间使用队列是一定需要做到同步的，在一个线程读写的时候，阻塞另一个线程。设置过程时间很短暂，所以没有必要使用锁。使用原子操作：要不操作全部完成要么一点都不开始。这和数据库的事务不同，因为原子操作没有回滚。也就是说原子操作，一旦开始某个操作，那么就必须要完全的完成。</p>
+<p>（2）使用方法：<strong>CAS原子操作</strong>——Compare &amp; Set，或是 Compare &amp; Swap。</p>
+<p>核心思想：队列结构设置使用人数，每次轮询使用人数如果是0，则设置为1，即获得了队列的使用权，反之则有其他线程在进行操作，继续等待。类似自旋锁</p>
+<p>核心代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取使用权</span></span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>)</span><br><span class="line">&#123;</span><br><span class="line">  rmb();<span class="comment">//rmb() 確保 barrier 之前的 read operation 都能在 barrier 之後的 read operation 之前發生，簡單來說就是確保 barrier 前後的 read operation 的順序</span></span><br><span class="line">  <span class="keyword">if</span>(!CAS32(&amp;m_pQueueHead-&gt;m_iUsedNum,<span class="number">0</span>,<span class="number">1</span>)) ??</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">continue</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  wmb();<span class="comment">//wmb() 如同 rmb() 但是只針對 write operation</span></span><br><span class="line">  <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="comment">//操作队列</span></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//释放使用权</span></span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>)</span><br><span class="line">&#123;</span><br><span class="line">  rmb();</span><br><span class="line">  <span class="keyword">if</span>(!CAS32(&amp;m_pQueueHead-&gt;m_iUsedNum,<span class="number">1</span>,<span class="number">0</span>))</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">continue</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  wmb();</span><br><span class="line">  <span class="keyword">break</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ol>
+<h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><p>包含消息生产者和消费者</p>
+<h4 id="生产者"><a href="#生产者" class="headerlink" title="生产者"></a>生产者</h4><p>（1）和服务端建立连接</p>
+<p>（2）消息格式 CreatePublishMessage</p>
+<ul>
+<li>设置消息格式 4 = CMD_CREATE_PUBLISH</li>
+<li>设置绑定的交换机名称：m_strExchangeName(istrExName)</li>
+<li>绑定键名称：m_strRoutingKey(istrKey)</li>
+<li>消息主体：m_strMsgBody(istrMsgBody)</li>
+<li>优先级：m_iPriority(iPriority)</li>
+<li>是否可持久化：m_bDurable(ibDurable)</li>
+<li>消息序列号：m_iMsgSeq(-1)</li>
+<li>确认级别：m_iConfirmLevel(iConfirmLevel)</li>
+</ul>
+<h4 id="交换机"><a href="#交换机" class="headerlink" title="交换机"></a>交换机</h4><p>交换器从生产者那收到消息后，根据Routing Key、Exchange Type和Binding key联合使用，分发消息到queue中。</p>
+<p>消息格式：CreateExchangeMessage</p>
+<ul>
+<li><p>设置标志位为1 = CMD_CREATE_EXCNANGE</p>
+</li>
+<li><p>设置交换机名称：m_strExchangeName(istrName)</p>
+</li>
+<li><p>交换机类型：m_iExchangeType(iExchangeType)，三种类型可以选择EXCHANGE_TYPE_FANOUT=1（广播），EXCHANGE_TYPE_DIRECT=2（绑定键与该消息的路由键完全匹配的队列），EXCHANGE_TYPE_TOPIC=3（根据主题）;</p>
+</li>
+<li><p>是否持久化：m_bDurable(ibDurable)</p>
+</li>
+<li><p>是否自动删除m_bAutoDel(ibAutoDel)</p>
+</li>
+</ul>
+<h4 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h4><p>消息最终被送到Queue中并等待consumer取走，一个message可以被同时拷贝到多个queue中。</p>
+<p>消息格式：CreateQueueMessage</p>
+<ul>
+<li>设置标志位2 = CMD_CREATE_QUEUE</li>
+<li>设置队列名称 m_strQueueName(istrName)</li>
+<li>设置优先级m_iPriority(iPriority)</li>
+<li>是否持久化：m_bDurable(ibDurable)</li>
+<li>是否自动删除m_bAutoDel(ibAutoDel)</li>
+</ul>
+<h4 id="绑定"><a href="#绑定" class="headerlink" title="绑定"></a>绑定</h4><p>通过Binding将Exchange与Queue关联起来，在绑定（Binding）Exchange与Queue的同时，一般会指定一个binding key。可以将多个Queue绑定到同一个Exchange上，并且可以指定相同的Binding Key。</p>
+<p>消息格式：CreateBindingMessage</p>
+<ul>
+<li>设置标志位3 = CMD_CREATE_BINDING</li>
+<li>绑定的交换机的名称：m_strExchangeName(istrExName)</li>
+<li>绑定的队列的名称m_strQueueName(istrQueueName)</li>
+<li>绑定键的名称：m_strBindingKey(istrKey)</li>
+</ul>
+<p>1.Publisher:消息的生产者，向交换器Exchange发布消息，发送消息时还要指定Routing Key。</p>
+<p>7.Consumer:消息的消费者，如果有多个消费者同时订阅同一个Queue中的消息，Queue中的消息会被平摊给多个消费者。</p>
+<h3 id="Connection-网络连接"><a href="#Connection-网络连接" class="headerlink" title="Connection:网络连接"></a>Connection:网络连接</h3><p>客户端通过tcp进行网络连接（Producer和Consumer都是通过TCP连接到Server的）</p>
+<h4 id="服务器端"><a href="#服务器端" class="headerlink" title="服务器端"></a>服务器端</h4><p>（1）初始化：int ConnectServer::Init()</p>
+<p>套接字：socket-&gt;SetNonBlock-&gt;setsockopt</p>
+<p>核心代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">m_iListenFd=socket(AF_INET,SOCK_STREAM,<span class="number">0</span>)；</span><br><span class="line">SetNonBlock(m_iListenFd)；</span><br><span class="line"><span class="keyword">int</span> ret=setsockopt(m_iListenFd,SOL_SOCKET,SO_REUSEADDR,(<span class="keyword">char</span> *)&amp;opt,<span class="keyword">sizeof</span>(opt));</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serverAddr</span>;</span></span><br><span class="line"><span class="built_in">memset</span>(&amp;serverAddr,<span class="number">0</span>,<span class="keyword">sizeof</span>(serverAddr));</span><br><span class="line">serverAddr.sin_family=AF_INET;</span><br><span class="line">serverAddr.sin_port=htons(SERVER_DEFAULT_PORT);</span><br><span class="line">serverAddr.sin_addr.s_addr=htonl(INADDR_ANY);</span><br><span class="line">bind(m_iListenFd,(struct sockaddr *)&amp;serverAddr,<span class="keyword">sizeof</span>(serverAddr);</span><br><span class="line"><span class="built_in">listen</span>(m_iListenFd,<span class="number">512</span>);</span><br></pre></td></tr></table></figure>
+
+<p>I/O多路复用：epoll_create（LT模式）-&gt;epoll_ctl（EPOLLIN读事件）</p>
+<p>核心代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">m_iEpollFd=epoll_create(CLIENT_EPOLL_COUNT);</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">event</span>;</span></span><br><span class="line">event.events=EPOLLIN;</span><br></pre></td></tr></table></figure>
+
+<p>（2）运行：int ConnectServer::Run()</p>
+<p>每轮处理数据：epoll_wait（所有要处理的事件）-&gt;读事件（ipEvents[i].events&amp;EPOLLIN）:如果是监听的套接字accept-&gt;SetNonBlock-&gt;添加到用户连接  -&gt;recv（接收数据）：处理接收到的数据</p>
+<p>核心代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> num=epoll_wait(m_iEpollFd,pEvents,CLIENT_EPOLL_COUNT,<span class="number">0</span>);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;iNum;++i) &#123;</span><br><span class="line">  <span class="keyword">if</span>(ipEvents[i].events&amp;EPOLLIN) &#123;</span><br><span class="line">    <span class="comment">//获取当前连接pClientConnect</span></span><br><span class="line">    <span class="keyword">int</span> sockfd=pClientConnect-&gt;m_iSockfd;</span><br><span class="line">    <span class="keyword">if</span>(sockfd==m_iListenFd)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">cliAddr</span>;</span></span><br><span class="line">      <span class="built_in">memset</span>(&amp;cliAddr,<span class="number">0</span>,<span class="keyword">sizeof</span>(cliAddr));</span><br><span class="line">      <span class="keyword">socklen_t</span> len=<span class="keyword">sizeof</span>(cliAddr);</span><br><span class="line">      <span class="keyword">int</span> confd=accept(m_iListenFd,(struct sockaddr *)&amp;cliAddr,&amp;len);<span class="comment">//接收监听端口的连接</span></span><br><span class="line">      SetNonBlock(confd);</span><br><span class="line">      <span class="keyword">int</span> iSendBufSize=SOCK_SEND_BUFF_SIZE;</span><br><span class="line">      <span class="keyword">int</span> iRevBufSize=SOCK_RECV_BUFF_SIZE;</span><br><span class="line">      setsockopt(confd,SOL_SOCKET,SO_SNDBUF,(<span class="keyword">char</span> *)&amp;iSendBufSize,<span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">      setsockopt(confd,SOL_SOCKET,SO_RCVBUF,(<span class="keyword">char</span> *)&amp;iRevBufSize,<span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">int</span> ret=recv(sockfd,pClientConnect-&gt;m_pRecvTail,iRecvBytes,<span class="number">0</span>);<span class="comment">//准备接收数据</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">//收到其他事件，断开连接</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="客户端-1"><a href="#客户端-1" class="headerlink" title="客户端"></a>客户端</h4><p>Producer和Consumer生产者和消费者</p>
+<p>（1）初始化：int Client::BuildConnection(const char *ipSeverIp,unsigned short iServerPort)</p>
+<p>套接字：socket-&gt;connect-&gt;SetNonBlock-&gt;setsockopt</p>
+<p>核心代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">m_iSockfd=socket(AF_INET,SOCK_STREAM,<span class="number">0</span>);</span><br><span class="line">sockaddr_in serverAddr;</span><br><span class="line"><span class="built_in">memset</span>(&amp;serverAddr,<span class="number">0</span>,<span class="keyword">sizeof</span>(serverAddr));</span><br><span class="line">serverAddr.sin_family=AF_INET;</span><br><span class="line">serverAddr.sin_port=htons(iServerPort);</span><br><span class="line">serverAddr.sin_addr.s_addr=inet_addr(ipSeverIp);</span><br><span class="line"><span class="keyword">int</span> ret=<span class="built_in">connect</span>(m_iSockfd,(struct sockaddr *)&amp;serverAddr,<span class="keyword">sizeof</span>(serverAddr));</span><br><span class="line">FuncTool::SetNonBlock(m_iSockfd);</span><br><span class="line"><span class="keyword">int</span> iSendBufSize=SOCK_SEND_BUFF_SIZE;</span><br><span class="line"><span class="keyword">int</span> iRevBufSize=SOCK_RECV_BUFF_SIZE;</span><br><span class="line">setsockopt(m_iSockfd,SOL_SOCKET,SO_SNDBUF,(<span class="keyword">char</span> *)&amp;iSendBufSize,<span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">setsockopt(m_iSockfd,SOL_SOCKET,SO_RCVBUF,(<span class="keyword">char</span> *)&amp;iRevBufSize,<span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br></pre></td></tr></table></figure>
+
+<p>（2）运行：</p>
+<p>以创建交换机为例</p>
+<p><strong>初始化</strong>：初始化交换机消息头CreateExchangeMessage（oMsg），调用GetMessagePack，将要创建的内容写入消息包</p>
+<p><strong>发送创建数据</strong>：I/O多路复用：poll（监听写事件）</p>
+<p>poll等待套接字可写后发送数据包</p>
+<p>核心代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//等待套接字可写</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> <span class="title">fds</span>[1];</span><span class="comment">//定义pollfd结构的文件句柄</span></span><br><span class="line">fds[<span class="number">0</span>].fd=m_iSockfd;</span><br><span class="line">fds[<span class="number">0</span>].events=POLLOUT|POLLERR;<span class="comment">//监听写事件</span></span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">int</span> ret=poll(fds,<span class="number">1</span>,<span class="number">-1</span>);</span><br><span class="line">  <span class="keyword">if</span>(fds[<span class="number">0</span>].revents&amp;POLLOUT)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">int</span> ret=send(iSockfd,pTemp,iLeft,<span class="number">0</span>);<span class="comment">//发送数据</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>接收创建回复</strong>：I/O多路复用：poll（监听读事件）</p>
+<p>核心代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">do</span><br><span class="line">&#123;</span><br><span class="line">  struct pollfd fds[1];//定义pollfd结构的文件句柄</span><br><span class="line">  fds[0].fd=m_iSockfd;</span><br><span class="line">  fds[0].events=POLLIN|POLLERR;//监听读事件</span><br><span class="line">  while(true)</span><br><span class="line">  &#123;</span><br><span class="line">    int ret=poll(fds,1,-1);</span><br><span class="line">    if(fds[0].revents&amp;POLLIN)</span><br><span class="line">    &#123;</span><br><span class="line">      break;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  ret = recv(m_iSockfd,m_pRecvTail,iFreeSpace,0);</span><br><span class="line">&#125; while (ret!=SUCCESS);</span><br><span class="line">//读取消息，处理消息</span><br></pre></td></tr></table></figure>
+
+<p>（发送数据只有发送，监听写事件即可，不需要回复，仅记录确认号即可）</p>
+<h4 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h4><p>输入./mq_server.start.sh启动服务端</p>
+<p>输入multi_producer_start.sh 1 10启动客户端，创建一个生产者，循环发送长度为10的消息</p>
+<p>服务端日志</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20210524164800.png" alt></p>
+<h2 id="后续改进的方向"><a href="#后续改进的方向" class="headerlink" title="后续改进的方向"></a>后续改进的方向</h2><p>（1） mq 得支持可伸缩性，需要的时候快速扩容，就可以增加吞吐量和容量?</p>
+<p>设计个分布式的系统呗，参照一下 kafka 的设计理念，broker -&gt; topic -&gt; partition，每个 partition 放一个机器，就存一部分数据。如果现在资源不够了，给 topic 增加 partition，然后做数据迁移，增加机器，存放更多数据，提供更高的吞吐量了</p>
+<p>（3） mq 的可用性啊?</p>
+<p>参考 kafka 的高可用保障机制。多副本 -&gt; leader &amp; follower -&gt; broker 挂了重新选举 leader 即可对 外服务。</p>
+<p>（4）能不能支持数据 0 丢失?</p>
+<p>参考 kafka 数据零丢失方案。</p>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><p>1、问题：tcp连接中socket端口号填的非本机，连接报错</p>
+<p>tcp连接端口的可重用:设置SO_REUSEADDR</p>
+<pre><code>int opt=1;
+int ret=setsockopt(m_iListenFd,SOL_SOCKET,SO_REUSEADDR,(char *)&amp;opt,sizeof(opt));//设置套接字</code></pre><p>2、poll调用问题：</p>
+<p>当有生产者生产消息时，消费者才能读到（poll监听事件），反之poll会一直阻塞等待</p>
+<p>所以需要先启动生产者，再启动消费者</p>
+<h2 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h2><p>服务端类调用图</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20210514152704.png" alt></p>
+<p>客户端（生产者和多个消费者）类调用图</p>
+<p><img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/20210514152721.png" alt></p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------</div>
+    
+</div>
+  
+</div>
+        <div class="reward-container">
+  <div>大爷来玩啊</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/wechat.png" alt="Xiapf 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/alipay.jpg" alt="Xiapf 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/mq/" rel="tag"><i class="fa fa-tag"></i> mq</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/blogs/mq/" rel="next" title="mq——mac下安装、使用">
+                  <i class="fa fa-chevron-left"></i> mq——mac下安装、使用
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#运行"><span class="nav-number">1.</span> <span class="nav-text">运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#功能实现"><span class="nav-number">2.</span> <span class="nav-text">功能实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#框架"><span class="nav-number">3.</span> <span class="nav-text">框架</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#整体框架"><span class="nav-number">3.1.</span> <span class="nav-text">整体框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器：消息队列服务器"><span class="nav-number">3.2.</span> <span class="nav-text">服务器：消息队列服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#客户端"><span class="nav-number">3.3.</span> <span class="nav-text">客户端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#生产者"><span class="nav-number">3.3.1.</span> <span class="nav-text">生产者</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#交换机"><span class="nav-number">3.3.2.</span> <span class="nav-text">交换机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#队列"><span class="nav-number">3.3.3.</span> <span class="nav-text">队列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#绑定"><span class="nav-number">3.3.4.</span> <span class="nav-text">绑定</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Connection-网络连接"><span class="nav-number">3.4.</span> <span class="nav-text">Connection:网络连接</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#服务器端"><span class="nav-number">3.4.1.</span> <span class="nav-text">服务器端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端-1"><span class="nav-number">3.4.2.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连接"><span class="nav-number">3.4.3.</span> <span class="nav-text">连接</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后续改进的方向"><span class="nav-number">4.</span> <span class="nav-text">后续改进的方向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到的问题"><span class="nav-number">5.</span> <span class="nav-text">遇到的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#整体流程"><span class="nav-number">6.</span> <span class="nav-text">整体流程</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiapf" src="https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/touxiang.jpg">
+  <p class="site-author-name" itemprop="name">Xiapf</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">43</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/iamxpf" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;iamxpf" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/mailto:iamxpf@126.com" title="E-Mail → mailto:iamxpf@126.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.v2ex.com/" title="https:&#x2F;&#x2F;www.v2ex.com&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">V2EX</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://leetcode-cn.com/problemset/all/" title="https:&#x2F;&#x2F;leetcode-cn.com&#x2F;problemset&#x2F;all&#x2F;" rel="external nofollow noopener noreferrer" target="_blank">LeetCode</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.nowcoder.com/activity/oj" title="https:&#x2F;&#x2F;www.nowcoder.com&#x2F;activity&#x2F;oj" rel="external nofollow noopener noreferrer" target="_blank">NowCoder</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">苏ICP备19068825号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">All Rights Reserved</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">418k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">6:20</span>
+</div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5dd16697c9fe6c8a" async="async"></script>
+  </div>
+
+        
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+            'X-LC-Key': 'NCOfwyk21HI5Snpwtgr9qkI5',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('https://cdn.jsdelivr.net/gh/iamxpf/pageImage/images/valine.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: false,
+    appId: 'e5fPNg6mJg8VLyXxWi6h7ItD-gzGzoHsz',
+    appKey: 'NCOfwyk21HI5Snpwtgr9qkI5',
+    placeholder: "吐槽一下",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname,
+    recordIP: true,
+    serverURLs: ''
+  });
+}, window.Valine);
+
+//增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/clicklove.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+<!--浏览器搞笑标题-->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
