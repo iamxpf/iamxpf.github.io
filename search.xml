@@ -199,7 +199,7 @@ int ret=setsockopt(m_iListenFd,SOL_SOCKET,SO_REUSEADDR,(char *)&amp;opt,sizeof(o
   <entry>
     <title>mq——mac下安装、使用</title>
     <url>/blogs/mq/</url>
-    <content><![CDATA[<h1 id="mq——mac下安装、使用"><a href="#mq——mac下安装、使用" class="headerlink" title="mq——mac下安装、使用"></a>mq——mac下安装、使用</h1><p>c++使用rabbitmq例子见项目：<a href="https://github.com/iambajie/mq-example" target="_blank" rel="external nofollow noopener noreferrer">https://github.com/iambajie/mq-example</a></p><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p><a href="https://blog.csdn.net/keysilence1/article/details/80264882" target="_blank" rel="external nofollow noopener noreferrer">https://blog.csdn.net/keysilence1/article/details/80264882</a></p><p>brew install rabbitmq安装 </p><a id="more"></a>
+    <content><![CDATA[<p>c++使用rabbitmq例子见项目：<a href="https://github.com/iambajie/rabbitmq-tutorials-cplusplus" target="_blank" rel="external nofollow noopener noreferrer">https://github.com/iambajie/rabbitmq-tutorials-cplusplus</a></p><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p><a href="https://blog.csdn.net/keysilence1/article/details/80264882" target="_blank" rel="external nofollow noopener noreferrer">https://blog.csdn.net/keysilence1/article/details/80264882</a></p><p>brew install rabbitmq安装 </p><a id="more"></a>
 
 
 <p>安装目录在/usr/local/Cellar/rabbitmq/3.8.2/下，以root权限启动 sudo sbin/rabbitmq-server启动</p>
