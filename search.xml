@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>测试</title>
-    <url>/blogs/test0113/</url>
-    <content><![CDATA[<p>测试</p>]]></content>
-  </entry>
-  <entry>
     <title>用c++实现的一个简单消息中间件</title>
     <url>/blogs/mqcplusplus/</url>
     <content><![CDATA[<p>项目地址：<a href="https://github.com/iambajie/mq-cplusplus" target="_blank" rel="external nofollow noopener noreferrer">https://github.com/iambajie/mq-cplusplus</a></p><h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><ul>
